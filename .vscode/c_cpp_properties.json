@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/ChocolataSliser/include",
+                "${workspaceFolder}/ChocolataSliser/include/ui",
+                "${workspaceFolder}/ChocolataSliser/src",
+                "${workspaceFolder}/ChocolataSliser/Cinder/include",
+                "${workspaceFolder}/ChocolataSliser/Cinder/include/cinder",
+                "${workspaceFolder}/ChocolataSliser/Cinder/include/glfw"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
