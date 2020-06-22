@@ -12,7 +12,7 @@ class ui::uiViewport {
         uiViewport(ci::app::WindowRef wnd, const char* id = "viewport:0" ) : _wnd(wnd), _id(id) {
             _flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoBringToFrontOnFocus;
             _flags |= ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollbar;
-            // _flags |= ImGuiWindowFlags_NoInputs;
+            _flags |= ImGuiWindowFlags_NoInputs;
         }
 
         void Begin() {

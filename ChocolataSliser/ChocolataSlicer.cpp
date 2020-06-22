@@ -13,9 +13,9 @@ static void __preSettingUp(ci::app::App::Settings* settings ) {
     configFile >> windowCfg;
     configFile.close();
 
-    // Loading arguments
+    // Loading arguments or set default values
     settings->setWindowSize(getValueByLabel(windowCfg, Label_winSize, glm::vec2(1124, 590)) );
-    settings->setFrameRate(getValueByLabel(windowCfg, Label_winFrameRate, 25) );
+    settings->setFrameRate(getValueByLabel(windowCfg, Label_winFrameRate, 45) );
 }
 
 

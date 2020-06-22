@@ -11,6 +11,8 @@
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
 	ci::gl::setMatrices(m_camera );
+
+    m_cameraui.setWindowSize(getWindowSize() );
 }
 
 void ChocolataSlicer::update() {
@@ -78,11 +80,11 @@ void ChocolataSlicer::drawUI() {
         ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
 
         // Slice/Print button
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-        ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
-        if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
-        else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
-        ImGui::PopStyleVar();
+        // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+        // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
+        // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
+        // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
+        // ImGui::PopStyleVar();
 
         m_handler_main->show();
     m_ui_viewport->End();
@@ -127,4 +129,19 @@ void ChocolataSlicer::draw() {
 
     ci::gl::color(0,0,1);
     ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
+}
+
+
+void ChocolataSlicer::mouseDrag(ci::app::MouseEvent event ) {
+	m_cameraui.mouseDrag( event );
+}
+
+
+void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
+    m_cameraui.mouseDown( event );
+
+}
+
+void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
+    m_cameraui.mouseWheel( event );
 }

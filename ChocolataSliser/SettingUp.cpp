@@ -31,6 +31,7 @@ void ChocolataSlicer::setup() {
     // Main opengl Initializing
     m_camera.setPerspective(45, getWindow()->getAspectRatio(), 1, 1000 );
     m_camera.lookAt(glm::vec3(3, 2, 4));
+    m_cameraui = ci::CameraUi(&m_camera );
 
 	ci::gl::enableDepthWrite();
 	ci::gl::enableDepthRead();

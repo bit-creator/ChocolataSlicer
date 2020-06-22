@@ -3,6 +3,7 @@
 
 #include "cinder/app/App.h"
 #include "cinder/app/RendererGl.h"
+#include "cinder/CameraUi.h"
 #include "cinder/gl/gl.h"
 
 
@@ -43,6 +44,11 @@ class ChocolataSlicer : public ci::app::App {
         */
         void drawUI();
 
+
+	    void mouseDown(ci::app::MouseEvent event ) override;
+	    void mouseDrag(ci::app::MouseEvent event ) override;
+        void mouseWheel(ci::app::MouseEvent event ) override;
+
     public :  // Ui components of Slicer
         ui::uiViewportRef       m_ui_viewport;
 
@@ -55,6 +61,7 @@ class ChocolataSlicer : public ci::app::App {
 
     public : // Hard logic components
         ci::CameraPersp         m_camera;
+        ci::CameraUi			m_cameraui;
 
         bool                    m_sliced = false;
 
