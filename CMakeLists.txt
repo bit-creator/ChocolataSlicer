@@ -11,19 +11,20 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
 set(SRC_CHOCOLATA_SLICER
 	# Main sources
-	${APP_PATH}/src/ChocolataSlicer.cpp
-	${APP_PATH}/src/__string.cpp
+	${APP_PATH}/ChocolataSlicer.cpp
+	${APP_PATH}/__string.cpp
 
 	# DocLoader
-	${APP_PATH}/DocLoader/ChocolataSlicerMesh.cpp
+	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
-	${APP_PATH}/include
+	${APP_PATH}/
 	${APP_PATH}/Cinder/include/glfw
+	${APP_PATH}/fileSelector
 
 	# DocLoader
-	${APP_PATH}/DocLoader
+	${APP_PATH}/docLoader
 )
 
 ci_make_app(
