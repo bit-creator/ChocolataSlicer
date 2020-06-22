@@ -7,7 +7,7 @@
 #include "cinder/app/Window.h"
 
 #include <string>
-#include "__string.h"
+#include "cstringFunctions.h"
 
 #include "ui/uiWindow.h"
 #include "ui/uiContentTree.h"

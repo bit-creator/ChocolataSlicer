@@ -12,7 +12,8 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 set(SRC_CHOCOLATA_SLICER
 	# Main sources
 	${APP_PATH}/ChocolataSlicer.cpp
-	${APP_PATH}/__string.cpp
+	${APP_PATH}/config/cstringFunctions.cpp
+	${APP_PATH}/config/jsonConfig.cpp
 
 	# DocLoader
 	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
@@ -20,7 +21,8 @@ set(SRC_CHOCOLATA_SLICER
 set(INC_CHOCOLATA_SLICER
 	# Main include
 	${APP_PATH}/
-	${APP_PATH}/Cinder/include/glfw
+	${APP_PATH}/config
+	# ${APP_PATH}/Cinder/include/glfw
 	${APP_PATH}/fileSelector
 
 	# DocLoader

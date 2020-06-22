@@ -1,4 +1,4 @@
-#include "__string.h"
+#include "cstringFunctions.h"
 
 #include <memory>
 

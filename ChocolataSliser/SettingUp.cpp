@@ -1,8 +1,8 @@
 #include "cinder/app/App.h"
+#include "cinder/Display.h"
 #include "cinder/Log.h"
 
 #include "cinder/CinderImGui.h"
-#include "jsoncpp/json.h"
 
 
 
@@ -15,22 +15,17 @@
 
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
+    CI_LOG_I("ChocolataApp ~> DisplaySize : " << getDisplay()->getSize().x << "px | " << getDisplay()->getSize().y << "px" );
+    CI_LOG_I("ChocolataApp ~> WindowSize : " << getWindowSize().x << "px | " << getWindowSize().y << "px\n" );
 
-    // Window prepering
-    std::ifstream configFile("assets/config/windowSettings.json" );
-    if (configFile.is_open() ) {
-        Json::Value windowCfg;
-        configFile >> windowCfg;
 
-        setWindowSize(glm::ivec2(windowCfg["windowSize"][0].asInt(), windowCfg["windowSize"][1].asInt()) );
-        setWindowPos(glm::vec2(windowCfg["windowPos"][0].asInt(), windowCfg["windowPos"][1].asInt() ) );
-        setFrameRate(windowCfg["windowFrameRate"].asInt() );
 
-        CI_LOG_D("Window config loaded : " << "assets/config/windowSettings.json" << getElapsedSeconds() );
-    } else CI_LOG_W("Window config didnt load : " << "assets/config/windowSettings.json" << getElapsedSeconds() );
-    configFile.close();
-
+    // Window preparing
     enablePowerManagement();
+    setWindowPos( glm::ivec2(  (getDisplay()->getSize().x/2) - (getWindowSize().x/2),
+                               (getDisplay()->getSize().y/2) - (getWindowSize().y/2) )
+    );
+
 
 
     // Main opengl Initializing
@@ -45,10 +40,8 @@ void ChocolataSlicer::setup() {
     // ImGui Initializing
     ImGui::Initialize();
     ImGui::StyleColorsLight();
-    ImGui::GetIO().IniFilename = "assets/config/img.ini";
+    ImGui::GetIO().IniFilename = "assets/config/imGuiReserveConfig.ini";
     ImGui::GetStyle().WindowRounding = 0;
-
-
 
 
 
@@ -60,13 +53,13 @@ void ChocolataSlicer::setup() {
 
     m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLoaction_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
     m_window_content = ui::uiWindow::create({240, 240}, {360, 60}, "Content bar", ui::uiLoaction_Down, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-    
 
     m_handler_main = ui::uiWindowHandler::create(getWindow(), ui::uiLoaction_Right, {250,250}, {0,19} );
     m_handler_main->pushWnd(m_window_editor );
     m_handler_main->pushWnd(m_window_content );
 
-    
+
+
     // Initializing of ChocolataSlicerFileSelector
     ChocolataSlicerFileSelector::getInstance().setPerentWindow(getWindow() );
 
