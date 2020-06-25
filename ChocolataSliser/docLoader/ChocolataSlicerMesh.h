@@ -17,6 +17,7 @@
 #define MESH_H
 
 #include <list>
+#include <string>
 #include <algorithm>
 #include "geometry.hpp"
 

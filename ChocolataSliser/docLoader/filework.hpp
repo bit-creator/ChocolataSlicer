@@ -322,7 +322,7 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                *__header = '/0';
+                // *__header = '/0';
                 __number = 0;
                 
                 result = true;
