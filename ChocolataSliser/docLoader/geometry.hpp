@@ -16,6 +16,7 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#include <optional>
 #include <memory>
 #include <cmath>
 
@@ -48,6 +49,8 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
      * Texture coordinate is pair has two float value: u & v respectivetly
     */
     using uv_t = std::pair < const float&, const float& >;
+
+    using cut_t = std::optional < std::pair < const float&, const float& > >
 
     /**
      * @class Primitive is abstract base for real geometric object
@@ -1396,6 +1399,16 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             { return !(*this == oth); }
 
 
+            /**
+             * @brief 
+            */
+            cut_t cut(const float& Height) noexcept
+            {
+                fixTriangle();
+                
+            }
+
+
         private:    // INTERNAL_METHOD
             /**
              * @brief 
@@ -1433,11 +1446,18 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 auto z_b = __vertex_B -> getZ();
                 auto z_c = __vertex_C -> getZ();
 
-                // if(z_c >= z_b) 
-                //     if(z_c >= z_a) std::swap(__vertex_A, __vertex_C);
-                //     else std::swap(__vertex_B, __vertex_C);
-                // else 
-
+                if(z_c >= z_b) 
+                    if(z_c >= z_a) 
+                    {
+                        std::swap(__vertex_A, __vertex_C);
+                        if(z_a >= z_b) std::swap(__vertex_A, __vertex_B)
+                    }
+                    else std::swap(__vertex_B, __vertex_C);
+                else if(z_b >= z_a) 
+                {
+                    std::swap(__vertex_B, __vertex_A)
+                    if(z_c >= z_a) std::swap(__vertex_C, __vertex_A)
+                }
             }
     }; // CLASS_TRIANGLE
 
