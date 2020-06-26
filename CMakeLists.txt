@@ -17,12 +17,19 @@ set(SRC_CHOCOLATA_SLICER
 
 	# DocLoader
 	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
+	# ${APP_PATH}/fileSelector/ChocolataSlicerFileSelector.cpp
+
+	# UI
+	${APP_PATH}/ui/uiWindiw.cpp
+	${APP_PATH}/ui/uiViewport.cpp
+	${APP_PATH}/ui/uiWindowHandler.cpp
+	${APP_PATH}/ui/uiContentTree.cpp
+
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
 	${APP_PATH}/
 	${APP_PATH}/config
-	# ${APP_PATH}/Cinder/include/glfw
 	${APP_PATH}/fileSelector
 
 	# DocLoader
@@ -35,5 +42,4 @@ ci_make_app(
 	SOURCES     ${SRC_CHOCOLATA_SLICER}
 	INCLUDES    ${INC_CHOCOLATA_SLICER}
 	ASSETS_PATH	"assets"
-	# LIBRARIES	"-dl"
 )

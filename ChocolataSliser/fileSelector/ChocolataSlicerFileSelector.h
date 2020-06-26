@@ -10,7 +10,7 @@
 #include "cstringFunctions.h"
 
 #include "ui/uiWindow.h"
-#include "ui/uiContentTree.h"
+// #include "ui/uiContentTree.h"
 #include "ChocolataSlicerMesh.h"
 
 #include "cinder/gl/Fbo.h"
@@ -54,6 +54,7 @@ class ChocolataSlicerFileSelector {
          * @return Returns path of file to be load with one of seated extensions
         */
         char* openLoadingFileSelector(const char* title, const char* extentions );
+
 
         /**
          * @brief Function for opening ChocolataSlicerFileSelector and systems FileSelector. You selecting
@@ -141,48 +142,48 @@ char* ChocolataSlicerFileSelector::openLoadingFileSelector(const char* title, co
 
 bool ChocolataSlicerFileSelector::open() {
     // Prepare variables before next file loading
-    _lastPathExtention = _FileExtention::_fileExtention_None;
-    ui::uiContentTree::getInstance()._selected = -1;
-    strcpy(_lastPathRef, "");
-    m_opened = true;
+    // _lastPathExtention = _FileExtention::_fileExtention_None;
+    // ui::uiContentTree::getInstance()._selected = -1;
+    // strcpy(_lastPathRef, "");
+    // m_opened = true;
 
 
-    openLoadingFileSelector("Select a file for loading", "*.png | *.jpg | *.jpeg | *.stl | *.obj | *.amf | *.3mf");
+    // openLoadingFileSelector("Select a file for loading", "*.png | *.jpg | *.jpeg | *.stl | *.obj | *.amf | *.3mf");
 
 
-    CI_LOG_D("Opening file : \"" << _lastPathRef << "\"");
+    // CI_LOG_D("Opening file : \"" << _lastPathRef << "\"");
 
-    // Checking file extention and load an object
-    if (_lastPathExtention == _FileExtention::_fileExtention_Texture ) {    // Loading a texture
-        CI_LOG_D("Loading file has IMAGE extension");
-        try {
-            _texturePtr = ci::gl::Texture2d::create( ci::loadImage(_lastPathRef), ci::gl::Texture2d::Format().mipmap() );
-            if (_texturePtr->getAspectRatio() != 1 ) { CI_LOG_W("Loaded image isnt a texture" ); } 
-            CI_LOG_D("Image loaded ~>" << " | wdt: " << _texturePtr->getWidth() << " | hgt: " << _texturePtr->getHeight() );
-        } catch (ci::Exception& e) { CI_LOG_W("Image didnt load : " << e.what() );  }
+    // // Checking file extention and load an object
+    // if (_lastPathExtention == _FileExtention::_fileExtention_Texture ) {    // Loading a texture
+    //     CI_LOG_D("Loading file has IMAGE extension");
+    //     try {
+    //         _texturePtr = ci::gl::Texture2d::create( ci::loadImage(_lastPathRef), ci::gl::Texture2d::Format().mipmap() );
+    //         if (_texturePtr->getAspectRatio() != 1 ) { CI_LOG_W("Loaded image isnt a texture" ); } 
+    //         CI_LOG_D("Image loaded ~>" << " | wdt: " << _texturePtr->getWidth() << " | hgt: " << _texturePtr->getHeight() );
+    //     } catch (ci::Exception& e) { CI_LOG_W("Image didnt load : " << e.what() );  }
 
-    }
-    else if (_lastPathExtention == _FileExtention::_fileExtention_Mesh ) {  // Loading a model
-        CI_LOG_D("Loading file has MODEL extension");_meshPtr = make_mesh(Mesh::File::_STL, _lastPathRef );
+    // }
+    // else if (_lastPathExtention == _FileExtention::_fileExtention_Mesh ) {  // Loading a model
+    //     CI_LOG_D("Loading file has MODEL extension");_meshPtr = make_mesh(Mesh::File::_STL, _lastPathRef );
 
-        if (_str_find(_lastPathRef, ".stl") == 0 ) {
-            printf("STL model loads. . .\n");
-            _meshPtr = make_mesh(Mesh::File::_STL, _lastPathRef );
-        }
-        else if (_str_find(_lastPathRef, ".obj") == 0 ) {
-            printf("OBJ model loads. . .\n");
-            _meshPtr = make_mesh(Mesh::File::_OBJ, _lastPathRef );
-        }
-        // if (_str_find(_lastPathRef, ".stl") == 0 ) {
-            // printf("STL model loads. . .\n");
-        // }
+    //     if (_str_find(_lastPathRef, ".stl") == 0 ) {
+    //         printf("STL model loads. . .\n");
+    //         _meshPtr = make_mesh(Mesh::File::_STL, _lastPathRef );
+    //     }
+    //     else if (_str_find(_lastPathRef, ".obj") == 0 ) {
+    //         printf("OBJ model loads. . .\n");
+    //         _meshPtr = make_mesh(Mesh::File::_OBJ, _lastPathRef );
+    //     }
+    //     // if (_str_find(_lastPathRef, ".stl") == 0 ) {
+    //         // printf("STL model loads. . .\n");
+    //     // }
 
-        _meshPtr->stat();
-        CI_LOG_D("Model loaded ~> trgs: " << _meshPtr->getTriangles() << " | vrcs: " << _meshPtr->getVertices() );
-    }
-    else {
-        CI_LOG_W("ERR of loading : " << "Download model extension not supported" );
-    }
+    //     _meshPtr->stat();
+    //     CI_LOG_D("Model loaded ~> trgs: " << _meshPtr->getTriangles() << " | vrcs: " << _meshPtr->getVertices() );
+    // }
+    // else {
+    //     CI_LOG_W("ERR of loading : " << "Download model extension not supported" );
+    // }
 
 }
 
@@ -192,23 +193,24 @@ void ChocolataSlicerFileSelector::setup() {
     _lastPathRef = (char*)malloc(sizeof(char) * 1024);
 
     // UI preparing 
-    _windowPtr = ui::uiWindow::create(ImVec2(), ImVec2(60,60), "ChocolataSlicerFileSelector", ui::uiLoaction_None, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
+    _windowPtr = ui::uiWindow::create(ImVec2(), ImVec2(60,60), "ChocolataSlicerFileSelector", ui::uiLocation_None, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
 
     // Prepare shader
-    try {
-        _shaderPtr = ci::gl::GlslProg::create("/home/deins_one/Code/ChocolataSlicer/assets/shaders/default.vs.glsl", 
-                                             "/home/deins_one/Code/ChocolataSlicer/assets/shaders/default.fs.glsl"
-        );
-    }
-    catch (ci::Exception& ex) {
-        CI_LOG_W("ERR : " << ex.what() );
-    }
+    // try {
+        // _shaderPtr = ci::gl::GlslProg::create("/home/deins_one/Code/ChocolataSlicer/assets/shaders/default.vs.glsl", 
+                                            //  "/home/deins_one/Code/ChocolataSlicer/assets/shaders/default.fs.glsl"
+        // );
+    // }
+    // catch (ci::Exception& ex) {
+        // CI_LOG_W("ERR : " << ex.what() );
+    // }
 
     // Frame buffer preparing
     ci::gl::Fbo::Format fboFormat;
     fboFormat.samples(8 );
     glm::ivec2 fboResolution = glm::ivec2(640, 480);
 	_FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );
+
 
     // Camera preparing
     _cameraPersp.setPerspective(50, float(fboResolution.x/fboResolution.y), 1, 700 );
@@ -233,13 +235,13 @@ void ChocolataSlicerFileSelector::draw() {
             ImGui::Text("Content tree");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Select item to wich tou  want load an object");
-            ui::uiContentTree::getInstance().draw();
+            // ui::uiContentTree::__tooltip("Select item to wich tou  want load an object");
+            // ui::uiContentTree::getInstance().draw();
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
             ImGui::Text("Previewing area" );
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Area for previewing model or texture befor loading");
+            // ui::uiContentTree::__tooltip("Area for previewing model or texture befor loading");
             ImGui::TextColored(ImVec4(0,0,0,0.5), "File path : %s", _lastPathRef );
             ImVec2 winSize = ImGui::GetWindowSize();
 
@@ -282,21 +284,21 @@ void ChocolataSlicerFileSelector::draw() {
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200, winSize.y+offsets.y-40) );
                 ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_WindowBg) );
                 if (ImGui::Button("Cencel", ImVec2(90,30))) {
-                    m_opened = false; ui::uiContentTree::getInstance()._selected = -1;
+                    // m_opened = false; ui::uiContentTree::getInstance()._selected = -1;
                 }
                 ImGui::PopStyleColor();
 
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-100, winSize.y+offsets.y-40) );
                 if (ImGui::Button("Load", ImVec2(90,30))) {                     // Load an object 
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _FileExtention::_fileExtention_Texture ) {          // If it is a texture
-                        ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr = std::shared_ptr<ci::gl::Texture2d>(_texturePtr.get() );
-                        _texturePtr.~__shared_ptr();
-                        m_opened = false;
-                    }
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _FileExtention::_fileExtention_Mesh ) {               // If it is a mesh
+                    // if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _FileExtention::_fileExtention_Texture ) {          // If it is a texture
+                        // ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr = std::shared_ptr<ci::gl::Texture2d>(_texturePtr.get() );
+                        // _texturePtr.~__shared_ptr();
+                        // m_opened = false;
+                    // }
+                    // if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _FileExtention::_fileExtention_Mesh ) {               // If it is a mesh
                         // ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_meshPtr = _meshPtr;
-                        m_opened = false;
-                    }
+                        // m_opened = false;
+                    // }
                 }
             }
 
@@ -306,19 +308,19 @@ void ChocolataSlicerFileSelector::draw() {
              * create new object in model
              * 
             */
-            if (_lastPathExtention == _FileExtention::_fileExtention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {         // Texture has been loaded
-                if (ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
-                    ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
-                    ImGui::TextColored(ImVec4(0,0,0,0.5), "Insert texture item to object" );
-                }
-                else {
-                    ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Replace texture item of object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Replace texture item of object").y/2)) );
-                    ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
-                }
-            } 
-            else if (_lastPathExtention == _FileExtention::_fileExtention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {  // Model has been loaded
-                /* ... */
-            }
+            // if (_lastPathExtention == _FileExtention::_fileExtention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {         // Texture has been loaded
+                // if (ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
+                    // ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
+                    // ImGui::TextColored(ImVec4(0,0,0,0.5), "Insert texture item to object" );
+                // }
+                // else {
+                    // ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Replace texture item of object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Replace texture item of object").y/2)) );
+                    // ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
+                // }
+            // } 
+            // else if (_lastPathExtention == _FileExtention::_fileExtention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {  // Model has been loaded
+                // /* ... */
+            // }
 
 
             /**
@@ -331,7 +333,7 @@ void ChocolataSlicerFileSelector::draw() {
                 ImVec4 cl = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg );
                 ci::gl::clear(ci::Color(cl.x, cl.y, cl.z) );
                 ci::gl::setMatrices(_cameraPersp );
-                ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ci::gl::getStockShader(ci::gl::ShaderDef().color() ) )-> draw();
+                // ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ci::gl::getStockShader(ci::gl::ShaderDef().color() ) )-> draw();
                 _FboPtr->unbindFramebuffer();
             }
 

@@ -49,19 +49,25 @@ void ChocolataSlicer::setup() {
     // Main Ui Initializing
     m_ui_viewport = ui::uiViewport::create(getWindow() );
 
-    ui::uiContentTree::getInstance().pushItem(ui::uiContentItem::create("ModelObject:01"));
-    ui::uiContentTree::getInstance().pushItem(ui::uiContentItem::create("ModelObject:02"));
 
-    m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLoaction_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-    m_window_content = ui::uiWindow::create({240, 240}, {360, 60}, "Content bar", ui::uiLoaction_Down, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    m_content_tree.pushItem(
+        ui::uiContentItem::create("ModelObject:01", 
+            ci::gl::Texture2d::create(1024, 1024 ) 
+        )
+    );
 
-    m_handler_main = ui::uiWindowHandler::create(getWindow(), ui::uiLoaction_Right, {250,250}, {0,19} );
+// ui::uiContentItem::create("ModelObject:01", ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color())) );
+
+    m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLocation_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
+    m_window_content = ui::uiWindow::create({240, 240}, {360, 60}, "Content bar", ui::uiLocation_Down, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+
+    m_handler_main = ui::uiWindowHandler::create(getWindow(), ui::uiLocation_Right, {250,250}, {0,19} );
     m_handler_main->pushWnd(m_window_editor );
     m_handler_main->pushWnd(m_window_content );
 
 
 
     // Initializing of ChocolataSlicerFileSelector
-    ChocolataSlicerFileSelector::getInstance().setPerentWindow(getWindow() );
+    // ChocolataSlicerFileSelector::getInstance().setPerentWindow(getWindow() );
 
 }

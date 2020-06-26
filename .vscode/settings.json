@@ -66,5 +66,9 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "unordered_set": "cpp"
-    }
+    },
+    "cSpell.words": [
+        "FBOs",
+        "msaa"
+    ]
 }

@@ -29,14 +29,14 @@ namespace ui {
 
 
 
-    // uiLoaction_ enum for controlling general position of any viewable objects in some local space
-    enum uiLoaction_ {
-        uiLoaction_None,
-        uiLoaction_Left,
-        uiLoaction_Right,
+    // uiLocation_ enum for controlling general position of any viewable objects in some local space
+    enum uiLocation_ {
+        uiLocation_None,
+        uiLocation_Left,
+        uiLocation_Right,
 
-        uiLoaction_Top,
-        uiLoaction_Down
+        uiLocation_Top,
+        uiLocation_Down
     };
 
 };

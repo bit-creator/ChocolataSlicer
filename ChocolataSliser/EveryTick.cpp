@@ -6,7 +6,6 @@
 #include "ui/uiWindowHandler.h"
 #include "ui/uiContentTree.h"
 
-// #include "glfw3.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -34,7 +33,7 @@ void ChocolataSlicer::drawUI() {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
                 // TODO: Loading model ar textures to programs buffer. If it is model then create new object for it
-                if (ImGui::MenuItem("Open...", "Ctrl+O")) { ChocolataSlicerFileSelector::getInstance().open(); }
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) { /* ChocolataSlicerFileSelector::getInstance().open(); */ }
 
                 // TODO: showing list of recent files
                 if (ImGui::BeginMenu("Open Recent..", "")) {  ImGui::Text("No Recent Files"); ImGui::EndMenu(); }
@@ -42,8 +41,8 @@ void ChocolataSlicer::drawUI() {
 
                 // TODO: Saving of 
                 if (ImGui::BeginMenu("Save")) {
-                    if (ui::uiContentTree::getInstance()._selected >= 0) { if (ImGui::MenuItem("Current Object", "")) { } }
-                    else { ImGui::MenuItem("Current Object", "", nullptr, false); } 
+                    // if (ui::uiContentTree::getInstance()._selected >= 0) { if (ImGui::MenuItem("Current Object", "")) { } }
+                    // else { ImGui::MenuItem("Current Object", "", nullptr, false); } 
 
                     if (ImGui::MenuItem("Scene Objects", "Ctrl+S")) { }
                     ImGui::EndMenu();
@@ -76,17 +75,6 @@ void ChocolataSlicer::drawUI() {
             ImGui::EndMenuBar();
         }
 
-        // General Info
-        ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
-
-        // Slice/Print button
-        // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-        // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
-        // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
-        // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
-        // ImGui::PopStyleVar();
-
-        m_handler_main->show();
     m_ui_viewport->End();
 
     // update all other
@@ -96,13 +84,13 @@ void ChocolataSlicer::drawUI() {
     }
     if (m_window_content->_opened ) {
         m_window_content->Begin();
-        ui::uiContentTree::getInstance().draw();
+        m_content_tree.draw();
         m_window_content->End();
     }
 
-    if (ChocolataSlicerFileSelector::getInstance().m_opened ) {
-        ChocolataSlicerFileSelector::getInstance().draw();
-    }
+    // if (ChocolataSlicerFileSelector::getInstance().m_opened ) {
+        // ChocolataSlicerFileSelector::getInstance().draw();
+    // }
 
 }
 
@@ -139,9 +127,18 @@ void ChocolataSlicer::mouseDrag(ci::app::MouseEvent event ) {
 
 void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
     m_cameraui.mouseDown( event );
-
 }
 
 void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
     m_cameraui.mouseWheel( event );
 }
+
+        // General Info
+        // ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
+
+        // Slice/Print button
+        // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+        // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
+        // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
+        // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
+        // ImGui::PopStyleVar();

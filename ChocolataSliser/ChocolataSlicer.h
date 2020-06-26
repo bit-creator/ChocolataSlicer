@@ -8,7 +8,8 @@
 
 
 #include "ui/ui.h"
-#include "ChocolataSlicerFileSelector.h"
+// #include "ChocolataSlicerFileSelector.h"
+#include "ui/uiContentTree.h"
 
 #define __ChocolataSlicer_Version_ "0.1.1"
 
@@ -30,7 +31,7 @@ class ChocolataSlicer : public ci::app::App {
         void update() override;
 
         /**
-         * Executes every tick and contains camera rersizing and fbos
+         * Executes every tick and contains camera resizing and FBOs
         */
         void resize() override;
 
@@ -40,7 +41,7 @@ class ChocolataSlicer : public ci::app::App {
         void draw() override;
 
         /**
-         * // Function for drawing all programs ui
+         * Function for drawing all programs ui
         */
         void drawUI();
 
@@ -58,6 +59,8 @@ class ChocolataSlicer : public ci::app::App {
         ui::uiWindowRef         m_window_editor;
 
         ui::uiWindowRef         m_window_content;
+
+        ui::uiContentTree       m_content_tree;
 
     public : // Hard logic components
         ci::CameraPersp         m_camera;

@@ -7,35 +7,21 @@
 
 class ui::uiWindow {
     public :
-        static uiWindowRef         create(ImVec2 size, ImVec2 pos = ImVec2(60,60), const char* title = "wnd", uiLoaction_ lc = uiLoaction_None, int flags = ImGuiWindowFlags_None) { 
-            return uiWindowRef(new uiWindow{size, pos, title, lc, flags} );
-        }
+        static uiWindowRef create(ImVec2 size, ImVec2 pos = ImVec2(60,60), const char* title = "wnd", uiLocation_ lc = uiLocation_None, int flags = ImGuiWindowFlags_None);
 
-        uiWindow(ImVec2 size, ImVec2 pos = ImVec2(60,60), const char* title = "wnd", uiLoaction_ lc = uiLoaction_None, int flags = ImGuiWindowFlags_None ) {
-            _size = size;
-            _pos = pos;
+        uiWindow(ImVec2 size, ImVec2 pos = ImVec2(60,60), const char* title = "wnd", uiLocation_ lc = uiLocation_None, int flags = ImGuiWindowFlags_None );
 
-            _title = title;
-            _opened = true;
+        void Begin();
+        void End();
 
-            _flags = flags;
-            _space = nullptr;
-            _location = lc;
-        }
+        void addFlag(int flag ) { _flags |= flag; }
+        void removeFlag(int flag ) { _flags &= ~flag; }
 
-        void Begin() {
-            ImGui::SetNextWindowPos(_pos );
-            ImGui::SetNextWindowSize(_size );
-            ImGui::Begin(_title, nullptr, _flags );
-        }
-        void End() {
-            _size = ImGui::GetWindowSize();
-            ImGui::End();
-        }
+        void setTite(const char* title);
+        const char* getTitle() { return _title; }
 
     private:
         const char*         _title;
-
         int                 _flags;
 
         uiWindowHandlerRef  _space;
@@ -45,7 +31,8 @@ class ui::uiWindow {
         ImVec2              _size;
         bool                _opened;
 
-        uiLoaction_         _location;
+        uiLocation_         _location;
+
 };
 
 

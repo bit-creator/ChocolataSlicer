@@ -3,12 +3,11 @@
 
 
 #include "cinder/gl/gl.h"
-#include "ui/uiComponents.h"
-#include "ChocolataSlicerMesh.h"
+// #include "ChocolataSlicerMesh.h"
 #include <vector>
 #include "ui/ui.h"
 
-#include "cinder/ObjLoader.h"
+// #include "cinder/ObjLoader.h"
 
 /** FIXME: add mesh definitions
  * @brief Is a simplest component of Slicers's objects system which user
@@ -17,17 +16,20 @@
 */
 class ui::uiContentItem {
     public :
-        /** FIXME: add mesh to create function
-         * @brief Function to create new items
+        /**
+         * @brief Function to create new item
          * 
          * @param name It's name of current model. It will be key for it
          * @param texture Is pointer to texture which should be stored in current model
          * 
-         * @return Returnt pointer to new created object
-         * 
+         * @return Returns pointer to new created object
         */
         static uiContentItemRef     create(const char* name, ci::gl::Texture2dRef texture = nullptr) {
             return uiContentItemRef(new uiContentItem{name, texture} );
+        }
+
+        static uiContentItemRef     create(const char* name, ci::gl::BatchRef mesh = nullptr) {
+            return uiContentItemRef(new uiContentItem{name, mesh} );
         }
 
 
@@ -36,17 +38,33 @@ class ui::uiContentItem {
          * 
          * @param name It's name of current model. It will be key for it
          * @param texture Is pointer to texture which should be stored in current model
-         * 
         */
-        uiContentItem(const char* name, ci::gl::Texture2dRef texture = nullptr ) : _nameRef(name), _texturePtr(texture) {
+        uiContentItem(const char* name, ci::gl::Texture2dRef texture = nullptr ) : _nameRef(name), _texturePtr(texture), _batchPtr(nullptr) {
         }
+
+        uiContentItem(const char* name, ci::gl::BatchRef mesh = nullptr ) : _nameRef(name), _batchPtr(mesh), _texturePtr(nullptr) {
+        }
+
+
+        /**
+         * @brief Function to check if object is empty
+
+         * @return Returns true case every pointer equals nullptr, or falsChocolataSlicere
+        */
+        bool isEmpty() { return (_texturePtr == nullptr && _batchPtr == nullptr ? true : false); }
+
+        /**
+         * @brief Function to cleanup an object of any dynamically reserved memory 
+        */
+        void destroy() { _texturePtr.~__shared_ptr(); _batchPtr.~__shared_ptr(); }
 
     public : // Lines of class
         const char*                         _nameRef; // Name of current object. It will be as a key for processing
 
-        ci::gl::Texture2dRef                _texturePtr; // Texture of this model
+        ci::gl::Texture2dRef                _texturePtr = nullptr; // Texture of this model
 
-        ci::gl::BatchRef                    _bathMesh; // Graphic Model
+        ci::gl::BatchRef                    _batchPtr = nullptr; // Graphic Model
+
 };
 
 
@@ -62,13 +80,13 @@ class ui::uiContentTree {
         */
         void update();
 
+    public :
+        // static uiContentTree& getInstance() { static uiContentTree tree; return tree; }
+
         /**
          * @brief Default constructor
         */
         uiContentTree() { }
-
-    public :
-        static uiContentTree& getInstance() { static uiContentTree tree; return tree; }
 
 
         /**
@@ -99,60 +117,6 @@ class ui::uiContentTree {
 
 };
 
-
-
-
-void ui::uiContentTree::__tooltip(const char* tx) {
-    if (ImGui::IsItemHovered() ) {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(tx);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-}
-
-
-void ui::uiContentTree::update() {
-    std::vector<uiContentItemRef> new_items;
-    for (int i = 0; i < _items.size(); i++ )
-        if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_bathMesh == nullptr ) new_items.push_back(_items.at(i));
-
-    for (int i = 0; i < _items.size(); i++ )
-        if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_bathMesh != nullptr ) new_items.push_back(_items.at(i));
-
-    _items = new_items;
-}
-
-
-void ui::uiContentTree::draw() {
-    update();       // update items location
-
-    static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-
-    for (int i = (_items.size() -1); i >= 0; i-- ) {
-        ImGuiTreeNodeFlags node_flags = base_flags;
-        if (i == _selected ) node_flags |= ImGuiTreeNodeFlags_Selected;
-        if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_bathMesh == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
-
-        bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef, (i+1) );
-        if (ImGui::IsItemClicked()) _selected = i;
-
-        // Draw elements content
-        if (node_open) {
-            if (_items.at(i)->_texturePtr != nullptr) {
-                ImGui::BulletText("%p", _items.at(i)->_texturePtr ); __tooltip("Texture object");
-            }
-
-            if (_items.at(i)->_bathMesh != nullptr) {
-                ImGui::BulletText("%p", _items.at(i)->_bathMesh ); __tooltip("Mesh object");
-            }
-
-            ImGui::TreePop();
-            if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_bathMesh != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
-        }
-    }
-}
 
 
 
