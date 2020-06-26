@@ -24,7 +24,7 @@
 #include <algorithm>
 
 #include "geometry.hpp"
-#include "mesh.h"
+#include "ChocolataSlicerMesh.h"
 
 /**
  * My ideas
