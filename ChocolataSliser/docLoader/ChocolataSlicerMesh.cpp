@@ -1,4 +1,4 @@
-#include "ChocolataSlicerMesh.h"
+#include "mesh.h"
 // #include "FileReaders/stl.h"
 #include "filework.hpp"
 
