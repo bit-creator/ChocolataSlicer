@@ -17,7 +17,7 @@ void ui::uiContentTree::__tooltip(const char* tx) {
 void ui::uiContentTree::update() {
     std::vector<uiContentItemRef> new_items;
     for (int i = 0; i < _items.size(); i++ )
-        if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) new_items.push_back(_items.at(i));
+        if (_items.at(i)->isEmpty() ) new_items.push_back(_items.at(i));
 
     for (int i = 0; i < _items.size(); i++ )
         if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) new_items.push_back(_items.at(i));

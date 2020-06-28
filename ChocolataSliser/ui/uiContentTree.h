@@ -54,9 +54,9 @@ class ui::uiContentItem {
         bool isEmpty() { return (_texturePtr == nullptr && _batchPtr == nullptr ? true : false); }
 
         /**
-         * @brief Function to cleanup an object of any dynamically reserved memory 
+         * @brief Function to cleanup objects which dynamically reserved memory 
         */
-        void destroy() { _texturePtr.~__shared_ptr(); _batchPtr.~__shared_ptr(); }
+        void destroy() { _texturePtr.~__shared_ptr(); _batchPtr.~__shared_ptr(); _texturePtr = nullptr; _batchPtr = nullptr; }
 
     public : // Lines of class
         const char*                         _nameRef; // Name of current object. It will be as a key for processing
@@ -81,7 +81,7 @@ class ui::uiContentTree {
         void update();
 
     public :
-        // static uiContentTree& getInstance() { static uiContentTree tree; return tree; }
+        static uiContentTree& getInstance() { static uiContentTree tree; return tree; }
 
         /**
          * @brief Default constructor
@@ -109,6 +109,12 @@ class ui::uiContentTree {
          * @brief Draws vector of items. User can do anything with them
         */
         void draw();
+
+        void destroy() {
+            for (int i = 0; i < getInstance()._items.size(); i++ ) {
+                _items.at(i)->destroy();
+            }
+        }
 
     public :
         std::vector<uiContentItemRef>                   _items; // Main items storage of slicer

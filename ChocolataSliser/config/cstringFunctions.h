@@ -1,5 +1,5 @@
-#ifndef __DOT_STRING_
-#define __DOT_STRING_
+#ifndef __CHOCOLATA_SLICER_CSTRING_
+#define __CHOCOLATA_SLICER_CSTRING_
 
 #include <string.h>
 

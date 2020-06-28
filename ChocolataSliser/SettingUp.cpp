@@ -50,13 +50,12 @@ void ChocolataSlicer::setup() {
     m_ui_viewport = ui::uiViewport::create(getWindow() );
 
 
-    m_content_tree.pushItem(
+    ui::uiContentTree::getInstance().pushItem(
         ui::uiContentItem::create("ModelObject:01", 
-            ci::gl::Texture2d::create(1024, 1024 ) 
+            ci::gl::Texture2d::create(ci::loadImage("assets/Ico.png") ) 
         )
     );
 
-// ui::uiContentItem::create("ModelObject:01", ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color())) );
 
     m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLocation_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
     m_window_content = ui::uiWindow::create({240, 240}, {360, 60}, "Content bar", ui::uiLocation_Down, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);

@@ -32,8 +32,8 @@ void ChocolataSlicer::drawUI() {
                 // TODO: Clear all loaded files and buffers
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
-                // TODO: Loading model ar textures to programs buffer. If it is model then create new object for it
-                if (ImGui::MenuItem("Open...", "Ctrl+O")) { /* ChocolataSlicerFileSelector::getInstance().open(); */ }
+                // TODO: Loading model ar textures to programs     echo "Debug"buffer. If it is model then create new object for it
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(); }
 
                 // TODO: showing list of recent files
                 if (ImGui::BeginMenu("Open Recent..", "")) {  ImGui::Text("No Recent Files"); ImGui::EndMenu(); }
@@ -84,13 +84,13 @@ void ChocolataSlicer::drawUI() {
     }
     if (m_window_content->_opened ) {
         m_window_content->Begin();
-        m_content_tree.draw();
+        ui::uiContentTree::getInstance().draw();
         m_window_content->End();
     }
 
-    // if (ChocolataSlicerFileSelector::getInstance().m_opened ) {
-        // ChocolataSlicerFileSelector::getInstance().draw();
-    // }
+    if (FileSelector::getInstance().isOpen() ) {
+        FileSelector::getInstance().draw();
+    }
 
 }
 

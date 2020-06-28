@@ -4,6 +4,18 @@
 #include "EveryTick.cpp"
 #include "SettingUp.cpp"
 
+
+void ChocolataSlicer::cleanup() {
+    CI_LOG_D("End program. Memory cleaning : ");
+
+    // uiContentTree
+    ui::uiContentTree::getInstance().destroy();
+
+    // FileSelector 
+    FileSelector::getInstance().destroy();
+
+}
+
 /**
  * General function for Setting up ChocolataSlicer before program will be loaded
 */

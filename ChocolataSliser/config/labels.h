@@ -1,5 +1,5 @@
-#ifndef _PLANET_MOV_LABLES_H
-#define _PLANET_MOV_LABLES_H
+#ifndef __CHOCOLATA_SLICER_LABLES_H
+#define __CHOCOLATA_SLICER_LABLES_H
 
 
 #include <vector>
@@ -23,6 +23,6 @@ static std::vector<std::pair<const char*, const char*> > Labels = std::initializ
 
 
 
-#endif // _PLANET_MOV_LABLES_H
+#endif // __CHOCOLATA_SLICER_LABLES_H
 
 
