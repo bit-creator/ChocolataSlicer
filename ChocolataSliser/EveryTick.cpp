@@ -33,7 +33,7 @@ void ChocolataSlicer::drawUI() {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
                 // TODO: Loading model ar textures to programs     echo "Debug"buffer. If it is model then create new object for it
-                if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(); }
+                if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
 
                 // TODO: showing list of recent files
                 if (ImGui::BeginMenu("Open Recent..", "")) {  ImGui::Text("No Recent Files"); ImGui::EndMenu(); }

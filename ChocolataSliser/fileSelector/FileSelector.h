@@ -21,6 +21,12 @@
  * You can call it by one line "FileSelector::getInstance.open()"
 */
 class FileSelector {
+    public :
+        enum _FileSelector_Type {
+            _FileSelector_Type_Load = 0,
+            _FileSelector_Type_Save
+        };
+
     private : // Singleton definitions
         /**
          * @brief Default constructor of singleton FileSelector class
@@ -47,12 +53,11 @@ class FileSelector {
         /**
          * @brief Opens system FileSelector to loading files by extentions
          * 
-         * @param title Title of file selector which loads your file
          * @param extentions Extentions of files which can be loaded. Write it by line ex: "*.png | *.jpg"
          * 
-         * @return Returns path of file to be load with one of seated extensions
+         * @return Returns true if some path selected
         */
-        // char* openLoadingFileSelector(const char* title, const char* extentions );
+        bool openLoadingFileSelector(_File_Extention extention );
 
 
         /**
@@ -61,8 +66,10 @@ class FileSelector {
          * 
          * @return Returns 1 if loaded something, or 0
         */
-        bool open();
+        bool open(_FileSelector_Type type );
 
+        // TODO:
+        void loadObject();
 
         /**
          * @brief Function for previewing FileSelector's window. It contains object tree and
@@ -71,24 +78,20 @@ class FileSelector {
         void draw();
 
 
+        /**
+         * @brief Function to clean dinamically reserved memory
+        */
+        void destroy();
+
+
         bool isOpen() { return m_opened; }
 
         bool isEmpty() { return (_texturePtr == nullptr ? true : false); }      // && _batchPtr == nullptr
 
-        void destroy() {
-            // if (!m_opened ) return;
-
-            _texturePtr.~__shared_ptr();
-            _shaderPtr.~__shared_ptr();
-            _FboPtr.~__shared_ptr();
-
-            _texturePtr = nullptr;
-            _shaderPtr = nullptr;
-            _FboPtr = nullptr;
-        }
-
     private : // Main variables of FileSelector. It must be hide of touching
         ui::uiWindowRef                     _windowPtr; // General purpose uiWindow of ChocolateSliceFileSelector
+
+        ui::uiWindowRef                     _windowBlurPtr; // Window to hide beckground windows
 
         ci::app::WindowRef                  _perentWindowPtr; // Parant window. Main programs wnd
 
@@ -104,7 +107,9 @@ class FileSelector {
         ci::CameraPersp                     _cameraPersp;
 
     private : // File extension vinificator
-        _FileExtention                      _lastPathExtention; // Extention indemnificator of last loaded object
+        _File_Extention                      _lastPathExtention; // Extention indemnificator of last loaded object
+
+        char*                               _lastPath;
 
     private : // Variables for users access
         bool m_opened;

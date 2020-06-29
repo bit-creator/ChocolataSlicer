@@ -11,7 +11,7 @@ void ChocolataSlicer::cleanup() {
     // uiContentTree
     ui::uiContentTree::getInstance().destroy();
 
-    // FileSelector 
+    // FileSelector
     FileSelector::getInstance().destroy();
 
 }

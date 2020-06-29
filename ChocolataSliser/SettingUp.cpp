@@ -53,6 +53,7 @@ void ChocolataSlicer::setup() {
     ui::uiContentTree::getInstance().pushItem(
         ui::uiContentItem::create("ModelObject:01", 
             ci::gl::Texture2d::create(ci::loadImage("assets/Ico.png") ) 
+            // ci::gl::Texture2dRef(nullptr)
         )
     );
 
@@ -67,6 +68,6 @@ void ChocolataSlicer::setup() {
 
 
     // Initializing of ChocolataSlicerFileSelector
-    // ChocolataSlicerFileSelector::getInstance().setPerentWindow(getWindow() );
+    FileSelector::getInstance().setPerentWindow(getWindow() );
 
 }
