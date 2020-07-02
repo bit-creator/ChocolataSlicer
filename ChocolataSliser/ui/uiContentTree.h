@@ -110,11 +110,7 @@ class ui::uiContentTree {
         */
         void draw();
 
-        void destroy() {
-            for (int i = 0; i < getInstance()._items.size(); i++ ) {
-                _items.at(i)->destroy();
-            }
-        }
+        void destroy();
 
     public :
         std::vector<uiContentItemRef>                   _items; // Main items storage of slicer

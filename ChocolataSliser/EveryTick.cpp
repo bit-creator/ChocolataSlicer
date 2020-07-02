@@ -6,6 +6,7 @@
 #include "ui/uiWindowHandler.h"
 #include "ui/uiContentTree.h"
 
+// #include "ui/uiComponents.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -92,6 +93,16 @@ void ChocolataSlicer::drawUI() {
         FileSelector::getInstance().draw();
     }
 
+    // General Info
+    // ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
+
+    // Slice/Print button
+    // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+    // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
+    // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
+    // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
+    // ImGui::PopStyleVar();
+
 }
 
 
@@ -132,13 +143,3 @@ void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
 void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
     m_cameraui.mouseWheel( event );
 }
-
-        // General Info
-        // ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
-
-        // Slice/Print button
-        // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-        // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
-        // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
-        // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
-        // ImGui::PopStyleVar();

@@ -17,7 +17,7 @@ void ChocolataSlicer::cleanup() {
 }
 
 /**
- * General function for Setting up ChocolataSlicer before program will be loaded
+ * @brief General function for Setting up ChocolataSlicer before program will be loaded
 */
 static void __preSettingUp(ci::app::App::Settings* settings ) {
     Json::Value windowCfg;

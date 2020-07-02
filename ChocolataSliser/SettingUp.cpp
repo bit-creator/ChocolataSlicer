@@ -44,6 +44,12 @@ void ChocolataSlicer::setup() {
     ImGui::GetIO().IniFilename = "assets/config/imGuiReserveConfig.ini";
     ImGui::GetStyle().WindowRounding = 0;
 
+    ImGui::GetIO().Fonts->AddFontDefault();
+    static ImWchar ranges[] = { 0xf000, 0xf3ff, 0 };
+    ImFontConfig config;
+    config.MergeMode = true;
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 12.0f, &config, ranges);
+    ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/fa-brands-400.ttf", 12.0f, &config, ranges);
 
 
     // Main Ui Initializing
@@ -52,10 +58,11 @@ void ChocolataSlicer::setup() {
 
     ui::uiContentTree::getInstance().pushItem(
         ui::uiContentItem::create("ModelObject:01", 
-            ci::gl::Texture2d::create(ci::loadImage("assets/Ico.png") ) 
-            // ci::gl::Texture2dRef(nullptr)
+            ci::gl::Texture2d::create(ci::loadImage("assets/Ico.png") )
         )
     );
+
+    ui::uiContentTree::getInstance()._items.at(0)->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color()) );
 
 
     m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLocation_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );

@@ -14,6 +14,12 @@ void ui::uiContentTree::__tooltip(const char* tx) {
 }
 
 
+void ui::uiContentTree::destroy() {
+    for (int i = 0; i < getInstance()._items.size(); i++ ) {
+        _items.at(i)->destroy();
+    }
+}
+
 void ui::uiContentTree::update() {
     std::vector<uiContentItemRef> new_items;
     for (int i = 0; i < _items.size(); i++ )
@@ -41,12 +47,16 @@ void ui::uiContentTree::draw() {
 
         // Draw elements content
         if (node_open) {
-            if (_items.at(i)->_texturePtr != nullptr) {
-                ImGui::BulletText("%p", _items.at(i)->_texturePtr ); __tooltip("Texture object");
+            if (_items.at(i)->_batchPtr != nullptr) {
+                ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
+                ImGui::SameLine();
+                ImGui::Text("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
             }
 
-            if (_items.at(i)->_batchPtr != nullptr) {
-                ImGui::BulletText("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
+            if (_items.at(i)->_texturePtr != nullptr) {
+                ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
+                ImGui::SameLine();
+                ImGui::Text("%p", _items.at(i)->_texturePtr ); __tooltip("Texture object");
             }
 
             ImGui::TreePop();

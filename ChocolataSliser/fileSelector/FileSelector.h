@@ -11,10 +11,7 @@
 
 #include "ui/uiWindow.h"
 #include "ui/uiContentTree.h"
-// #include "ChocolataSlicerMesh.h"
 
-// #include "cinder/gl/Fbo.h"
-// #include "cinder/ImageIo.h"
 
 /**
  * @brief Singleton class with window for viewing and loading objects to programs objects buffer.
@@ -34,6 +31,9 @@ class FileSelector {
         FileSelector()  : m_opened(false) {  initFileSelector(); }
 
 
+        /**
+         * @brief Function to set default values of singleton class 
+        */
         void initFileSelector();
 
 
@@ -84,8 +84,19 @@ class FileSelector {
         void destroy();
 
 
+        /**
+         * @brief Function check if FileSelector is open
+         * 
+         * @return Returns m_opened vale
+        */
         bool isOpen() { return m_opened; }
 
+
+        /**
+         * @brief Function check if FileSelector is empty from objects
+         * 
+         * @return Returns true if every object of FileSelector is nullptr
+        */
         bool isEmpty() { return (_texturePtr == nullptr ? true : false); }      // && _batchPtr == nullptr
 
     private : // Main variables of FileSelector. It must be hide of touching

@@ -60,17 +60,20 @@ void FileSelector::draw() {
     _windowPtr->Begin();
         ImGui::Columns(2, "FileSelectorItems" );        // FileSelectorItems items to be selected for object loading
             ImGui::SetColumnWidth(0, 250 );
-            ImGui::Text("Content tree");
+            ImGui::TextColored(ImVec4(0,0,0,0.8), "Content tree");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Select item to wich tou  want load an object");
+            ui::uiContentTree::__tooltip("Select item to which tou  want load an object");
+            ImGui::Spacing(); ImGui::Spacing();
             ui::uiContentTree::getInstance().draw();
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
-            ImGui::Text("Previewing area");
+            ImGui::TextColored(ImVec4(0,0,0,0.8), "Previewing area");
             ImGui::SameLine();
             ImGui::Text("(?)");
             ui::uiContentTree::__tooltip("Area for previewing model or texture befor loading");
-            ImGui::TextColored(ImVec4(0,0,0,0.5), "File path : %s", _lastPath );
+            ImGui::Separator();
+            ImGui::Spacing();
+            ImGui::TextColored(ImVec4(0,0,0,0.5), "%s", _lastPath );
             ImVec2 winSize = ImGui::GetWindowSize();
 
 
@@ -81,32 +84,29 @@ void FileSelector::draw() {
              * Meshes draws to separate FBO with other nonmove camera.
              * 
             */
-            if (_lastPathExtention == _File_Extention::_File_Extention_Texture ) {             // Preview texture
+            if (_lastPathExtention == _File_Extention::_File_Extention_Texture ) {
                 ImVec2 st_pos = ImGui::GetCursorScreenPos();
                 ImVec2 en_pos = {_windowPtr->_pos.x+_windowPtr->_size.x-10, _windowPtr->_pos.y+_windowPtr->_size.y-50};
                 float screenHight = en_pos.y - st_pos.y;
                 ImVec2 imSize = ImVec2(_texturePtr->getHeight()*(screenHight/_texturePtr->getHeight())*_texturePtr->getAspectRatio(), _texturePtr->getHeight()*(screenHight/_texturePtr->getHeight()));
                 ImGui::SetCursorScreenPos({ st_pos.x + ((en_pos.x-st_pos.x)/2 - imSize.x/2 ) , st_pos.y });
                 ImGui::Image(_texturePtr, imSize, {0,1}, {1,0} );
-                ImGui::GetWindowDrawList()->AddRect(st_pos, en_pos, ImGui::GetColorU32({0.90196,0.29804,0.67451,1.0}) );
             }
-            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {          // Preview mesh
+            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
                 ImVec2 st_pos = ImGui::GetCursorScreenPos();
                 ImVec2 en_pos = {_windowPtr->_pos.x+_windowPtr->_size.x-10, _windowPtr->_pos.y+_windowPtr->_size.y-50};
                 float screenHight = en_pos.y - st_pos.y;
-                // ImVec2 imSize = ImVec2(_FboPtr->getWidth(), _FboPtr->getHeight() );
                 ImVec2 imSize = ImVec2(480*(screenHight/480)*_FboPtr->getAspectRatio(), 480*(screenHight/480));
                 ImGui::SetCursorScreenPos({ st_pos.x + ((en_pos.x-st_pos.x)/2 - imSize.x/2 ) , st_pos.y });
-                // _FboTexturePtr
                 ImGui::Image(_FboPtr->getColorTexture(), imSize, {0,1}, {1,0} );
             }
 
 
             /**
-             * Buttons for applying actions. Before loading object you should shoice it in Object tree.
-             * After selecting object you will be given some info aboud loading.
+             * Buttons for applying actions. Before loading object you should choice it in Object tree.
+             * After selecting object you will be given some info about loading.
              * 
-             * It contains two buttons: Cencel, Load
+             * It contains two buttons: Cancel, Load
              * 
             */  {
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200, winSize.y+offsets.y-40) );
@@ -114,20 +114,24 @@ void FileSelector::draw() {
                 if (ImGui::Button("Cancel", ImVec2(90,30))) {
                     m_opened = false; ui::uiContentTree::getInstance()._selected = -1;
                 }
-                ImGui::PopStyleColor();
+                
+                if (ui::uiContentTree::getInstance()._selected >= 0)
+                    ImGui::PopStyleColor();
 
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-100, winSize.y+offsets.y-40) );
-                if (ImGui::Button("Load", ImVec2(90,30))) {                     // Load an object 
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {          // If it is a texture
+                if (ImGui::Button("Load", ImVec2(90,30))) {
+                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {
                         ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr.swap(_texturePtr);
 
                         m_opened = false;
                     }
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {               // If it is a mesh
-                        // ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_meshPtr = _meshPtr;
+                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
                         m_opened = false;
                     }
                 }
+                
+                if (ui::uiContentTree::getInstance()._selected == -1)
+                    ImGui::PopStyleColor();
             }
 
 
@@ -136,17 +140,17 @@ void FileSelector::draw() {
              * create new object in model
              * 
             */
-            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {         // Texture has been loaded
+            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {
                 if (ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
                     ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Insert texture item to object" );
                 }
-                else { // _lastPathExtention
+                else {
                     ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Replace texture item of object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Replace texture item of object").y/2)) );
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
                 }
             }
-            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {  // Model has been loaded
+            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {
                 /* ... */
             }
 
@@ -158,9 +162,10 @@ void FileSelector::draw() {
             if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
 	            ci::gl::ScopedViewport viewport(glm::vec2( 0.0f ), _FboPtr->getSize() );
                 _FboPtr->bindFramebuffer();
-                ImVec4 cl = ImGui::GetStyleColorVec4(ImGuiCol_Border ); // ImGuiCol_WindowBg
+                ImVec4 cl = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg );
                 ci::gl::clear(ci::Color(cl.x, cl.y, cl.z) );
                 ci::gl::setMatrices(_cameraPersp );
+                /* Draw model */
                 ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ci::gl::getStockShader(ci::gl::ShaderDef().color() ) )-> draw();
                 _FboPtr->unbindFramebuffer();
             }
@@ -256,7 +261,7 @@ void FileSelector::loadObject( ) {
     }
 
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-    //     /* ... */
+        /* ... */
     }
 
 }
