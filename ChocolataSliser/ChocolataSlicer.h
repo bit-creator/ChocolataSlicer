@@ -10,6 +10,7 @@
 #include "ui/ui.h"
 #include "FileSelector.h"
 #include "ui/uiContentTree.h"
+#include "docLoader/filework.hpp"
 
 #define __ChocolataSlicer_Version_ "0.1.1"
 
@@ -55,6 +56,9 @@ class ChocolataSlicer : public ci::app::App {
 	    void mouseDrag(ci::app::MouseEvent event ) override;
         void mouseWheel(ci::app::MouseEvent event ) override;
 
+	    void keyDown(ci::app::KeyEvent event ) override;
+	    // void keyUp(ci::app::KeyEvent event ) override;
+
     public :  // Ui components of Slicer
         ui::uiViewportRef       m_ui_viewport;
 
@@ -65,6 +69,7 @@ class ChocolataSlicer : public ci::app::App {
 
         ui::uiWindowRef         m_window_content;
 
+        ci::gl::BatchRef _bt;
 
     public : // Hard logic components
         ci::CameraPersp         m_camera;

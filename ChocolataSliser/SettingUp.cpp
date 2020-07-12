@@ -58,7 +58,7 @@ void ChocolataSlicer::setup() {
 
     ui::uiContentTree::getInstance().pushItem(
         ui::uiContentItem::create("ModelObject:01", 
-            ci::gl::Texture2d::create(ci::loadImage("assets/Ico.png") )
+            ci::gl::Texture2dRef(nullptr )
         )
     );
 
@@ -76,5 +76,11 @@ void ChocolataSlicer::setup() {
 
     // Initializing of ChocolataSlicerFileSelector
     FileSelector::getInstance().setPerentWindow(getWindow() );
+
+    ci::gl::GlslProgRef _sh = ci::gl::GlslProg::create(
+        ci::loadFile("assets/shaders/Velvety.vs.glsl"),
+        ci::loadFile("assets/shaders/Velvety.fs.glsl")
+    );
+    _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _sh );
 
 }

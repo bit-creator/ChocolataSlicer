@@ -2,11 +2,14 @@
 #include "fileConfig.h"
 #include "thread"
 
+#define FBO_RESOLUTION glm::ivec2(1280, 960)
+
 void FileSelector::destroy() {
     _texturePtr.reset();
     _shaderPtr.reset();
     _FboPtr.reset();
 
+    _batch.reset();
 }
 
 void FileSelector::initFileSelector() {
@@ -29,7 +32,7 @@ void FileSelector::initFileSelector() {
     // Frame buffer preparing
     ci::gl::Fbo::Format fboFormat;
     fboFormat.samples(8 );
-    glm::ivec2 fboResolution = glm::ivec2(640, 480);
+    glm::ivec2 fboResolution = FBO_RESOLUTION;
 	_FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );
 
 
@@ -37,6 +40,21 @@ void FileSelector::initFileSelector() {
     _cameraPersp.setPerspective(50, float(fboResolution.x/fboResolution.y), 1, 700 );
     _cameraPersp.setEyePoint({12,8,16});
     _cameraPersp.lookAt({0,0,0});
+
+
+    // Shader
+    try {
+        _shaderPtr = ci::gl::GlslProg::create( ci::loadFile("assets/shaders/Velvety.vs.glsl"),
+                                               ci::loadFile("assets/shaders/Velvety.fs.glsl")
+        );
+    }
+    catch (ci::Exception& e ) {
+        CI_LOG_EXCEPTION("FileSelector shader loading", e);
+    }
+
+
+    _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), _shaderPtr );
+
 }
 
 
@@ -45,14 +63,12 @@ void FileSelector::initFileSelector() {
 
 // FIXME:
 void FileSelector::draw() {
-    ImVec2 offsets = ImVec2(35,35);             // Dynamic values for changing
+    ImVec2 offsets = ImVec2(35,35);
 
     ImGui::PushStyleColor(ImGuiCol_WindowBg, { 0.23137,0.20784,0.21961,0.5 } );
     _windowBlurPtr->_size = ImVec2(_perentWindowPtr->getSize().x, _perentWindowPtr->getSize().y );
     _windowBlurPtr->Begin();
     ImGui::PopStyleColor();
-
-    // Set FileSelector window focus
     ImGui::SetNextWindowFocus();
 
     _windowPtr->_size = ImVec2(_perentWindowPtr->getSize().x-(2*offsets.x), _perentWindowPtr->getSize().y-(2*offsets.y));
@@ -156,7 +172,7 @@ void FileSelector::draw() {
 
 
             /**
-             * Update frame buffer if it is a mesh object. Clear and drow it to Fbo with multtsampling,
+             * Update frame buffer if it is a mesh object. Clear and draw it to Fbo with multtsampling,
              * depth buffer and mipmaping
             */
             if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
@@ -165,8 +181,16 @@ void FileSelector::draw() {
                 ImVec4 cl = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg );
                 ci::gl::clear(ci::Color(cl.x, cl.y, cl.z) );
                 ci::gl::setMatrices(_cameraPersp );
+
                 /* Draw model */
-                ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ci::gl::getStockShader(ci::gl::ShaderDef().color() ) )-> draw();
+                if (_shaderPtr != nullptr ) {
+                    _shaderPtr->uniform("ciEyePos", _cameraPersp.getEyePoint() );
+                    _shaderPtr->uniform("ciCameraUp", glm::cross(_cameraPersp.getViewDirection(), glm::vec3(1,0,0)) );
+                    _batch->draw();
+                }
+                else {
+                    // ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ci::gl::getStockShader(ci::gl::ShaderDef().color() ) )-> draw();
+                }
                 _FboPtr->unbindFramebuffer();
             }
 
@@ -183,7 +207,7 @@ void FileSelector::draw() {
 bool FileSelector::open(_FileSelector_Type type ) {
     _texturePtr.reset();
 
-    CI_LOG_I("File selector opened in mode : " << (type == _FileSelector_Type_Load ? "FileSelector_Type_Load" : "FileSelector_Type_Save") ); 
+    CI_LOG_D("File selector opened in mode : " << (type == _FileSelector_Type_Load ? "FileSelector_Type_Load" : "FileSelector_Type_Save") ); 
     m_opened = true;
 
     openLoadingFileSelector(_File_Extention::_File_Extention_None );

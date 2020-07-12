@@ -13,19 +13,20 @@
  * 
  */
 
-#ifndef MESH_H
-#define MESH_H
+#ifndef CHOCOLATASLICERMESH_H
+#define CHOCOLATASLICERMESH_H
 
 #include <list>
 #include <string>
 #include <algorithm>
 #include "geometry.hpp"
+#include "../Cinder/include/cinder/TriMesh.h"
 
 using Geometry::_vectorPtr;
 using Geometry::_vertexPtr;
 using Geometry::_trianglePtr;
 
-class Mesh
+class Mesh : public cinder::TriMesh
 {
     public:    // FILES
         enum class File
@@ -96,4 +97,4 @@ class Mesh
        const _meshPtr_t& model, _filename_t filename) noexcept;
 };
 
-#endif // MESH_H
+#endif // CHOCOLATASLICERMESH_H

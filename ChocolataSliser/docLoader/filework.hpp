@@ -23,8 +23,9 @@
 #include <future>
 #include <algorithm>
 
+#include "../Cinder/include/cinder/ObjLoader.h"
 #include "geometry.hpp"
-#include "mesh.h"
+#include "ChocolataSlicerMesh.h"
 
 /**
  * My ideas
@@ -1008,7 +1009,8 @@ namespace Filework
 
     std::ifstream& operator >> (std::ifstream& in, OBJ& model) noexcept
     {
-
+        cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
+        
         return in;
     }
 

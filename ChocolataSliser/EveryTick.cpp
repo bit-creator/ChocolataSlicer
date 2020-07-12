@@ -6,7 +6,6 @@
 #include "ui/uiWindowHandler.h"
 #include "ui/uiContentTree.h"
 
-// #include "ui/uiComponents.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -128,6 +127,13 @@ void ChocolataSlicer::draw() {
 
     ci::gl::color(0,0,1);
     ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
+
+
+    ci::gl::color(0.7,0.7,0.7);
+    _bt->getGlslProg()->uniform("ciEyePos", m_camera.getEyePoint() );
+    _bt->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(m_camera.getViewDirection() ), glm::vec3(1,0,0)) );
+    _bt->draw();
+
 }
 
 
@@ -142,4 +148,9 @@ void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
 
 void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
     m_cameraui.mouseWheel( event );
+}
+
+
+void ChocolataSlicer::keyDown(ci::app::KeyEvent event ) {
+    if(event.getCode() == ci::app::KeyEvent::KEY_ESCAPE ) quit();
 }
