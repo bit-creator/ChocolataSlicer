@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2020 Chocolata Printer oficial software (Autor Abernihin Ilia & Velichko Bohdan)
- * 
+ *
  * All right reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. something :)
- * 
- * 
+ *
+ *
  * Abstract: this is declaretion of Mesh
- * 
+ *
  */
 
 #ifndef CHOCOLATASLICERMESH_H
@@ -26,7 +26,9 @@ using Geometry::_vectorPtr;
 using Geometry::_vertexPtr;
 using Geometry::_trianglePtr;
 
-class Mesh : public cinder::TriMesh
+using namespace cinder;
+
+class Mesh : public TriMesh
 {
     public:    // FILES
         enum class File
@@ -47,14 +49,14 @@ class Mesh : public cinder::TriMesh
         using _stat_t       = uint64_t;
 
     protected:   // DATA
-        _filename_t   __filename;
-        _vertexData   __vertexData;
-        _triangleData __triangleData;
+        _filename_t                  __filename;
+        _vertexData                  __vertexData;
+        _triangleData                __triangleData;
 
     private:    // DATA
-        _stat_t _vertices;
-        _stat_t _triangles;
-    
+        _stat_t                      _vertices;
+        _stat_t                      _triangles;
+
     public:
         bool _valid = false;
 
@@ -67,7 +69,7 @@ class Mesh : public cinder::TriMesh
 
         void stat() noexcept;
 
-    public:   // CONSTRUCT  
+    public:   // CONSTRUCT
         Mesh ( _filename_t filename ) noexcept;
 
         Mesh ( const Mesh& mesh ) noexcept;
@@ -76,12 +78,15 @@ class Mesh : public cinder::TriMesh
         Mesh& operator = ( const Mesh& mesh ) noexcept;
         Mesh& operator = ( const Mesh&& mesh ) noexcept;
 
-        virtual ~Mesh ( ) noexcept; 
+        virtual ~Mesh ( ) noexcept;
 
     public:
         virtual bool open() noexcept = 0;
         virtual bool save() const noexcept = 0;
         virtual bool destroy() noexcept = 0;
+
+    private:
+        void conf() noexcept;
 
        // FRIEND_FOO_DECL
     friend _meshPtr_t make_mesh(File file_type,
@@ -92,7 +97,7 @@ class Mesh : public cinder::TriMesh
 
     friend bool reinit_mesh(File file_type,
         _meshPtr_t& model, _filename_t filename) noexcept;
-        
+
     friend void save_mesh_as(File file_type,
        const _meshPtr_t& model, _filename_t filename) noexcept;
 };

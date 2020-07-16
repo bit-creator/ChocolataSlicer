@@ -16,7 +16,7 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/config/jsonConfig.cpp
 
 	# DocLoader
-	# ${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
+	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
 	${APP_PATH}/fileSelector/FileSelector.cpp
 
 	# UI

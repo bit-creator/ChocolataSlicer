@@ -3,7 +3,7 @@
 
 
 #include "cinder/gl/gl.h"
-// #include "ChocolataSlicerMesh.h"
+#include "../docLoader/ChocolataSlicerMesh.h"
 #include <vector>
 #include "ui/ui.h"
 
@@ -12,16 +12,16 @@
 /** FIXME: add mesh definitions
  * @brief Is a simplest component of Slicers's objects system which user
  * can manipulate and change. Is used in uiContentTree as simple component
- * 
+ *
 */
 class ui::uiContentItem {
     public :
         /**
          * @brief Function to create new item
-         * 
+         *
          * @param name It's name of current model. It will be key for it
          * @param texture Is pointer to texture which should be stored in current model
-         * 
+         *
          * @return Returns pointer to new created object
         */
         static uiContentItemRef     create(const char* name, ci::gl::Texture2dRef texture = nullptr) {
@@ -35,7 +35,7 @@ class ui::uiContentItem {
 
         /**
          * @brief Siplest constructor for it
-         * 
+         *
          * @param name It's name of current model. It will be key for it
          * @param texture Is pointer to texture which should be stored in current model
         */
@@ -54,7 +54,7 @@ class ui::uiContentItem {
         bool isEmpty() { return (_texturePtr == nullptr && _batchPtr == nullptr ? true : false); }
 
         /**
-         * @brief Function to cleanup objects which dynamically reserved memory 
+         * @brief Function to cleanup objects which dynamically reserved memory
         */
         void destroy() { _texturePtr.~__shared_ptr(); _batchPtr.~__shared_ptr(); _texturePtr = nullptr; _batchPtr = nullptr; }
 
@@ -70,7 +70,7 @@ class ui::uiContentItem {
 
 /**
  * @brief Main storage of objects for ChocolataSlicer. It contains uiContentItems and info for
- * visualizing items 
+ * visualizing items
 */
 class ui::uiContentTree {
     private : // Singleton definitions
@@ -91,7 +91,7 @@ class ui::uiContentTree {
 
         /**
          * @brief Adds new item to vector of items.
-         * 
+         *
          * @param item Pointer to item which should be pushed to vector
         */
         void pushItem(uiContentItemRef item) { _items.push_back(item ); }
@@ -99,7 +99,7 @@ class ui::uiContentTree {
 
         /**
          * @brief Shows tooltip with any text to users screen.
-         * 
+         *
          * @param tx Is a text for visualizing
         */
         static void __tooltip(const char* tx);
