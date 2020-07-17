@@ -57,7 +57,7 @@ void ChocolataSlicer::setup() {
 
 
     ui::uiContentTree::getInstance().pushItem(
-        ui::uiContentItem::create("ModelObject:01", 
+        ui::uiContentItem::create("ModelObject:01",
             ci::gl::Texture2dRef(nullptr )
         )
     );
@@ -78,6 +78,10 @@ void ChocolataSlicer::setup() {
         ci::loadFile("assets/shaders/Velvety.vs.glsl"),
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
     );
+
     _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _sh );
+
+    _bt = ci::gl::Batch::create(*make_mesh(Mesh::File::_STL,
+    "ChocolataSliser/docLoader/test_model/stl/Bear.stl"), _sh );
 
 }
