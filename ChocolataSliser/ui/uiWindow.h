@@ -26,7 +26,7 @@ class ui::uiWindow {
 
         uiWindowHandlerRef  _space;
 
-    public : 
+    public :
         ImVec2              _pos;
         ImVec2              _size;
         bool                _opened;

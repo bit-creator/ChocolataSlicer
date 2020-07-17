@@ -1,6 +1,10 @@
+#include "cinder/app/App.h"
+
 #include "FileSelector.h"
 #include "fileConfig.h"
 #include "thread"
+
+#include "labels.h"
 
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
@@ -27,6 +31,16 @@ void FileSelector::initFileSelector() {
                                         ImGuiWindowFlags_NoNavInputs |
                                         ImGuiWindowFlags_NoFocusOnAppearing
     );
+
+    _perentWindowPtr = ci::app::getWindow();
+
+
+    std::ifstream recentFilesStream("assets/config/recentFiles.json" );
+    if (recentFilesStream.is_open() ) {
+        recentFilesStream >> _recentFiles;
+    }
+
+    recentFilesStream.close();
 
 
     // Frame buffer preparing
@@ -214,6 +228,33 @@ bool FileSelector::open(_FileSelector_Type type ) {
 
 }
 
+bool FileSelector::open(const char* path ) {
+    _texturePtr.reset(); 
+
+    CI_LOG_D("File selector opened in mode : " << "FileSelector_Type_Load" ); 
+    m_opened = true;
+
+    strcpy(_lastPath, path);
+
+
+    // Exception situation
+    if (strlen(_lastPath) <= 6 ) {
+        m_opened = false;
+        return false;
+    }
+
+    // Cutting _lastPathRef from endline symbol. _lastPathRef will contains clear path to file
+    // strcpy(_lastPath, (std::string(_lastPath).erase(std::string(_lastPath).find("\n"))).c_str());
+    CI_LOG_I("Selected object : " << _lastPath << "\n" );
+
+    // Load an object
+    loadObject();
+
+
+    return true;
+
+}
+
 
 bool FileSelector::openLoadingFileSelector(_File_Extention extention ) {
     std::string title = (extention == _File_Extention::_File_Extention_None ? "Select an object" : 
@@ -287,5 +328,22 @@ void FileSelector::loadObject( ) {
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
         /* ... */
     }
+
+
+
+    bool found = false;
+    for (int i = 0; i < _recentFiles[Labels.at((int)Label_recentFiles).first].size(); i++ ) {
+        if (_str_find(_recentFiles[Labels.at((int)Label_recentFiles).first][i].asCString(), _lastPath) == 0 ) found = true;
+    }
+
+    if (!found )
+        _recentFiles[Labels.at((int)Label_recentFiles).first][_recentFiles[Labels.at((int)Label_recentFiles).first].size()] = std::string(_lastPath);
+
+    Json::StyledWriter jsonWriter = Json::StyledWriter();
+
+    std::fstream recentFilesStream("assets/config/recentFiles.json",std::ios_base::out );
+    recentFilesStream << jsonWriter.write(_recentFiles);
+
+    recentFilesStream.close();
 
 }

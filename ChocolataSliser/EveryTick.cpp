@@ -6,6 +6,7 @@
 #include "ui/uiWindowHandler.h"
 #include "ui/uiContentTree.h"
 
+#include "ui/uiBarWindows.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -28,50 +29,102 @@ void ChocolataSlicer::drawUI() {
         // Menu bar
         if (ImGui::BeginMenuBar()) {
 
-            if (ImGui::BeginMenu("File"))  {
+            if (ImGui::BeginMenu("File")) {
                 // TODO: Clear all loaded files and buffers
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
-                // TODO: Loading model ar textures to programs     echo "Debug"buffer. If it is model then create new object for it
+
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
 
-                // TODO: showing list of recent files
-                if (ImGui::BeginMenu("Open Recent..", "")) {  ImGui::Text("No Recent Files"); ImGui::EndMenu(); }
-                ImGui::Separator();
 
-                // TODO: Saving of 
-                if (ImGui::BeginMenu("Save")) {
-                    // if (ui::uiContentTree::getInstance()._selected >= 0) { if (ImGui::MenuItem("Current Object", "")) { } }
-                    // else { ImGui::MenuItem("Current Object", "", nullptr, false); } 
+                // showing list of recent files
+                if (ImGui::BeginMenu("Open Recent..", (!FileSelector::getInstance()._recentFiles["recentFiles"].size() ? false : true) )) {  
+                    for (int i = FileSelector::getInstance()._recentFiles["recentFiles"].size()-1; i >= 0 ; i-- ) {
+                        if (ImGui::MenuItem(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString()) ) {
+                            FileSelector::getInstance().open(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString() );
+                        }
+                    }
 
-                    if (ImGui::MenuItem("Scene Objects", "Ctrl+S")) { }
                     ImGui::EndMenu();
                 }
 
-                // TODO: only binary suggestions file formats
-                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {  }
+
+                // TODO: Saving off
                 ImGui::Separator();
+                if (ImGui::BeginMenu("Save", false )) { ImGui::EndMenu(); }
+
+
+                // TODO: only binary suggestions file formats
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S", nullptr, false )) {  }
+
 
                 // TODO: Utf-8 formats of files
-                if (ImGui::MenuItem("Export", "")) {  }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Export", "", nullptr, false )) {  }
 
-                if (ImGui::BeginMenu("Export As...", "")) {
+
+                if (ImGui::BeginMenu("Export As...", false )) {
                     ImGui::Text("Utf-8 formats from Export item");
                     ImGui::EndMenu();
                 }
+
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("Exit", "Esc/Ctrl+Q")) { quit(); }
+
+
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Edit"))  {
-                ImGui::EndMenu();
-            }
+
+            // TODO:
+            if (ImGui::BeginMenu("Edit"))  { ImGui::EndMenu(); }
+
+
+            // TODO:
             if (ImGui::BeginMenu("Tools"))  {
+                if (ImGui::MenuItem("Slice", "Ctrl+Shift+L" )) {  }
+
+                if (ImGui::MenuItem("Print", "Ctrl+Shift+P" )) {  }
+
+
+                // TODO:
+                ImGui::Separator();
+
+
+                if (ImGui::BeginMenu("View mode")) {
+                    ImGui::EndMenu();
+                }
+
+
+                if (ImGui::BeginMenu("Addons", false)) {
+                    ImGui::EndMenu();
+                }
+
+
                 if (ImGui::MenuItem("Setings", "Ctrl+,")) {  }
+
                 ImGui::EndMenu();
             }
+
+
+            // TODO:
             if (ImGui::BeginMenu("Help"))  {
+                if (ImGui::MenuItem("Welcome", "")) { ui::UiWindows.welcome = true; }
+                if (ImGui::MenuItem("Documentation", "")) {  }
+                if (ImGui::MenuItem("Shortcuts", "Ctrl+Shift+O")) { ui::UiWindows.shortCuts = true; }
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("Change log", "")) {  }
+
+                if (ImGui::MenuItem("Report issue", "")) {  }
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("About", "Alt+A")) { ui::UiWindows.about = true; }
                 ImGui::EndMenu();
             }
+
+
             ImGui::EndMenuBar();
         }
 
@@ -90,6 +143,12 @@ void ChocolataSlicer::drawUI() {
 
     if (FileSelector::getInstance().isOpen() ) {
         FileSelector::getInstance().draw();
+    }
+
+
+
+    if (ui::UiWindows.about == true ) {
+        ui::showAboutWindow();
     }
 
     // General Info

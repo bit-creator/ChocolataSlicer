@@ -13,6 +13,7 @@
 #include "docLoader/filework.hpp"
 
 #define __ChocolataSlicer_Version_ "0.1.1"
+#define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior

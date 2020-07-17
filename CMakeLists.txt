@@ -25,6 +25,8 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ui/uiWindowHandler.cpp
 	${APP_PATH}/ui/uiContentTree.cpp
 
+	${APP_PATH}/ui/uiAbout.cpp
+
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include

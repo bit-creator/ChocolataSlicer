@@ -29,6 +29,16 @@ namespace ui {
 
 
 
+    typedef struct uiWindows {
+        bool about          = false;
+        bool welcome        = false;
+
+        bool shortCuts      = false;
+    };
+
+    static struct uiWindows UiWindows;
+
+
     // uiLocation_ enum for controlling general position of any viewable objects in some local space
     enum uiLocation_ {
         uiLocation_None,

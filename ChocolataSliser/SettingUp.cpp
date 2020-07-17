@@ -74,9 +74,6 @@ void ChocolataSlicer::setup() {
 
 
 
-    // Initializing of ChocolataSlicerFileSelector
-    FileSelector::getInstance().setPerentWindow(getWindow() );
-
     ci::gl::GlslProgRef _sh = ci::gl::GlslProg::create(
         ci::loadFile("assets/shaders/Velvety.vs.glsl"),
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
