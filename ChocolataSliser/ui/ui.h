@@ -21,14 +21,6 @@ namespace ui {
 
 
 
-    class uiContentItem;
-    typedef std::shared_ptr<uiContentItem>                           uiContentItemRef;
-
-    class uiContentTree;
-    typedef std::shared_ptr<class ui::uiContentTree>                uiContentTreeRef;
-
-
-
     typedef struct uiWindows {
         bool about          = false;
         bool welcome        = false;

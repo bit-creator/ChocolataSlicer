@@ -8,8 +8,8 @@
 void ChocolataSlicer::cleanup() {
     CI_LOG_D("End program. Memory cleaning : ");
 
-    // uiContentTree
-    ui::uiContentTree::getInstance().destroy();
+    // ContentTree
+    ContentTree::getInstance().destroy();
 
     // FileSelector
     FileSelector::getInstance().destroy();

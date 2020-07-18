@@ -9,7 +9,7 @@
 
 #include "ui/ui.h"
 #include "FileSelector.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 #include "docLoader/ChocolataSlicerMesh.h"
 
 #define __ChocolataSlicer_Version_ "0.1.1"

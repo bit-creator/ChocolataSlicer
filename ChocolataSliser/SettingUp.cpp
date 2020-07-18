@@ -11,7 +11,7 @@
 #include "ui/uiWindow.h"
 #include "ui/uiWindowHandler.h"
 #include "ui/uiViewport.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
@@ -56,13 +56,13 @@ void ChocolataSlicer::setup() {
     m_ui_viewport = ui::uiViewport::create(getWindow() );
 
 
-    ui::uiContentTree::getInstance().pushItem(
-        ui::uiContentItem::create("ModelObject:01",
+    ContentTree::getInstance().pushItem(
+        ContentItem::create("ModelObject:01",
             ci::gl::Texture2dRef(nullptr )
         )
     );
 
-    ui::uiContentTree::getInstance()._items.at(0)->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color()) );
+    ContentTree::getInstance()._items.at(0)->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color()) );
 
 
     m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLocation_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
@@ -73,7 +73,7 @@ void ChocolataSlicer::setup() {
     m_handler_main->pushWnd(m_window_content );
 
 
-
+    // testModel
     ci::gl::GlslProgRef _sh = ci::gl::GlslProg::create(
         ci::loadFile("assets/shaders/Velvety.vs.glsl"),
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
@@ -81,7 +81,8 @@ void ChocolataSlicer::setup() {
 
     _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _sh );
 
-    _bt = ci::gl::Batch::create(*make_mesh(Mesh::File::_STL,
-    "ChocolataSliser/docLoader/test_model/stl/Bear.stl"), _sh );
+    // _bt = ci::gl::Batch::create(*make_mesh( Mesh::File::_STL, "assets/test_models/pantera.stl"),
+                                // _sh
+    // );
 
 }

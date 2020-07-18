@@ -1,9 +1,10 @@
-#include "uiContentTree.h"
+#include "ContentTree.h"
+
 #include "ui/uiComponents.h"
 
 
 
-void ui::uiContentTree::__tooltip(const char* tx) {
+void ContentTree::__tooltip(const char* tx) {
     if (ImGui::IsItemHovered() ) {
         ImGui::BeginTooltip();
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
@@ -14,14 +15,14 @@ void ui::uiContentTree::__tooltip(const char* tx) {
 }
 
 
-void ui::uiContentTree::destroy() {
+void ContentTree::destroy() {
     for (int i = 0; i < getInstance()._items.size(); i++ ) {
         _items.at(i)->destroy();
     }
 }
 
-void ui::uiContentTree::update() {
-    std::vector<uiContentItemRef> new_items;
+void ContentTree::update() {
+    std::vector<ContentItemRef> new_items;
     for (int i = 0; i < _items.size(); i++ )
         if (_items.at(i)->isEmpty() ) new_items.push_back(_items.at(i));
 
@@ -32,7 +33,7 @@ void ui::uiContentTree::update() {
 }
 
 
-void ui::uiContentTree::draw() {
+void ContentTree::draw() {
     update();       // update items location
 
     static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;

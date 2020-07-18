@@ -12,6 +12,7 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 set(SRC_CHOCOLATA_SLICER
 	# Main sources
 	${APP_PATH}/ChocolataSlicer.cpp
+	${APP_PATH}/ContentTree.cpp
 	${APP_PATH}/config/cstringFunctions.cpp
 	${APP_PATH}/config/jsonConfig.cpp
 
@@ -23,7 +24,6 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ui/uiWindiw.cpp
 	${APP_PATH}/ui/uiViewport.cpp
 	${APP_PATH}/ui/uiWindowHandler.cpp
-	${APP_PATH}/ui/uiContentTree.cpp
 
 	${APP_PATH}/ui/uiAbout.cpp
 

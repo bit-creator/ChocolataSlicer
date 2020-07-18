@@ -10,7 +10,7 @@
 #include "fileConfig.h"
 
 #include "ui/uiWindow.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 
 #include "jsonConfig.h"
 

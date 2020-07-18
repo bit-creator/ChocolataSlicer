@@ -4,7 +4,7 @@
 #include "ui/uiWindow.h"
 #include "ui/uiViewport.h"
 #include "ui/uiWindowHandler.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 
 #include "ui/uiBarWindows.h"
 
@@ -137,7 +137,7 @@ void ChocolataSlicer::drawUI() {
     }
     if (m_window_content->_opened ) {
         m_window_content->Begin();
-        ui::uiContentTree::getInstance().draw();
+        ContentTree::getInstance().draw();
         m_window_content->End();
     }
 

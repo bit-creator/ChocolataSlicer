@@ -93,14 +93,14 @@ void FileSelector::draw() {
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Content tree");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Select item to which tou  want load an object");
+            ContentTree::__tooltip("Select item to which tou  want load an object");
             ImGui::Spacing(); ImGui::Spacing();
-            ui::uiContentTree::getInstance().draw();
+            ContentTree::getInstance().draw();
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Previewing area");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Area for previewing model or texture befor loading");
+            ContentTree::__tooltip("Area for previewing model or texture befor loading");
             ImGui::Separator();
             ImGui::Spacing();
             ImGui::TextColored(ImVec4(0,0,0,0.5), "%s", _lastPath );
@@ -142,25 +142,25 @@ void FileSelector::draw() {
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200, winSize.y+offsets.y-40) );
                 ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_WindowBg) );
                 if (ImGui::Button("Cancel", ImVec2(90,30))) {
-                    m_opened = false; ui::uiContentTree::getInstance()._selected = -1;
+                    m_opened = false; ContentTree::getInstance()._selected = -1;
                 }
                 
-                if (ui::uiContentTree::getInstance()._selected >= 0)
+                if (ContentTree::getInstance()._selected >= 0)
                     ImGui::PopStyleColor();
 
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-100, winSize.y+offsets.y-40) );
                 if (ImGui::Button("Load", ImVec2(90,30))) {
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {
-                        ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr.swap(_texturePtr);
+                    if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {
+                        ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr.swap(_texturePtr);
 
                         m_opened = false;
                     }
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
+                    if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
                         m_opened = false;
                     }
                 }
                 
-                if (ui::uiContentTree::getInstance()._selected == -1)
+                if (ContentTree::getInstance()._selected == -1)
                     ImGui::PopStyleColor();
             }
 
@@ -170,8 +170,8 @@ void FileSelector::draw() {
              * create new object in model
              * 
             */
-            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {
-                if (ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
+            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ContentTree::getInstance()._selected >= 0 ) {
+                if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
                     ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Insert texture item to object" );
                 }
@@ -180,7 +180,7 @@ void FileSelector::draw() {
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
                 }
             }
-            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {
+            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ContentTree::getInstance()._selected >= 0 ) {
                 /* ... */
             }
 
