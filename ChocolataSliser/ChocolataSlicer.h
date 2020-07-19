@@ -70,8 +70,6 @@ class ChocolataSlicer : public ci::app::App {
 
         ui::uiWindowRef         m_window_content;
 
-        ci::gl::BatchRef        _bt;
-
     public : // Hard logic components
         ci::CameraPersp         m_camera;
         ci::CameraUi			m_cameraui;

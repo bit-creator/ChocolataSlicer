@@ -94,7 +94,7 @@ class ContentTree {
          *
          * @param item Pointer to item which should be pushed to vector
         */
-        void pushItem(ContentItemRef item) { _items.push_back(item ); }
+        ContentItemRef pushItem(ContentItemRef item) { _items.push_back(item ); return _items.at(_items.size()-1); }
 
 
         /**
@@ -113,7 +113,7 @@ class ContentTree {
         void destroy();
 
     public :
-        std::vector<ContentItemRef>                   _items; // Main items storage of slicer
+        std::vector<ContentItemRef>                     _items; // Main items storage of slicer
 
         int32_t                                         _selected = -1; // Selected item in list of items. It is index of element in vector
 

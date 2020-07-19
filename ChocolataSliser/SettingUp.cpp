@@ -55,16 +55,6 @@ void ChocolataSlicer::setup() {
     // Main Ui Initializing
     m_ui_viewport = ui::uiViewport::create(getWindow() );
 
-
-    ContentTree::getInstance().pushItem(
-        ContentItem::create("ModelObject:01",
-            ci::gl::Texture2dRef(nullptr )
-        )
-    );
-
-    ContentTree::getInstance()._items.at(0)->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ci::gl::getStockShader(ci::gl::ShaderDef().color()) );
-
-
     m_window_editor = ui::uiWindow::create({240, 240}, {60, 60}, "Editor", ui::uiLocation_Top, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
     m_window_content = ui::uiWindow::create({240, 240}, {360, 60}, "Content bar", ui::uiLocation_Down, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
@@ -73,16 +63,20 @@ void ChocolataSlicer::setup() {
     m_handler_main->pushWnd(m_window_content );
 
 
-    // testModel
+
+    // Test object
     ci::gl::GlslProgRef _sh = ci::gl::GlslProg::create(
         ci::loadFile("assets/shaders/Velvety.vs.glsl"),
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
     );
+    
+    ContentItemRef itm = ContentTree::getInstance().pushItem( ContentItem::create("ModelObject:01", ci::gl::Texture2dRef(nullptr )) );
+    itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), _sh );
 
-    _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _sh );
 
     // _bt = ci::gl::Batch::create(*make_mesh( Mesh::File::_STL, "assets/test_models/pantera.stl"),
                                 // _sh
     // );
+
 
 }

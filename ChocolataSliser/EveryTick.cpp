@@ -189,9 +189,9 @@ void ChocolataSlicer::draw() {
 
 
     ci::gl::color(0.7,0.7,0.7);
-    _bt->getGlslProg()->uniform("ciEyePos", m_camera.getEyePoint() );
-    _bt->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(m_camera.getViewDirection() ), glm::vec3(1,0,0)) );
-    _bt->draw();
+    ContentTree::getInstance()._items.at(0)->_batchPtr->getGlslProg()->uniform("ciEyePos", m_camera.getEyePoint() );
+    ContentTree::getInstance()._items.at(0)->_batchPtr->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(m_camera.getViewDirection() ), glm::vec3(1,0,0)) );
+    ContentTree::getInstance()._items.at(0)->_batchPtr->draw();
 
 }
 

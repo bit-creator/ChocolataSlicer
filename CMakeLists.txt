@@ -27,6 +27,9 @@ set(SRC_CHOCOLATA_SLICER
 
 	${APP_PATH}/ui/uiAbout.cpp
 
+	
+	${APP_PATH}/Cinder/include/glfw
+
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
