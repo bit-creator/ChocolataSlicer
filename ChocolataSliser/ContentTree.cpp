@@ -16,6 +16,8 @@ void ContentTree::__tooltip(const char* tx) {
 
 
 void ContentTree::destroy() {
+    _FboPtr.reset();
+
     for (int i = 0; i < getInstance()._items.size(); i++ ) {
         _items.at(i)->destroy();
     }
@@ -52,12 +54,22 @@ void ContentTree::draw() {
                 ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
                 ImGui::SameLine();
                 ImGui::Text("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
+
+                // TODO: Object highlight
             }
 
             if (_items.at(i)->_texturePtr != nullptr) {
                 ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
                 ImGui::SameLine();
                 ImGui::Text("%p", _items.at(i)->_texturePtr ); __tooltip("Texture object");
+
+                if (ImGui::IsItemHovered() ) {
+                    ImGui::BeginTooltip();
+
+                    // FIXME: Proportional scaling of image
+                    ImGui::Image(_items.at(i)->_texturePtr, _items.at(i)->_texturePtr->getSize()/2, {0,1}, {1,0} );
+                    ImGui::EndTooltip();
+                }
             }
 
             ImGui::TreePop();

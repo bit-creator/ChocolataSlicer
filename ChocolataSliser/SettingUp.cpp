@@ -70,7 +70,12 @@ void ChocolataSlicer::setup() {
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
     );
     
-    ContentItemRef itm = ContentTree::getInstance().pushItem( ContentItem::create("ModelObject:01", ci::gl::Texture2dRef(nullptr )) );
+    ContentItemRef itm = ContentTree::getInstance().pushItem( 
+        ContentItem::create("ModelObject:01", 
+            ci::gl::Texture2dRef(nullptr)
+            // ci::gl::Texture2d::create(ci::loadImage("assets/logo.png"), ci::gl::Texture2d::Format().mipmap() )
+        ) 
+    );
     itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), _sh );
 
 

@@ -65,6 +65,12 @@ class ContentItem {
 
         ci::gl::BatchRef                    _batchPtr = nullptr; // Graphic Model
 
+
+    public : // Transforms
+        glm::vec3               _position = glm::vec3(0, 0, 0);
+        glm::vec3               _scale = glm::vec3(1, 1, 1);
+        glm::vec3               _rotate = glm::vec3(0, 0, 0);
+
 };
 
 
@@ -83,7 +89,12 @@ class ContentTree {
         /**
          * @brief Default constructor
         */
-        ContentTree() { }
+        ContentTree() {
+            ci::gl::Fbo::Format fboFormat;
+            fboFormat.samples(8 );
+            glm::ivec2 fboResolution = glm::ivec2(1280, 960);
+	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );    
+        }
 
     public :
         static ContentTree& getInstance() { static ContentTree tree; return tree; }
@@ -116,6 +127,9 @@ class ContentTree {
         std::vector<ContentItemRef>                     _items; // Main items storage of slicer
 
         int32_t                                         _selected = -1; // Selected item in list of items. It is index of element in vector
+
+    private : // Objects to preview mesh objects in toolrip
+        ci::gl::FboRef                      _FboPtr;
 
 };
 

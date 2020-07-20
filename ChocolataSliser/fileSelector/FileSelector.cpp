@@ -156,6 +156,12 @@ void FileSelector::draw() {
                         m_opened = false;
                     }
                     if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
+                        if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr == nullptr )
+                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr = _batch;
+
+                        else 
+                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr.swap(_batch);
+
                         m_opened = false;
                     }
                 }
@@ -326,7 +332,7 @@ void FileSelector::loadObject( ) {
     }
 
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-        /* ... */
+        _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _shaderPtr );
     }
 
 

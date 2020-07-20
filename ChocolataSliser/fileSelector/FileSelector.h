@@ -117,7 +117,6 @@ class FileSelector {
     private : // Parts of previewing area and actual objects for drawing 
         ci::gl::Texture2dRef                _texturePtr;
 
-        // Mesh::_meshPtr_t                    _meshPtr;
         ci::gl::BatchRef                    _batch;
         ci::gl::GlslProgRef                 _shaderPtr;
 
