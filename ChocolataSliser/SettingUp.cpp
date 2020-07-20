@@ -82,9 +82,15 @@ void ChocolataSlicer::setup() {
         ci::loadFile("assets/shaders/Velvety.fs.glsl")
     );
 
-    _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _sh );
+    // _bt = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(3/2), _sh );
 
-    _bt = ci::gl::Batch::create(*make_mesh(Mesh::File::_STL,
-    "ChocolataSliser/docLoader/test_model/stl/Bear.stl"), _sh );
+    auto model = make_mesh(Mesh::File::_STL,
+    "ChocolataSliser/docLoader/test_model/stl/panter.stl");
+
+    save_mesh_as(Mesh::File::_STL, model, "pantera.stl");
+
+    _bt = ci::gl::Batch::create(*model, _sh );
+
+
 
 }

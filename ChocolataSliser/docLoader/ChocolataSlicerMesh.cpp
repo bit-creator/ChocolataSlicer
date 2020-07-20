@@ -56,47 +56,39 @@ void Mesh::conf() noexcept
     (
         __triangleData.cbegin(),
         __triangleData.cend(),
-        [this, current = -1](_trianglePtr triangle) mutable -> void
+        [this](_trianglePtr triangle) mutable -> void
         {
-            mNormals.push_back
-            (
-                vec3
-                (
-                    triangle -> getNormal().getX(),
-                    triangle -> getNormal().getY(),
-                    triangle -> getNormal().getZ()
-                )
-            );
-
-            mPositions.insert
-            (
-                mPositions.end(),
-                {
-                    triangle -> getVertex_A() -> getX(),
-                    triangle -> getVertex_A() -> getY(),
-                    triangle -> getVertex_A() -> getZ(),
-                    triangle -> getVertex_B() -> getX(),
-                    triangle -> getVertex_B() -> getY(),
-                    triangle -> getVertex_B() -> getZ(),
-                    triangle -> getVertex_C() -> getX(),
-                    triangle -> getVertex_C() -> getY(),
-                    triangle -> getVertex_C() -> getZ(),
-                }
-            );
-
             mIndices.insert
             (
                 mIndices.end(),
                 {
-                    ++current,
-                    ++current,
-                    ++current
+                    __vertexData [ triangle -> getVertex_A() ],
+                    __vertexData [ triangle -> getVertex_B() ],
+                    __vertexData [ triangle -> getVertex_C() ],
                 }
             );
         }
     );
 
-    // recalculateNormals();
+    std::for_each
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [this](auto vert) mutable -> void
+        {
+            mPositions.insert
+            (
+                mPositions.begin(),
+                {
+                    vert.first -> getX(),
+                    vert.first -> getY(),
+                    vert.first -> getZ(),
+                }
+            );
+        }
+    );
+
+    recalculateNormals();
     recalculateTangents();
     recalculateBitangents();
 }

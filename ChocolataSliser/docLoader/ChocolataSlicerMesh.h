@@ -19,6 +19,8 @@
 #include <list>
 #include <string>
 #include <algorithm>
+#include <map>
+
 #include "geometry.hpp"
 #include "../Cinder/include/cinder/TriMesh.h"
 
@@ -41,10 +43,33 @@ class Mesh : public TriMesh
             _PLY
         };
 
+        struct _Hesher
+        {
+            size_t
+            operator()(const _vertexPtr value) const noexcept
+            {
+                char bit[sizeof(*value)];
+
+                std::memcpy(bit, value.get(), 32);
+
+                std::hash < std::string > hesher;
+
+                return  hesher(bit);
+            }
+        }; // STRUCT__HESHER
+
+        struct _Equal
+        {
+                bool
+                operator()(const _vertexPtr lhr, const _vertexPtr rhr) const noexcept
+                { return *lhr == *rhr; }
+        }; // STRUCT__EQUALs
+
     public:    // TYPES
         using _meshPtr_t    = std::unique_ptr < Mesh >;
         using _triangleData = std::list < _trianglePtr >;
-        using _vertexData   = std::list < _vertexPtr >;
+        using _vertexData   = std::unordered_map < _vertexPtr, uint32_t,
+                                                   _Hesher   , _Equal >;
         using _filename_t   = std::string;
         using _stat_t       = uint64_t;
 

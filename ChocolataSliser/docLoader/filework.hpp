@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2020 Chocolata Printer oficial software (Autor Abernihin Ilia & Velichko Bohdan)
- * 
+ *
  * All right reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. something :)
- * 
- * 
+ *
+ *
  * Abstract: this is declaretion of file reader/writer
- * 
+ *
  */
 
 #ifndef FILEWORK_HPP
@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <future>
 #include <algorithm>
+#include <cstring>
 
 #include "../Cinder/include/cinder/ObjLoader.h"
 #include "geometry.hpp"
@@ -36,9 +37,9 @@ namespace Filework
 {
     /**
      * @class STL is a structure for reading writing Mesh in format "binary STL"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class STL : public Mesh
@@ -47,116 +48,10 @@ namespace Filework
             using _number_t = uint32_t;
             using _header_t = char;
 
-
-        private:   // VERTEX__tree
-            /**
-             * @struct _Hesher is a functor who realize heshing vertecies
-             * 
-             * construction: disable
-            */
-            struct _Hesher  
-            {
-                private:  // COPY_OPERATIONS
-                    /**
-                     * all copy or move operations delete
-                    */
-                    _Hesher(const _Hesher&) = delete;
-
-                    _Hesher& 
-                    operator = (const _Hesher&) = delete;
-
-                public:
-                    /**
-                     * (constructor) and (destructor) declareted default,
-                     * but use hesher functor not recomend.
-                    */
-                    _Hesher() = default;
-                    ~_Hesher() = default;
-
-                    /**
-                     * @brief call function operator for hash vertex
-                     * 
-                     * @param value is pointer on orginal vertex who need hashing
-                     * 
-                     * @return hash value 
-                     * 
-                     * this method no change object 
-                     * 
-                     * this nethod no throw exeption
-                    */ 
-                    size_t 
-                    operator()(const _vertexPtr value) const noexcept
-                    { 
-                        std::bitset < 32 >  bit_x(*(int32_t*)(&(value -> getX())));
-                        std::bitset < 32 >  bit_y(*(int32_t*)(&(value -> getY())));
-                        std::bitset < 32 >  bit_z(*(int32_t*)(&(value -> getZ())));
-
-                        std::string bits = bit_x.to_string();
-                        bits.append(bit_y.to_string());
-                        bits.append(bit_z.to_string());
-
-                        std::bitset < 96 > bitsArray(bits);
-                        std::hash < std::bitset < 96 > > hesher;
-
-                        return  hesher(bitsArray); 
-                    }
-            }; // STRUCT__HESHER
-
-            /**
-             * @struct _Equal is functor sho realize compare two vertecies
-             * 
-             * construction: disable.
-            */
-            struct _Equal
-            {
-                private:  // COPY_OPERATIONS
-                    /**
-                     * all copy or move operations delete
-                    */
-                    _Equal(const _Equal&) = delete;
-
-                    _Equal& 
-                    operator = (const _Equal&) = delete;
-
-                public:
-                    /**
-                     * (constructor) and (destructor) declareted default,
-                     * but use compare functor not recomend.
-                    */
-                    _Equal() = default;
-                    ~_Equal() = default;
-
-                    /**
-                     * @brief function call operator impliment compare two vertecies
-                     * 
-                     * @param lhr is pointer on first original vertex who compares
-                     * @param rhr is pointer on second original vertex who compares
-                     * 
-                     * @return TRUE if original vertex is equal, enother FALSE
-                     * 
-                     * this method no change object
-                     * 
-                     * this method no throw exeption
-                    */
-                    bool 
-                    operator()(const _vertexPtr lhr, const _vertexPtr rhr) const noexcept
-                    { return *(static_cast<Geometry::Primitive*>(lhr.get())) 
-                          == *(static_cast<Geometry::Primitive*>(rhr.get())); }
-            }; // STRUCT__EQUAL
-
-            /**
-             * for optimisation searche and insertion vertecies used C++ standart hashtable
-             * std::unordered_set for hash uses functor @struct _Heasher who hashing bitset 
-             * geometric coordinates vertecies 
-            */
-            using _vertexTree_t = std::unordered_set < _vertexPtr, _Hesher, _Equal >;  
-
-            _vertexTree_t _tree;  // sometimes tree (lifetime - loading model) 
-
         private:  // STL_POLIGON_IMPL
             /**
              * @struct Poligon is helper, for read/write in/out STL binary file
-             * 
+             *
              * construction: desable.
             */
             struct Poligon
@@ -166,7 +61,7 @@ namespace Filework
                      * all copy or move operations delete
                     */
                     Poligon(const Poligon&) = delete;
-                    
+
                     Poligon&
                     operator = (const Poligon&) = delete;
 
@@ -188,22 +83,22 @@ namespace Filework
                 public:
                     /**
                      * @brief call function operator have two overloads:
-                     * 
+                     *
                      * first: used in read binary STL data
-                     * 
+                     *
                      * @brief set triangle in model
-                     * 
+                     *
                      * @param model STL object reference
-                     * 
+                     *
                      * this overload no change the Poligon
-                     * 
+                     *
                      * this overload no throw exeption
-                     * 
-                     * 
+                     *
+                     *
                      * second: used in write binary data in STL file
-                     * 
+                     *
                      * @param triangle const pointer on original triangle
-                     * 
+                     *
                      * this overload no throw exeption
                     */
                     void operator()(STL& model) const noexcept
@@ -232,14 +127,14 @@ namespace Filework
 
         private:  //SPECIFIC_STL_INFO
             _header_t __header[80];     // 80 byte of header in file begin
-            _number_t __number;     // triangle number in model  
+            _number_t __number;     // triangle number in model
 
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class STL
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             STL(_filename_t filename) noexcept
@@ -256,28 +151,28 @@ namespace Filework
             STL ( const STL& ) noexcept = default;
             STL ( STL&& ) noexcept = default;
 
-            STL& 
+            STL&
             operator = ( const STL& ) noexcept = default;
-            
-            STL& 
+
+            STL&
             operator = ( STL&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~STL( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -290,8 +185,9 @@ namespace Filework
 
                 //end async
 
-                _tree.clear();
                 stat();
+
+                std::cout << "\n\n" << getVertices() << "\t" << getTriangles() << "\n\n";
 
                 return result;
             }
@@ -301,14 +197,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -325,21 +221,21 @@ namespace Filework
                 __filename.clear();
                 // __header = '/0';
                 __number = 0;
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -350,25 +246,25 @@ namespace Filework
             /**
              * @brief this function returns pointer on original vertex
              * equal param vertex, or create if not find
-             * 
+             *
              * @param vertex new vertex
-             * 
+             *
              * @return pointer on this vertex in dataVertex
-             * 
+             *
              * this method no throw exeption
             */
-            _vertexPtr 
+            inline _vertexPtr
             findOrCreate(const Geometry::Vertex&& vertex) noexcept
             {
-                if(auto[iterator, insert] = 
-                    _tree.emplace(std::make_shared<Geometry::Vertex>(std::move(vertex)));
-                insert)    // COND
-                {
-                    __vertexData.emplace_back(std::make_shared
-                        <Geometry::Vertex>(std::move(vertex)));
-                    return *iterator;
-                }
-                else return *iterator;
+                auto [iterator, insert] = __vertexData.emplace
+                    (
+                        std::make_pair
+                        (
+                            std::make_shared<Geometry::Vertex>(std::move(vertex)),
+                            __vertexData.size()
+                        )
+                    );
+                return iterator -> first;
             }
 
 
@@ -379,9 +275,9 @@ namespace Filework
 
     /**
      * @class OBJ is a structure for reading writing Mesh in format "ASCII OBJ"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class OBJ : public Mesh
@@ -389,9 +285,9 @@ namespace Filework
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class OBJ
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             OBJ(_filename_t filename) noexcept
@@ -408,28 +304,28 @@ namespace Filework
             OBJ ( const OBJ& ) noexcept = default;
             OBJ ( OBJ&& ) noexcept = default;
 
-            OBJ& 
+            OBJ&
             operator = ( const OBJ& ) noexcept = default;
-            
-            OBJ& 
+
+            OBJ&
             operator = ( OBJ&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~OBJ( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -448,14 +344,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -470,21 +366,21 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -498,9 +394,9 @@ namespace Filework
 
     /**
      * @class AMF is a structure for reading writing Mesh in format "AMF"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class AMF : public Mesh
@@ -508,9 +404,9 @@ namespace Filework
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class AMF
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             AMF(_filename_t filename) noexcept
@@ -527,28 +423,28 @@ namespace Filework
             AMF ( const AMF& ) noexcept = default;
             AMF ( AMF&& ) noexcept = default;
 
-            AMF& 
+            AMF&
             operator = ( const AMF& ) noexcept = default;
-            
-            AMF& 
+
+            AMF&
             operator = ( AMF&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~AMF( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -567,14 +463,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -589,21 +485,21 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -617,9 +513,9 @@ namespace Filework
 
     /**
      * @class _3MF is a structure for reading writing Mesh in format "3MF"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class _3MF: public Mesh
@@ -627,9 +523,9 @@ namespace Filework
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class _3MF
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             _3MF(_filename_t filename) noexcept
@@ -646,28 +542,28 @@ namespace Filework
             _3MF ( const _3MF& ) noexcept = default;
             _3MF ( _3MF&& ) noexcept = default;
 
-            _3MF& 
+            _3MF&
             operator = ( const _3MF& ) noexcept = default;
-            
-            _3MF& 
+
+            _3MF&
             operator = ( _3MF&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~_3MF( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -686,14 +582,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -708,21 +604,21 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -736,9 +632,9 @@ namespace Filework
 
     /**
      * @class FBX is a structure for reading writing Mesh in format "FBX"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class FBX : public Mesh
@@ -746,9 +642,9 @@ namespace Filework
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class FBX
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             FBX(_filename_t filename) noexcept
@@ -765,28 +661,28 @@ namespace Filework
             FBX ( const FBX& ) noexcept = default;
             FBX ( FBX&& ) noexcept = default;
 
-            FBX& 
+            FBX&
             operator = ( const FBX& ) noexcept = default;
-            
-            FBX& 
+
+            FBX&
             operator = ( FBX&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~FBX( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -805,14 +701,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -827,21 +723,21 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -856,9 +752,9 @@ namespace Filework
 
     /**
      * @class PLY is a structure for reading writing Mesh in format "binary PLY"
-     * 
+     *
      * Base class: Mesh
-     * 
+     *
      * construction: with @class Mesh make_fuunction
     */
     class PLY : public Mesh
@@ -866,9 +762,9 @@ namespace Filework
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
              * @brief (constructor) for class PLY
-             * 
+             *
              * @param filename current path for read/write file
-             * 
+             *
              * this method no throw exeption
             */
             PLY(_filename_t filename) noexcept
@@ -885,28 +781,28 @@ namespace Filework
             PLY ( const PLY& ) noexcept = default;
             PLY ( PLY&& ) noexcept = default;
 
-            PLY& 
+            PLY&
             operator = ( const PLY& ) noexcept = default;
-            
-            PLY& 
+
+            PLY&
             operator = ( PLY&& ) noexcept = default;
 
             /**
              * @brief (destructor) destroy all of data
-             * 
+             *
              * rhis method no throw exeption
             */
-            virtual 
+            virtual
             ~PLY( ) noexcept
             { destroy(); }
 
         public:     // OPEN/SAVE SPECIFICATION
             /**
              * @brief read data in the file
-             * 
+             *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             open() noexcept final
             {
                 bool result = false;
@@ -925,14 +821,14 @@ namespace Filework
              *
              * this method no throw exeption
             */
-            virtual bool 
+            virtual bool
             save() const noexcept final
             {
-                bool result = false; 
+                bool result = false;
                 std::ofstream out(__filename, std::ios::binary);
                 out << *this;
 
-                result = true;    
+                result = true;
                 return result;
             }
 
@@ -947,21 +843,21 @@ namespace Filework
                 __triangleData.clear();
                 __vertexData.clear();
                 __filename.clear();
-                
+
                 result = true;
                 return result;
             }
 
             /**
              * @brief save mesh in other path
-             * 
+             *
              * @param filename path who must be save
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             saveAs(_filename_t filename) const noexcept
             {
                 std::ofstream out(filename, std::ios::binary);
@@ -981,7 +877,7 @@ namespace Filework
 
         if(!model.__number) { return in; }
 
-        model._tree.reserve(model.__number / 1.5);
+        model.__vertexData.reserve(model.__number / 1.5);
 
         STL::Poligon poligon;
         for(uint32_t num = 0; num < model.__number; ++num)
@@ -1010,7 +906,7 @@ namespace Filework
     std::ifstream& operator >> (std::ifstream& in, OBJ& model) noexcept
     {
         cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
-        
+
         return in;
     }
 
