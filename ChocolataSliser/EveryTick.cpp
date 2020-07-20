@@ -216,7 +216,7 @@ void ChocolataSlicer::drawUI() {
     }
     if (m_window_content->_opened ) {
         m_window_content->Begin();
-        ContentTree::getInstance().draw();
+        ContentTree::getInstance().drawObjectsToUiList();
         m_window_content->End();
     }
 
@@ -268,14 +268,7 @@ void ChocolataSlicer::draw() {
 
 
 
-    ci::gl::color(0.7,0.7,0.7);
-    ci::gl::translate(ContentTree::getInstance()._items.at(0)->_position );
-    ci::gl::scale(ContentTree::getInstance()._items.at(0)->_scale );
-    ci::gl::rotate(ContentTree::getInstance()._items.at(0)->_rotate );
-
-    ContentTree::getInstance()._items.at(0)->_batchPtr->getGlslProg()->uniform("ciEyePos", m_camera.getEyePoint() );
-    ContentTree::getInstance()._items.at(0)->_batchPtr->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(m_camera.getViewDirection() ), glm::vec3(1,0,0)) );
-    ContentTree::getInstance()._items.at(0)->_batchPtr->draw();
+    ContentTree::getInstance().drawObjectsToScene(&m_camera );
 
 }
 

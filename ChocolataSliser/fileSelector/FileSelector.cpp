@@ -95,7 +95,7 @@ void FileSelector::draw() {
             ImGui::Text("(?)");
             ContentTree::__tooltip("Select item to which tou  want load an object");
             ImGui::Spacing(); ImGui::Spacing();
-            ContentTree::getInstance().draw();
+            ContentTree::getInstance().drawObjectsToUiList();
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Previewing area");
             ImGui::SameLine();

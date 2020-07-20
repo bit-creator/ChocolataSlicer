@@ -35,7 +35,7 @@ void ContentTree::update() {
 }
 
 
-void ContentTree::draw() {
+void ContentTree::drawObjectsToUiList() {
     update();       // update items location
 
     static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -76,4 +76,22 @@ void ContentTree::draw() {
             if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
         }
     }
+}
+
+
+
+void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
+    for (auto _itemIt : _items ) {
+        if (_itemIt->_batchPtr == nullptr ) continue;
+
+        ci::gl::color(0.7,0.7,0.7);
+        ci::gl::translate(_itemIt->_position );
+        ci::gl::rotate(_itemIt->_rotate );
+        ci::gl::scale(_itemIt->_scale );
+
+        _itemIt->_batchPtr->getGlslProg()->uniform("ciEyePos", _camera->getEyePoint() );
+        _itemIt->_batchPtr->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(_camera->getViewDirection() ), glm::vec3(1,0,0)) );
+        _itemIt->_batchPtr->draw();
+    }
+
 }

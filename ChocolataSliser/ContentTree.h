@@ -119,7 +119,13 @@ class ContentTree {
         /**
          * @brief Draws vector of items. User can do anything with them
         */
-        void draw();
+        void drawObjectsToUiList();
+
+
+        /**
+         * @brief Draw objects to scene 
+        */
+        void drawObjectsToScene(ci::CameraPersp* _camera );
 
         void destroy();
 
