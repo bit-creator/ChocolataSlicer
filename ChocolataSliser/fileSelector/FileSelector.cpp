@@ -1,6 +1,10 @@
+#include "cinder/app/App.h"
+
 #include "FileSelector.h"
 #include "fileConfig.h"
 #include "thread"
+
+#include "labels.h"
 
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
@@ -27,6 +31,16 @@ void FileSelector::initFileSelector() {
                                         ImGuiWindowFlags_NoNavInputs |
                                         ImGuiWindowFlags_NoFocusOnAppearing
     );
+
+    _perentWindowPtr = ci::app::getWindow();
+
+
+    std::ifstream recentFilesStream("assets/config/recentFiles.json" );
+    if (recentFilesStream.is_open() ) {
+        recentFilesStream >> _recentFiles;
+    }
+
+    recentFilesStream.close();
 
 
     // Frame buffer preparing
@@ -79,14 +93,14 @@ void FileSelector::draw() {
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Content tree");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Select item to which tou  want load an object");
+            ContentTree::__tooltip("Select item to which tou  want load an object");
             ImGui::Spacing(); ImGui::Spacing();
-            ui::uiContentTree::getInstance().draw();
+            ContentTree::getInstance().drawObjectsToUiList();
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Previewing area");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ui::uiContentTree::__tooltip("Area for previewing model or texture befor loading");
+            ContentTree::__tooltip("Area for previewing model or texture befor loading");
             ImGui::Separator();
             ImGui::Spacing();
             ImGui::TextColored(ImVec4(0,0,0,0.5), "%s", _lastPath );
@@ -128,25 +142,31 @@ void FileSelector::draw() {
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200, winSize.y+offsets.y-40) );
                 ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_WindowBg) );
                 if (ImGui::Button("Cancel", ImVec2(90,30))) {
-                    m_opened = false; ui::uiContentTree::getInstance()._selected = -1;
+                    m_opened = false; ContentTree::getInstance()._selected = -1;
                 }
                 
-                if (ui::uiContentTree::getInstance()._selected >= 0)
+                if (ContentTree::getInstance()._selected >= 0)
                     ImGui::PopStyleColor();
 
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-100, winSize.y+offsets.y-40) );
                 if (ImGui::Button("Load", ImVec2(90,30))) {
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {
-                        ui::uiContentTree::getInstance().ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr.swap(_texturePtr);
+                    if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Texture ) {
+                        ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr.swap(_texturePtr);
 
                         m_opened = false;
                     }
-                    if (ui::uiContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
+                    if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
+                        if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr == nullptr )
+                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr = _batch;
+
+                        else 
+                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr.swap(_batch);
+
                         m_opened = false;
                     }
                 }
                 
-                if (ui::uiContentTree::getInstance()._selected == -1)
+                if (ContentTree::getInstance()._selected == -1)
                     ImGui::PopStyleColor();
             }
 
@@ -156,8 +176,8 @@ void FileSelector::draw() {
              * create new object in model
              * 
             */
-            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ui::uiContentTree::getInstance()._selected >= 0 ) {
-                if (ui::uiContentTree::getInstance()._items.at(ui::uiContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
+            if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ContentTree::getInstance()._selected >= 0 ) {
+                if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
                     ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Insert texture item to object" );
                 }
@@ -166,7 +186,7 @@ void FileSelector::draw() {
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
                 }
             }
-            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ui::uiContentTree::getInstance()._selected >= 0 ) {
+            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ContentTree::getInstance()._selected >= 0 ) {
                 /* ... */
             }
 
@@ -211,6 +231,33 @@ bool FileSelector::open(_FileSelector_Type type ) {
     m_opened = true;
 
     openLoadingFileSelector(_File_Extention::_File_Extention_None );
+
+}
+
+bool FileSelector::open(const char* path ) {
+    _texturePtr.reset(); 
+
+    CI_LOG_D("File selector opened in mode : " << "FileSelector_Type_Load" ); 
+    m_opened = true;
+
+    strcpy(_lastPath, path);
+
+
+    // Exception situation
+    if (strlen(_lastPath) <= 6 ) {
+        m_opened = false;
+        return false;
+    }
+
+    // Cutting _lastPathRef from endline symbol. _lastPathRef will contains clear path to file
+    // strcpy(_lastPath, (std::string(_lastPath).erase(std::string(_lastPath).find("\n"))).c_str());
+    CI_LOG_I("Selected object : " << _lastPath << "\n" );
+
+    // Load an object
+    loadObject();
+
+
+    return true;
 
 }
 
@@ -285,7 +332,24 @@ void FileSelector::loadObject( ) {
     }
 
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-        /* ... */
+        _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _shaderPtr );
     }
+
+
+
+    bool found = false;
+    for (int i = 0; i < _recentFiles[Labels.at((int)Label_recentFiles).first].size(); i++ ) {
+        if (_str_find(_recentFiles[Labels.at((int)Label_recentFiles).first][i].asCString(), _lastPath) == 0 ) found = true;
+    }
+
+    if (!found )
+        _recentFiles[Labels.at((int)Label_recentFiles).first][_recentFiles[Labels.at((int)Label_recentFiles).first].size()] = std::string(_lastPath);
+
+    Json::StyledWriter jsonWriter = Json::StyledWriter();
+
+    std::fstream recentFilesStream("assets/config/recentFiles.json",std::ios_base::out );
+    recentFilesStream << jsonWriter.write(_recentFiles);
+
+    recentFilesStream.close();
 
 }

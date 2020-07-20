@@ -4,8 +4,9 @@
 #include "ui/uiWindow.h"
 #include "ui/uiViewport.h"
 #include "ui/uiWindowHandler.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 
+#include "ui/uiBarWindows.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -28,50 +29,102 @@ void ChocolataSlicer::drawUI() {
         // Menu bar
         if (ImGui::BeginMenuBar()) {
 
-            if (ImGui::BeginMenu("File"))  {
+            if (ImGui::BeginMenu("File")) {
                 // TODO: Clear all loaded files and buffers
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
-                // TODO: Loading model ar textures to programs     echo "Debug"buffer. If it is model then create new object for it
+
                 if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
 
-                // TODO: showing list of recent files
-                if (ImGui::BeginMenu("Open Recent..", "")) {  ImGui::Text("No Recent Files"); ImGui::EndMenu(); }
-                ImGui::Separator();
 
-                // TODO: Saving of 
-                if (ImGui::BeginMenu("Save")) {
-                    // if (ui::uiContentTree::getInstance()._selected >= 0) { if (ImGui::MenuItem("Current Object", "")) { } }
-                    // else { ImGui::MenuItem("Current Object", "", nullptr, false); } 
+                // showing list of recent files
+                if (ImGui::BeginMenu("Open Recent..", (!FileSelector::getInstance()._recentFiles["recentFiles"].size() ? false : true) )) {  
+                    for (int i = FileSelector::getInstance()._recentFiles["recentFiles"].size()-1; i >= 0 ; i-- ) {
+                        if (ImGui::MenuItem(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString()) ) {
+                            FileSelector::getInstance().open(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString() );
+                        }
+                    }
 
-                    if (ImGui::MenuItem("Scene Objects", "Ctrl+S")) { }
                     ImGui::EndMenu();
                 }
 
-                // TODO: only binary suggestions file formats
-                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {  }
+
+                // TODO: Saving off
                 ImGui::Separator();
+                if (ImGui::BeginMenu("Save", false )) { ImGui::EndMenu(); }
+
+
+                // TODO: only binary suggestions file formats
+                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S", nullptr, false )) {  }
+
 
                 // TODO: Utf-8 formats of files
-                if (ImGui::MenuItem("Export", "")) {  }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Export", "", nullptr, false )) {  }
 
-                if (ImGui::BeginMenu("Export As...", "")) {
+
+                if (ImGui::BeginMenu("Export As...", false )) {
                     ImGui::Text("Utf-8 formats from Export item");
                     ImGui::EndMenu();
                 }
+
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("Exit", "Esc/Ctrl+Q")) { quit(); }
+
+
                 ImGui::EndMenu();
             }
 
-            if (ImGui::BeginMenu("Edit"))  {
-                ImGui::EndMenu();
-            }
+
+            // TODO:
+            if (ImGui::BeginMenu("Edit"))  { ImGui::EndMenu(); }
+
+
+            // TODO:
             if (ImGui::BeginMenu("Tools"))  {
+                if (ImGui::MenuItem("Slice", "Ctrl+Shift+L" )) {  }
+
+                if (ImGui::MenuItem("Print", "Ctrl+Shift+P" )) {  }
+
+
+                // TODO:
+                ImGui::Separator();
+
+
+                if (ImGui::BeginMenu("View mode")) {
+                    ImGui::EndMenu();
+                }
+
+
+                if (ImGui::BeginMenu("Addons", false)) {
+                    ImGui::EndMenu();
+                }
+
+
                 if (ImGui::MenuItem("Setings", "Ctrl+,")) {  }
+
                 ImGui::EndMenu();
             }
+
+
+            // TODO:
             if (ImGui::BeginMenu("Help"))  {
+                if (ImGui::MenuItem("Welcome", "")) { ui::UiWindows.welcome = true; }
+                if (ImGui::MenuItem("Documentation", "")) {  }
+                if (ImGui::MenuItem("Shortcuts", "Ctrl+Shift+O")) { ui::UiWindows.shortCuts = true; }
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("Change log", "")) {  }
+
+                if (ImGui::MenuItem("Report issue", "")) {  }
+
+                ImGui::Separator();
+                if (ImGui::MenuItem("About", "Alt+A")) { ui::UiWindows.about = true; }
                 ImGui::EndMenu();
             }
+
+
             ImGui::EndMenuBar();
         }
 
@@ -80,16 +133,101 @@ void ChocolataSlicer::drawUI() {
     // update all other
     if (m_window_editor->_opened ) {
         m_window_editor->Begin();
+            if (ContentTree::getInstance()._selected != -1 ) {
+                // Transforms
+                if (ImGui::TreeNode("Transforms" )) {
+                    if (ContentTree::getInstance()._selected != -1 ) {
+                        ImGui::TextColored(ImVec4(0,0,0,0.7), "  Transforms ( X, Y, Z )");
+                        ImGui::DragFloat3("Pos", &ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_position );
+                        ImGui::DragFloat3("Scale", &ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_scale );
+                        ImGui::DragFloat3("Rotate", &ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_rotate );
+
+                        ImGui::Separator();
+                        ImGui::Spacing();
+                    }
+
+                    ImGui::TreePop();
+                }
+
+
+                // Texture
+                if (ImGui::TreeNode("Texture") ) {
+                    if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr != nullptr ) {
+                        ImGui::Spacing();
+                        ImGui::TextColored(ImVec4(0,0,0,0.7), "  Texture");
+
+                        ImGui::Text("ID : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr->getId() );
+                        ImGui::Text("Label : %s", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr->getLabel().c_str() );
+
+                        ImGui::Spacing();
+                        glm::ivec2 size = ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr->getSize();
+                        ImGui::Text("Size  : %d | %d", size.x, size.y );
+
+                        ImGui::Spacing();
+                        // ImGui::Button("Edit", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20) );
+                    }
+                    else {
+                        if (ImGui::Button("Add", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20)) ) {
+                            FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load );
+                        }
+                    }
+
+                    ImGui::Separator();
+                    ImGui::Spacing();
+
+                    ImGui::TreePop();
+                }
+
+
+                // Mesh
+                if (ImGui::TreeNode("Mesh") ) {
+                    if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr != nullptr ) {
+                        ImGui::Spacing();
+                        ImGui::TextColored(ImVec4(0,0,0,0.7), "  Mesh");
+
+
+                        ImGui::Text("Vertices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getNumVertices() );
+                        ImGui::Text("Indices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getNumIndices() );
+
+                        ImGui::Spacing();
+                        // ImGui::Button("Edit", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20) );
+
+                        // ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getVao()->getLabel();
+                    }
+                    else {
+                        if (ImGui::Button("Add", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20)) ) {
+                            FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load );
+                        }
+                    }
+
+                    ImGui::Separator();
+                    ImGui::Spacing();
+
+                    ImGui::TreePop();
+                }
+
+            }
+            else {
+                ImGui::TextColored(ImVec4(0,0,0,0.7), "  No selected object");
+            }
+
+
         m_window_editor->End();
     }
     if (m_window_content->_opened ) {
         m_window_content->Begin();
-        ui::uiContentTree::getInstance().draw();
+        ContentTree::getInstance().drawObjectsToUiList();
         m_window_content->End();
     }
 
     if (FileSelector::getInstance().isOpen() ) {
         FileSelector::getInstance().draw();
+    }
+
+
+
+    if (ui::UiWindows.about == true ) {
+        ui::showAboutWindow();
     }
 
     // General Info
@@ -129,10 +267,8 @@ void ChocolataSlicer::draw() {
     ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
 
 
-    ci::gl::color(0.7,0.7,0.7);
-    _bt->getGlslProg()->uniform("ciEyePos", m_camera.getEyePoint() );
-    _bt->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(m_camera.getViewDirection() ), glm::vec3(1,0,0)) );
-    _bt->draw();
+
+    ContentTree::getInstance().drawObjectsToScene(&m_camera );
 
 }
 

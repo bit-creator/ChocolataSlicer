@@ -21,12 +21,14 @@ namespace ui {
 
 
 
-    class uiContentItem;
-    typedef std::shared_ptr<uiContentItem>                           uiContentItemRef;
+    typedef struct uiWindows {
+        bool about          = false;
+        bool welcome        = false;
 
-    class uiContentTree;
-    typedef std::shared_ptr<class ui::uiContentTree>                uiContentTreeRef;
+        bool shortCuts      = false;
+    };
 
+    static struct uiWindows UiWindows;
 
 
     // uiLocation_ enum for controlling general position of any viewable objects in some local space

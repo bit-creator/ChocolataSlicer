@@ -9,10 +9,11 @@
 
 #include "ui/ui.h"
 #include "FileSelector.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 #include "docLoader/ChocolataSlicerMesh.h"
 
 #define __ChocolataSlicer_Version_ "0.1.1"
+#define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior
@@ -68,8 +69,6 @@ class ChocolataSlicer : public ci::app::App {
         ui::uiWindowRef         m_window_editor;
 
         ui::uiWindowRef         m_window_content;
-
-        ci::gl::BatchRef        _bt;
 
     public : // Hard logic components
         ci::CameraPersp         m_camera;

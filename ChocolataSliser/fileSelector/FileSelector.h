@@ -10,8 +10,9 @@
 #include "fileConfig.h"
 
 #include "ui/uiWindow.h"
-#include "ui/uiContentTree.h"
+#include "ContentTree.h"
 
+#include "jsonConfig.h"
 
 /**
  * @brief Singleton class with window for viewing and loading objects to programs objects buffer.
@@ -51,7 +52,7 @@ class FileSelector {
 
 
         /**
-         * @brief Opens system FileSelector to loading files by extentions
+         * @brief Opens system FileSelector to load files by extentions
          * 
          * @param extentions Extentions of files which can be loaded. Write it by line ex: "*.png | *.jpg"
          * 
@@ -67,6 +68,13 @@ class FileSelector {
          * @return Returns 1 if loaded something, or 0
         */
         bool open(_FileSelector_Type type );
+
+        /**
+         * @brief Function for opening FileSelector without systems FileSelector
+         * 
+         * @return Returns 1 if loaded something, or 0
+        */
+        bool open(const char* path );
 
         // TODO:
         void loadObject();
@@ -109,7 +117,6 @@ class FileSelector {
     private : // Parts of previewing area and actual objects for drawing 
         ci::gl::Texture2dRef                _texturePtr;
 
-        // Mesh::_meshPtr_t                    _meshPtr;
         ci::gl::BatchRef                    _batch;
         ci::gl::GlslProgRef                 _shaderPtr;
 
@@ -124,6 +131,9 @@ class FileSelector {
 
     private : // Variables for users access
         bool m_opened;
+
+    public: // 
+        Json::Value                         _recentFiles;
 
 };
 
