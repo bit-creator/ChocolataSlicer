@@ -249,7 +249,7 @@ void ChocolataSlicer::draw() {
     ci::gl::setMatrices(m_camera );
 
 
-    // Draw Grid + Axises
+    // FIXME: Draw Grid + Axises
     uint32_t lines = 6, offset = 2;
     ci::gl::color(1,1,1, 0.4);
     for (int i = 1; i <= lines; i ++ ) {

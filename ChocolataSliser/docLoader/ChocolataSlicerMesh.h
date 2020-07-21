@@ -94,6 +94,8 @@ class Mesh : public TriMesh
 
         void stat() noexcept;
 
+        bool isEmpty() noexcept;
+
     public:   // CONSTRUCT
         Mesh ( _filename_t filename ) noexcept;
 
