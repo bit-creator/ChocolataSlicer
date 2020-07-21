@@ -6,6 +6,8 @@
 
 #include "labels.h"
 
+#include "docLoader/ChocolataSlicerMesh.h"
+
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
 void FileSelector::destroy() {
@@ -332,7 +334,37 @@ void FileSelector::loadObject( ) {
     }
 
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-        _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(32), _shaderPtr );
+        Mesh::_meshPtr_t _mesh;
+
+        if (_str_find(_lastPath, ".stl") == 0 )
+            _mesh = make_mesh(Mesh::File::_STL, _lastPath );
+
+        else if (_str_find(_lastPath, ".obj") == 0 )
+            _mesh = make_mesh(Mesh::File::_OBJ, _lastPath );
+
+        else if (_str_find(_lastPath, ".amf") == 0 )
+            _mesh = make_mesh(Mesh::File::_AMF, _lastPath );
+
+        else if (_str_find(_lastPath, ".3mf") == 0 )
+            _mesh = make_mesh(Mesh::File::_3MF, _lastPath );
+
+
+
+        if (_mesh->isEmpty() ) {
+            _batch = ci::gl::Batch::create(ci::geom::Cube(), _shaderPtr );  // Default Cube model
+        }
+        else {
+            try {
+                _batch = ci::gl::Batch::create(*_mesh, _shaderPtr );
+            }
+            catch (ci::Exception& e) {
+                CI_LOG_EXCEPTION("Model loading", e );
+
+                _batch = ci::gl::Batch::create(ci::geom::Cube(), _shaderPtr );  // Cube model
+            }
+        }
+
+
     }
 
 

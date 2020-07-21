@@ -93,6 +93,10 @@ void Mesh::conf() noexcept
     recalculateBitangents();
 }
 
+bool Mesh::isEmpty() noexcept {
+    return (getNumTriangles() < 1) ? true : false;
+}
+
 Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
     Mesh::_filename_t filename) noexcept
 {
