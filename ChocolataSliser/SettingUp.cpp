@@ -77,6 +77,6 @@ void ChocolataSlicer::setup() {
     );
     // itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), _sh );
 
-    itm->_batchPtr = ci::gl::Batch::create(*make_mesh( Mesh::File::_STL, "assets/test_models/pantera.stl"), _sh );
+    itm->_batchPtr = ci::gl::Batch::create(*make_mesh( Mesh::File::_STL, "assets/test_models/puramida.stl"), _sh );
 
 }

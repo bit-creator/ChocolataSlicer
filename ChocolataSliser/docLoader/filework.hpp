@@ -907,6 +907,10 @@ namespace Filework
     {
         cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
 
+        // auto mesh = cinder::TriMesh::create(loader);
+
+        // model = cinder::TriMesh::create(loader);
+
         return in;
     }
 

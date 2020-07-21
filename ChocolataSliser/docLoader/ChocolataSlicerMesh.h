@@ -54,7 +54,7 @@ class Mesh : public TriMesh
 
                 std::hash < std::string > hesher;
 
-                return  hesher(bit);
+                return hesher(bit);
             }
         }; // STRUCT__HESHER
 
