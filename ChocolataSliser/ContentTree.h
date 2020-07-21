@@ -129,6 +129,9 @@ class ContentTree {
 
         void destroy();
 
+
+        void swapShaders(ci::gl::GlslProgRef _shader );
+
     public :
         std::vector<ContentItemRef>                     _items; // Main items storage of slicer
 

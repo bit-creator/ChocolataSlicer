@@ -13,6 +13,8 @@
 #include "ui/uiViewport.h"
 #include "ContentTree.h"
 
+#include "ShaderTree.h"
+
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
     CI_LOG_I("ChocolataApp ~> DisplaySize : " << getDisplay()->getSize().x << "px | " << getDisplay()->getSize().y << "px" );
@@ -65,17 +67,12 @@ void ChocolataSlicer::setup() {
 
 
     // Test object
-    ci::gl::GlslProgRef _sh = ci::gl::GlslProg::create(
-        ci::loadFile("assets/shaders/Velvety.vs.glsl"),
-        ci::loadFile("assets/shaders/Velvety.fs.glsl")
-    );
-
     ContentItemRef itm = ContentTree::getInstance().pushItem(
         ContentItem::create("ModelObject:01",
-            ci::gl::Texture2dRef(nullptr)
+            ci::gl::Batch::create(ci::geom::Cube().subdivisions(2), ShaderTree::getInstance().velvetyShader() )
         )
     );
-    // itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), _sh );
+    // itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ShaderTree::getInstance().velvetyShader() );
 
     // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "assets/test_models/pantera.stl");
     // itm->_batchPtr = ci::gl::Batch::create(*ms, _sh );

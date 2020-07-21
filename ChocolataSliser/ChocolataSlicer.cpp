@@ -14,6 +14,9 @@ void ChocolataSlicer::cleanup() {
     // FileSelector
     FileSelector::getInstance().destroy();
 
+    // ShaderTree
+    ShaderTree::getInstance().destroy();
+
 }
 
 /**

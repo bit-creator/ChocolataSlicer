@@ -95,3 +95,12 @@ void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
     }
 
 }
+
+
+void ContentTree::swapShaders(ci::gl::GlslProgRef _shader ) {
+    for (auto it : _items ) {
+        if (it->_batchPtr == nullptr ) continue;
+
+        it->_batchPtr->replaceGlslProg(_shader );
+    }
+}

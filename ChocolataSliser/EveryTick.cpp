@@ -125,6 +125,28 @@ void ChocolataSlicer::drawUI() {
             }
 
 
+            // ViewMode
+            static const Json::Value::Members _list = Json::Value::Members({"Shaded", "Wireframe", "Solid" } ); 
+            if (ImGui::Combo("ViewMode", &_viewMode, _list ) ) {
+                switch (_viewMode) {
+                    case (0) : {
+                        ci::gl::disableWireframe();
+                        ContentTree::getInstance().swapShaders(ShaderTree::getInstance().velvetyShader() );
+                        break;
+                    }
+                    case (1) : {
+                        ci::gl::enableWireframe();
+                        ContentTree::getInstance().swapShaders(ShaderTree::getInstance().colorShader() );
+                        break;
+                    }
+                    case (2) : {
+                        ci::gl::disableWireframe();
+                        ContentTree::getInstance().swapShaders(ShaderTree::getInstance().solidShader() );
+                        break;
+                    }
+                }
+            }
+
             ImGui::EndMenuBar();
         }
 
