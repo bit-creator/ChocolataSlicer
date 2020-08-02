@@ -13,11 +13,14 @@ void ChocolataSlicer::resize() {
 	ci::gl::setMatrices(m_camera );
 
     m_cameraui.setWindowSize(getWindowSize() );
+
+    ObjectPicker::getInstance().resize();
+
 }
 
 void ChocolataSlicer::update() {
     drawUI();
-
+    
 }
 
 void ChocolataSlicer::drawUI() {
@@ -233,7 +236,6 @@ void ChocolataSlicer::drawUI() {
                 ImGui::TextColored(ImVec4(0,0,0,0.7), "  No selected object");
             }
 
-
         m_window_editor->End();
     }
     if (m_window_content->_opened ) {
@@ -288,8 +290,6 @@ void ChocolataSlicer::draw() {
     ci::gl::color(0,0,1);
     ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
 
-
-
     ContentTree::getInstance().drawObjectsToScene(&m_camera );
 
 }
@@ -302,6 +302,9 @@ void ChocolataSlicer::mouseDrag(ci::app::MouseEvent event ) {
 
 void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
     m_cameraui.mouseDown( event );
+
+    ObjectPicker::getInstance().calculateSelection(&m_camera, event );
+
 }
 
 void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {

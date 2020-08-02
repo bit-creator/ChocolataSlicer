@@ -14,6 +14,7 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ChocolataSlicer.cpp
 	${APP_PATH}/ShaderTree.cpp
 	${APP_PATH}/ContentTree.cpp
+	${APP_PATH}/ObjectPicker.cpp
 	${APP_PATH}/config/cstringFunctions.cpp
 	${APP_PATH}/config/jsonConfig.cpp
 

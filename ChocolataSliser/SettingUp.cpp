@@ -67,14 +67,26 @@ void ChocolataSlicer::setup() {
 
 
     // Test object
-    ContentItemRef itm = ContentTree::getInstance().pushItem(
-        ContentItem::create("ModelObject:01",
+    ContentTree::getInstance().pushItem(
+        ContentItem::create("Cube:1",
             ci::gl::Batch::create(ci::geom::Cube().subdivisions(2), ShaderTree::getInstance().velvetyShader() )
         )
     );
-    // itm->_batchPtr = ci::gl::Batch::create(ci::geom::Sphere().subdivisions(32), ShaderTree::getInstance().velvetyShader() );
 
-    // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "assets/test_models/pantera.stl");
-    // itm->_batchPtr = ci::gl::Batch::create(*ms, _sh );
+    ContentItemRef itm0 = ContentTree::getInstance().pushItem(
+        ContentItem::create("Sphere:1",
+            ci::gl::Batch::create(ci::geom::Sphere().subdivisions(2), ShaderTree::getInstance().velvetyShader() )
+        )
+    );
+    itm0->_position = {2,0,0};
+
+
+    // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/Pantera.stl" );
+    // ci::gl::BatchRef _panteraBatch = ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() );
+    // ContentTree::getInstance().pushItem(
+    //     ContentItem::create("Pantera:1", 
+    //         _panteraBatch
+    //     )
+    // );
 
 }
