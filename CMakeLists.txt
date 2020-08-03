@@ -12,7 +12,9 @@ include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 set(SRC_CHOCOLATA_SLICER
 	# Main sources
 	${APP_PATH}/ChocolataSlicer.cpp
+	${APP_PATH}/ShaderTree.cpp
 	${APP_PATH}/ContentTree.cpp
+	${APP_PATH}/ObjectPicker.cpp
 	${APP_PATH}/config/cstringFunctions.cpp
 	${APP_PATH}/config/jsonConfig.cpp
 
@@ -27,9 +29,6 @@ set(SRC_CHOCOLATA_SLICER
 
 	${APP_PATH}/ui/uiAbout.cpp
 
-	
-	${APP_PATH}/Cinder/include/glfw
-
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
@@ -39,6 +38,7 @@ set(INC_CHOCOLATA_SLICER
 
 	# DocLoader
 	${APP_PATH}/docLoader
+	
 )
 
 ci_make_app(

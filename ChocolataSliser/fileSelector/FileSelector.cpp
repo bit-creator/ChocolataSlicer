@@ -7,12 +7,13 @@
 #include "labels.h"
 
 #include "docLoader/ChocolataSlicerMesh.h"
+#include "ShaderTree.h"
 
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
 void FileSelector::destroy() {
     _texturePtr.reset();
-    _shaderPtr.reset();
+    // _shaderPtr.reset();
     _FboPtr.reset();
 
     _batch.reset();
@@ -59,17 +60,18 @@ void FileSelector::initFileSelector() {
 
 
     // Shader
-    try {
-        _shaderPtr = ci::gl::GlslProg::create( ci::loadFile("assets/shaders/Velvety.vs.glsl"),
-                                               ci::loadFile("assets/shaders/Velvety.fs.glsl")
-        );
-    }
-    catch (ci::Exception& e ) {
-        CI_LOG_EXCEPTION("FileSelector shader loading", e);
-    }
+    // try {
+    //     _shaderPtr = ci::gl::GlslProg::create( ci::loadFile("assets/shaders/Velvety.vs.glsl"),
+    //                                            ci::loadFile("assets/shaders/Velvety.fs.glsl")
+    //     );
+    //     // _shaderPtr = 
+    // }
+    // catch (ci::Exception& e ) {
+    //     CI_LOG_EXCEPTION("FileSelector shader loading", e);
+    // }
 
 
-    _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), _shaderPtr );
+    _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ShaderTree::getInstance().velvetyShader() );
 
 }
 
@@ -211,9 +213,9 @@ void FileSelector::draw() {
                 ci::gl::setMatrices(_cameraPersp );
 
                 /* Draw model */
-                if (_shaderPtr != nullptr ) {
-                    _shaderPtr->uniform("ciEyePos", _cameraPersp.getEyePoint() );
-                    _shaderPtr->uniform("ciCameraUp", glm::cross(_cameraPersp.getViewDirection(), glm::vec3(1,0,0)) );
+                if (ShaderTree::getInstance().velvetyShader() != nullptr ) {
+                    _batch->getGlslProg()->uniform("ciEyePos", _cameraPersp.getEyePoint() );
+                    _batch->getGlslProg()->uniform("ciCameraUp", glm::cross(_cameraPersp.getViewDirection(), glm::vec3(1,0,0)) );
                     _batch->draw();
                 }
                 else {
@@ -355,16 +357,16 @@ void FileSelector::loadObject( ) {
 
 
         if (_mesh->isEmpty() ) {
-            _batch = ci::gl::Batch::create(ci::geom::Cube(), _shaderPtr );  // Default Cube model
+            _batch = ci::gl::Batch::create(ci::geom::Cube(), ShaderTree::getInstance().velvetyShader() );  // Default Cube model
         }
         else {
             try {
-                _batch = ci::gl::Batch::create(*_mesh, _shaderPtr );
+                _batch = ci::gl::Batch::create(*_mesh, ShaderTree::getInstance().velvetyShader() );
             }
             catch (ci::Exception& e) {
                 CI_LOG_EXCEPTION("Model loading", e );
 
-                _batch = ci::gl::Batch::create(ci::geom::Cube(), _shaderPtr );  // Cube model
+                _batch = ci::gl::Batch::create(ci::geom::Cube(), ShaderTree::getInstance().velvetyShader() );  // Cube model
             }
         }
 

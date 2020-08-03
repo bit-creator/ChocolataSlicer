@@ -18,9 +18,9 @@ static std::vector<std::pair<const char*, const char*> > Labels = std::initializ
 
     { "windowPosition", "winPos" },                             // Label_winPos
 
-    { "windowFrameRate", "winFrameRate" },                         // Label_winFrameRate
+    { "windowFrameRate", "winFrameRate" },                      // Label_winFrameRate
 
-    { "recentFiles", "" },                                     // Label_recentFiles
+    { "recentFiles", "" },                                      // Label_recentFiles
 
 };
 

@@ -84,6 +84,7 @@ void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
     for (auto _itemIt : _items ) {
         if (_itemIt->_batchPtr == nullptr ) continue;
 
+        ci::gl::setModelMatrix(glm::mat4(1.0) );
         ci::gl::color(0.7,0.7,0.7);
         ci::gl::translate(_itemIt->_position );
         ci::gl::rotate(_itemIt->_rotate );
@@ -94,4 +95,13 @@ void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
         _itemIt->_batchPtr->draw();
     }
 
+}
+
+
+void ContentTree::swapShaders(ci::gl::GlslProgRef _shader ) {
+    for (auto it : _items ) {
+        if (it->_batchPtr == nullptr ) continue;
+
+        it->_batchPtr->replaceGlslProg(_shader );
+    }
 }

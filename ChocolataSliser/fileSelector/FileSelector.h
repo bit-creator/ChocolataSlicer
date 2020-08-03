@@ -122,7 +122,6 @@ class FileSelector {
         Mesh::_meshPtr_t                    _mesh;
 
         ci::gl::BatchRef                    _batch;
-        ci::gl::GlslProgRef                 _shaderPtr;
 
         ci::gl::FboRef                      _FboPtr;
 

@@ -10,8 +10,12 @@
 #include "ui/ui.h"
 #include "FileSelector.h"
 #include "ContentTree.h"
+#include "ObjectPicker.h"
 #include "docLoader/ChocolataSlicerMesh.h"
 #include "vertexcloud.hpp"
+
+#include "ShaderTree.h"
+
 
 #define __ChocolataSlicer_Version_ "0.1.1"
 #define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
@@ -75,9 +79,11 @@ class ChocolataSlicer : public ci::app::App {
         ci::CameraPersp         m_camera;
         ci::CameraUi			m_cameraui;
 
-    public: // slicing components
-        Slicer::vertexCloud     m_cloud;
+
+        int                     _viewMode = 0;
+
         bool                    m_sliced = false;
+
 
 };
 

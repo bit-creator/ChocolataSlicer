@@ -66,7 +66,8 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "unordered_set": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.ipp": "cpp"
     },
     "cSpell.words": [
         "FBOs",
