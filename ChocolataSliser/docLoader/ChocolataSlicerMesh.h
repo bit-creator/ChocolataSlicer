@@ -1,38 +1,62 @@
 /**
- * Copyright (C) 2020 Chocolata Printer oficial software (Autor Abernihin Ilia & Velichko Bohdan)
+ * Copyright (C) 2020 Chocolata Printer oficial software, All right reserved.
  *
- * All right reserved.
+ * Autors: Abernihin Ilia & Velichko Bohdan
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
+ * that the following conditions are met:
  *
- * 1. something :)
+ *  * Redistributions of source code must retain the above copyright notice, this list of conditions and
+ * the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  *
  *
- * Abstract: this is declaretion of Mesh
- *
+ * Abstract: this is declaration of Mesh
  */
 
 #ifndef CHOCOLATASLICERMESH_H
 #define CHOCOLATASLICERMESH_H
 
-#include <list>
-#include <string>
-#include <algorithm>
 #include <map>
+#include <list>
+#include <cmath>
+#include <string>
+#include <optional>
+#include <algorithm>
 
 #include "geometry.hpp"
+// #include "../vertexCloud/vertexcloud.h"
+
 #include "../Cinder/include/cinder/TriMesh.h"
 
-using Geometry::_vectorPtr;
-using Geometry::_vertexPtr;
-using Geometry::_trianglePtr;
+using               Geometry::_vectorPtr;         // Pointer on geometric Vector
+using               Geometry::_vertexPtr;         // Pointer on geometric Vertex
+using               Geometry::_trianglePtr;       // Pointer on triangle
+using               cinder::TriMesh;              // Visualizing Mesh
 
-using namespace cinder;
-
+/**
+ * @class Mesh is abstract base for 3D Mesh objects
+ * Mesh improved vertex and triangle arrays
+ * also gabarite sizes for standart axes
+ * Mesh this is a cinder::TriMesh derived class,
+ * TriMesh improve visualize Mesh
+ */
 class Mesh : public TriMesh
 {
-    public:    // FILES
+    public:
+        /**
+         * @class File has MIME type geometry who can be opened
+         */
         enum class File
         {
             _STL,
@@ -43,6 +67,9 @@ class Mesh : public TriMesh
             _PLY
         };
 
+        /**
+         * @struct _Heasher is functor who ganerate unique Hesh key
+         */
         struct _Hesher
         {
             size_t
@@ -56,63 +83,145 @@ class Mesh : public TriMesh
 
                 return hesher(bit);
             }
-        }; // STRUCT__HESHER
+        }; // STRUCT_HESHER
 
+        /**
+         * #struct _Equal is functor who comparisson two geometric vertex
+         */
         struct _Equal
         {
                 bool
                 operator()(const _vertexPtr lhr, const _vertexPtr rhr) const noexcept
                 { return *lhr == *rhr; }
-        }; // STRUCT__EQUALs
+        }; // STRUCT__EQUAL
 
     public:    // TYPES
-        using _meshPtr_t    = std::unique_ptr < Mesh >;
-        using _triangleData = std::list < _trianglePtr >;
+        using _meshPtr_t    = std::shared_ptr < Mesh >;                         // pointer on Mesh
+        using _triangleData = std::list < _trianglePtr >;                       // array of triangle
         using _vertexData   = std::unordered_map < _vertexPtr, uint32_t,
-                                                   _Hesher   , _Equal >;
-        using _filename_t   = std::string;
-        using _stat_t       = uint64_t;
+                                                   _Hesher   , _Equal >;        // array of verrtex
+        using _filename_t   = std::string;                                      // Mesh name type
+        using _stat_t       = uint64_t;                                         // type for statict
 
     protected:   // DATA
-        _filename_t                  __filename;
-        _vertexData                  __vertexData;
-        _triangleData                __triangleData;
+        _filename_t                  __filename;                // full or ralative path
+        _vertexData                  __vertexData;              // array of this vertex
+        _triangleData                __triangleData;            // array of this triangle
 
-    private:    // DATA
-        _stat_t                      _vertices;
-        _stat_t                      _triangles;
+    private:   // GABARITS
+        float                        _g_x = 0;                  // gabatited sizes
+        float                        _g_y = 0;                  // gabatited sizes
+        float                        _g_z = 0;                  // gabatited sizes
 
     public:
-        bool _valid = false;
+        bool _valid = false;            // What is this????
 
-    public:    // STATISTICS_GETTER
+    public:    // GETTER
+        /**
+         * @brief use special type for reeturned value
+         * @brief no change object
+         * @brief no throw the exeption
+         * @return num of verticies
+         */
         const _stat_t
         getVertices( ) const noexcept;
 
+        /**
+         * @brief use special type for reeturned value
+         * @brief no change object
+         * @brief no throw the exeption
+         * @return num of triangle
+         */
         const _stat_t
         getTriangles( ) const noexcept;
 
-        void stat() noexcept;
+        /**
+         * @brief getter for data of triangle
+         * @brief no change object
+         * @brief no throw the exeption
+         * @return constant reference on triangle list
+         */
+        const _triangleData&
+        getTriangleArray( ) const noexcept;
 
+        /**
+         * @brief needed for vertex cloud only
+         * @brief no change object
+         * @brief no throw the exeption
+         * @return gabarit size on Z axis
+         */
+        const float
+        getModelHeights( ) const noexcept;
+
+        /**
+         * @brief calcs the value of model gabarit on X Y Z axis
+         * @brief no throw exeption
+         */
+        void
+        calculateGabarit( ) noexcept;
+
+        /**
+         * @brief autofixing problems triangle
+         * @brief no throw exeption
+         */
+        void
+        fixAllTriangle() noexcept;
+
+        /**
+         * @brief calculate next layer use previous
+         * @param prev previous layer height
+         * return next layer height or std::nullopt_t
+         * @brief no change object
+         * @brief no throw the exeption
+         */
+        std::optional < float >
+        nextLayerHeight(const float prev) const noexcept;
+
+        /**
+         * @brief empty conditional test
+         * @brief no throw the exeption
+         * @return true if triangle and vertex arrays empty
+         */
         bool isEmpty() noexcept;
 
     public:   // CONSTRUCT
+        /**
+         * (constructor) create empty model with correct path
+         * no throw exeption
+         */
         Mesh ( _filename_t filename ) noexcept;
 
+        /**
+         * copy/move (constructor) create model equal another
+         * nothrow exeption
+         * @param mesh another mesh
+         */
         Mesh ( const Mesh& mesh ) noexcept;
         Mesh ( const Mesh&& mesh ) noexcept;
 
+        /**
+         * copy/move assigned operator create model equal another
+         * nothrow exeption
+         * @param mesh another mesh
+         */
         Mesh& operator = ( const Mesh& mesh ) noexcept;
         Mesh& operator = ( const Mesh&& mesh ) noexcept;
 
+        /**
+         * virtual (destructor) no throw exeption
+         */
         virtual ~Mesh ( ) noexcept;
 
-    public:
+    public: // abstract interface for inheritance
         virtual bool open() noexcept = 0;
         virtual bool save() const noexcept = 0;
         virtual bool destroy() noexcept = 0;
 
-    private:
+    private: // internal method
+        /**
+         * @brief configurate files data with TriMesh data arrays
+         * @brief for visualize model no throw exeption
+         */
         void conf() noexcept;
 
        // FRIEND_FOO_DECL

@@ -93,8 +93,85 @@ void Mesh::conf() noexcept
     recalculateBitangents();
 }
 
-bool Mesh::isEmpty() noexcept {
-    return (getNumTriangles() < 1) ? true : false;
+bool Mesh::isEmpty() noexcept
+{ return __triangleData.empty() && __vertexData.empty(); }
+
+const Mesh::_triangleData&
+Mesh::getTriangleArray() const noexcept
+{ return __triangleData; }
+
+const float
+Mesh::getModelHeights() const noexcept
+{ return _g_z; }
+
+void Mesh::calculateGabarit() noexcept
+{
+    auto tempX = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getX() > v_2.first -> getX();}
+    );
+
+    auto tempY = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getY() > v_2.first -> getY();}
+    );
+
+    auto tempZ = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getZ() > v_2.first -> getZ();}
+    );
+
+    _g_x = std::abs(tempX.first -> first -> getX() - tempX.second -> first -> getX());
+    _g_y = std::abs(tempY.first -> first -> getY() - tempY.second -> first -> getY());
+    _g_z = std::abs(tempZ.first -> first -> getZ() - tempZ.second -> first -> getZ());
+}
+
+void Mesh::fixAllTriangle() noexcept
+{
+    std::for_each
+    (
+        __triangleData.begin(),
+        __triangleData.end(),
+        [] (auto triangle) -> void
+        { triangle -> fixTriangle(); }
+    );
+}
+
+std::optional < float >
+Mesh::nextLayerHeight(const float prev) const noexcept
+{
+    std::optional < float > minCos = {};   // max angle
+
+    float min = 0.07;           // need defined configs value
+    float max = 0.3;            // need defined configs value
+    float intersection = 0.01;  // need defined configs value
+
+    std::for_each
+    (
+        __triangleData.cbegin(),
+        __triangleData.cend(),
+        [&minCos, prev, min, max] (auto triangle) mutable -> void
+        {
+            if (triangle -> onRange(prev + min) || triangle -> onRange(prev + max))
+            {
+                if(!minCos) minCos = 0.;
+                if (auto angle = triangle -> getNormal().normalAngle();
+                    angle < *minCos ) minCos = angle;
+            }
+        }
+    );
+
+    if(minCos) return prev + std::sqrt(std::pow(1 / *minCos, 2) - 1) * intersection;
+    return {};
 }
 
 Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
@@ -309,16 +386,10 @@ void save_mesh_as(Mesh::File file_type, const Mesh::_meshPtr_t& model,
 
 const Mesh::_stat_t Mesh::getVertices( ) const noexcept
 {
-    return _vertices;
+    return __vertexData.size();
 }
 
 const Mesh::_stat_t Mesh::getTriangles( ) const noexcept
 {
-    return _triangles;
-}
-
-void Mesh::stat() noexcept
-{
-    _vertices = __vertexData.size();
-    _triangles = __triangleData.size();
+    return __triangleData.size();
 }

@@ -11,7 +11,7 @@
 #include "FileSelector.h"
 #include "ContentTree.h"
 #include "docLoader/ChocolataSlicerMesh.h"
-#include "vertexCloud/vertexcloud.h"
+#include "vertexcloud.hpp"
 
 #define __ChocolataSlicer_Version_ "0.1.1"
 #define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
@@ -76,7 +76,7 @@ class ChocolataSlicer : public ci::app::App {
         ci::CameraUi			m_cameraui;
 
     public: // slicing components
-        Slice::vertexCloud      m_cloud;
+        Slicer::vertexCloud     m_cloud;
         bool                    m_sliced = false;
 
 };
