@@ -3,25 +3,19 @@
 
 Mesh::Mesh(_filename_t filename) noexcept
     : __filename ( filename )
-{
-
-}
+{ }
 
 Mesh::Mesh(const Mesh& mesh) noexcept
     : __filename    (mesh.__filename    )
     , __vertexData  (mesh.__vertexData  )
     , __triangleData(mesh.__triangleData)
-{
-
-}
+{ fixAllTriangle(); calculateGabarit(); }
 
 Mesh::Mesh(const Mesh&& mesh) noexcept
     : __filename    (std::move(mesh.__filename)    )
     , __vertexData  (std::move(mesh.__vertexData)  )
     , __triangleData(std::move(mesh.__triangleData))
-{
-
-}
+{ fixAllTriangle(); calculateGabarit(); }
 
 Mesh::~Mesh( ) noexcept
 {
@@ -52,45 +46,45 @@ Mesh& Mesh::operator = ( const Mesh&& mesh ) noexcept
 
 void Mesh::conf() noexcept
 {
-    std::for_each
-    (
-        __triangleData.cbegin(),
-        __triangleData.cend(),
-        [this](_trianglePtr triangle) mutable -> void
-        {
-            mIndices.insert
-            (
-                mIndices.end(),
-                {
-                    __vertexData [ triangle -> getVertex_A() ],
-                    __vertexData [ triangle -> getVertex_B() ],
-                    __vertexData [ triangle -> getVertex_C() ],
-                }
-            );
-        }
-    );
-
-    std::for_each
-    (
-        __vertexData.cbegin(),
-        __vertexData.cend(),
-        [this](auto vert) mutable -> void
-        {
-            mPositions.insert
-            (
-                mPositions.begin(),
-                {
-                    vert.first -> getX(),
-                    vert.first -> getY(),
-                    vert.first -> getZ(),
-                }
-            );
-        }
-    );
-
-    recalculateNormals();
-    recalculateTangents();
-    recalculateBitangents();
+//     std::for_each
+//     (
+//         __triangleData.cbegin(),
+//         __triangleData.cend(),
+//         [this](_trianglePtr triangle) mutable -> void
+//         {
+//             mIndices.insert
+//             (
+//                 mIndices.end(),
+//                 {
+//                     __vertexData [ triangle -> getVertex_A() ],
+//                     __vertexData [ triangle -> getVertex_B() ],
+//                     __vertexData [ triangle -> getVertex_C() ],
+//                 }
+//             );
+//         }
+//     );
+//
+//     std::for_each
+//     (
+//         __vertexData.cbegin(),
+//         __vertexData.cend(),
+//         [this](auto vert) mutable -> void
+//         {
+//             mPositions.insert
+//             (
+//                 mPositions.begin(),
+//                 {
+//                     vert.first -> getX(),
+//                     vert.first -> getY(),
+//                     vert.first -> getZ(),
+//                 }
+//             );
+//         }
+//     );
+//
+//     recalculateNormals();
+//     recalculateTangents();
+//     recalculateBitangents();
 }
 
 bool Mesh::isEmpty() noexcept
@@ -106,33 +100,35 @@ Mesh::getModelHeights() const noexcept
 
 void Mesh::calculateGabarit() noexcept
 {
-    auto tempX = std::minmax_element
+    if (__vertexData.empty()) std::cout << "YOU ARE DYRAK";
+
+    auto [minX, maxX] = std::minmax_element
     (
         __vertexData.cbegin(),
         __vertexData.cend(),
         [] (auto v_1, auto v_2) -> bool
-        { return  v_1.first -> getX() > v_2.first -> getX();}
+        { return  v_1.first -> getX() < v_2.first -> getX(); }
     );
 
-    auto tempY = std::minmax_element
+    auto [minY, maxY] = std::minmax_element
     (
         __vertexData.cbegin(),
         __vertexData.cend(),
         [] (auto v_1, auto v_2) -> bool
-        { return  v_1.first -> getY() > v_2.first -> getY();}
+        { return  v_1.first -> getY() < v_2.first -> getY();}
     );
 
-    auto tempZ = std::minmax_element
+    auto [minZ, maxZ] = std::minmax_element
     (
         __vertexData.cbegin(),
         __vertexData.cend(),
         [] (auto v_1, auto v_2) -> bool
-        { return  v_1.first -> getZ() > v_2.first -> getZ();}
+        { return  v_1.first -> getZ() < v_2.first -> getZ();}
     );
 
-    _g_x = std::abs(tempX.first -> first -> getX() - tempX.second -> first -> getX());
-    _g_y = std::abs(tempY.first -> first -> getY() - tempY.second -> first -> getY());
-    _g_z = std::abs(tempZ.first -> first -> getZ() - tempZ.second -> first -> getZ());
+    _g_x = maxX -> first -> getX() - minX -> first -> getX();
+    _g_y = maxY -> first -> getY() - minY -> first -> getY();
+    _g_z = maxZ -> first -> getZ() - minZ -> first -> getZ();
 }
 
 void Mesh::fixAllTriangle() noexcept
@@ -149,11 +145,11 @@ void Mesh::fixAllTriangle() noexcept
 std::optional < float >
 Mesh::nextLayerHeight(const float prev) const noexcept
 {
-    std::optional < float > minCos = {};   // max angle
+    std::optional < float > minCos = std::nullopt;   // max angle
 
     float min = 0.07;           // need defined configs value
     float max = 0.3;            // need defined configs value
-    float intersection = 0.01;  // need defined configs value
+    float intersection = 0.051; // need defined configs value
 
     std::for_each
     (
@@ -161,71 +157,61 @@ Mesh::nextLayerHeight(const float prev) const noexcept
         __triangleData.cend(),
         [&minCos, prev, min, max] (auto triangle) mutable -> void
         {
+            // Geometry::Triangle::onTerm(triangle);
             if (triangle -> onRange(prev + min) || triangle -> onRange(prev + max))
             {
-                if(!minCos) minCos = 0.;
+                // std::cout << triangle -> getNormal().normalAngle() << '\n';
+
+                // std::cout << "_______________CONDISHION__________________" << '\n' << prev + min << '\t' << prev + max << '\n' << "_______________CONDISHION__________________\n";
+                // Geometry::Triangle::onTerm(triangle);
+                if(!minCos) minCos = 1.f;
                 if (auto angle = triangle -> getNormal().normalAngle();
-                    angle < *minCos ) minCos = angle;
+                    std::abs(angle) < *minCos ) minCos = std::abs(angle);
             }
         }
     );
 
-    if(minCos) return prev + std::sqrt(std::pow(1 / *minCos, 2) - 1) * intersection;
-    return {};
+    std::cout << '\n';
+
+    if (minCos)
+    {
+        auto res = std::sqrt ( ( 1 - *minCos ) * ( 1 + *minCos ) ) * intersection;
+
+        // std::cout << *minCos << '\t' << res << '\n';
+
+        if(*minCos != 0) res /= *minCos;
+        else return prev + max;
+
+        if (res <= min) return prev + min;
+        if (res >= max) return prev + max;
+        if (res >=   0) return prev + res;
+    }
+    return std::nullopt;
 }
 
 Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
     Mesh::_filename_t filename) noexcept
 {
-    if (file_type == Mesh::File::_STL)
-    {
-        auto tmp = std::make_unique<Filework::STL>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
+    Mesh::_meshPtr_t result = nullptr;
+    if (file_type == Mesh::File::_STL) result = std::make_shared<Filework:: STL>(filename);
+    if (file_type == Mesh::File::_OBJ) result = std::make_shared<Filework:: OBJ>(filename);
+    if (file_type == Mesh::File::_AMF) result = std::make_shared<Filework:: AMF>(filename);
+    if (file_type == Mesh::File::_3MF) result = std::make_shared<Filework::_3MF>(filename);
+    if (file_type == Mesh::File::_FBX) result = std::make_shared<Filework:: FBX>(filename);
+    if (file_type == Mesh::File::_PLY) result = std::make_shared<Filework:: PLY>(filename);
 
-    if (file_type == Mesh::File::_OBJ)
-    {
-        auto tmp = std::make_unique<Filework::OBJ>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
+    auto fut = std::async
+    (
+        std::launch::async,
+        [result] () -> void
+        {
+            if(result == nullptr) return;
+            result -> open();
+            result -> conf();
+        }
+    );
 
-    if (file_type == Mesh::File::_AMF)
-    {
-        auto tmp = std::make_unique<Filework::AMF>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_3MF)
-    {
-        auto tmp = std::make_unique<Filework::_3MF>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_FBX)
-    {
-        auto tmp = std::make_unique<Filework::FBX>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_PLY)
-    {
-        auto tmp = std::make_unique<Filework::PLY>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-    // etc...
-    return nullptr;
+    return result;
 }
 
 bool add_in_this_mesh(Mesh::File file_type,

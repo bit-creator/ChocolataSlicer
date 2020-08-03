@@ -32,11 +32,11 @@
 #include <iostream>
 #include <bitset>
 #include <unordered_set>
-#include <future>
+// #include <future>
 #include <algorithm>
 #include <cstring>
 
-#include "../Cinder/include/cinder/ObjLoader.h"
+// #include "../Cinder/include/cinder/ObjLoader.h"
 #include "geometry.hpp"
 #include "ChocolataSlicerMesh.h"
 
@@ -116,9 +116,9 @@ namespace Filework
                     void operator()(STL& model) const noexcept
                     { model.__triangleData.emplace_back ( std::make_shared < Geometry::Triangle > (
                                              Geometry::Vector ( normalX,   normalY,   normalZ   ),
-                        model.findOrCreate ( Geometry::Vertex ( point_A_X, point_A_Y, point_A_Z )),
-                        model.findOrCreate ( Geometry::Vertex ( point_B_X, point_B_Y, point_B_Z )),
-                        model.findOrCreate ( Geometry::Vertex ( point_C_X, point_C_Y, point_C_Z )))); }
+                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_A_X, point_A_Y, point_A_Z ))),
+                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_B_X, point_B_Y, point_B_Z ))),
+                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_C_X, point_C_Y, point_C_Z ))))); }
 
                     void operator()(const _trianglePtr& triangle) noexcept
                     {
@@ -138,8 +138,9 @@ namespace Filework
             }; // STRUCT_POLIGON
 
         private:  //SPECIFIC_STL_INFO
-            _header_t __header[80];     // 80 byte of header in file begin
-            _number_t __number;     // triangle number in model
+                           _header_t                    __header[80];           // 80 byte of header in file begin
+                           _number_t                    __number;               // triangle number in model
+            inline static  _number_t                    __index        = 0;     // vertex index
 
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
@@ -189,17 +190,12 @@ namespace Filework
             {
                 bool result = false;
 
-                // std::async
-
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
+
+                fixAllTriangle(); calculateGabarit();
+
                 _valid = true;
-
-                //end async
-
-
-
-                std::cout << "\n\n" << getVertices() << "\t" << getTriangles() << "\n\n";
 
                 return result;
             }
@@ -270,11 +266,11 @@ namespace Filework
             {
                 auto [iterator, insert] = __vertexData.emplace
                     (
-                        std::make_pair
+                        std::move ( std::make_pair
                         (
                             std::make_shared<Geometry::Vertex>(std::move(vertex)),
-                            __vertexData.size()
-                        )
+                            ++__index
+                        ) )
                     );
                 return iterator -> first;
             }
@@ -894,6 +890,7 @@ namespace Filework
         STL::Poligon poligon;
         for(uint32_t num = 0; num < model.__number; ++num)
         {
+            // std::cout << "[ " << num << " / " << model.__number << " ]\t" << "triangle loaded\n";
             in.read((char*)&(poligon), 50);
             poligon(model);
         }
@@ -917,7 +914,7 @@ namespace Filework
 
     std::ifstream& operator >> (std::ifstream& in, OBJ& model) noexcept
     {
-        cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
+        // cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
 
         // auto mesh = cinder::TriMesh::create(loader);
 

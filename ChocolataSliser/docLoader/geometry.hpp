@@ -910,9 +910,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
              *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator + (const Vector& vec) const noexcept
-            { return std::move(Vector(_x + vec.getX(), _y + vec.getY(), _z + vec.getZ())); }
+            { return Vector(_x + vec.getX(), _y + vec.getY(), _z + vec.getZ()); }
 
             /**
              * @brief operator asignment multiply increase this vector
@@ -936,9 +936,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
              *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator * (const float& lambda) const noexcept
-            { return std::move(Vector(_x * lambda, _y * lambda, _z * lambda)); }
+            { return Vector(_x * lambda, _y * lambda, _z * lambda); }
 
             /**
              * @brief operator assignment minus decrease this vector
@@ -962,9 +962,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
              *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator - (Vector &vec) const noexcept
-            { return std::move(*this + vec * (-1.)); }
+            { return *this + vec * (-1.); }
 
             /**
              * @brief this method count scalar multiply
@@ -1007,7 +1007,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             */
             inline float
             normalAngle() const noexcept
-            { return VectorAngle(Vector(0., 1., 0.)); }
+            { return VectorAngle(Vector(0., 0., 1.)); }
 
         public:     // LOGIC_OPERATORS
             /**
@@ -1487,12 +1487,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 float a_x            =           __vertex_A -> getX();
                 float a_y            =           __vertex_A -> getY();
                 float a_z            =           __vertex_A -> getZ();
-                float b_x            =           __vertex_B -> getX();
-                float b_y            =           __vertex_B -> getY();
-                float b_z            =           __vertex_B -> getZ();
+                // float b_x            =           __vertex_B -> getX();
+                // float b_y            =           __vertex_B -> getY();
+                // float b_z            =           __vertex_B -> getZ();
                 float c_x            =           __vertex_C -> getX();
                 float c_y            =           __vertex_C -> getY();
-                float c_z            =           __vertex_C -> getZ();
+                // float c_z            =           __vertex_C -> getZ();
 
                 float k = - n_x / n_y;
                 float p = (n_x * a_x + n_y * a_y - n_z * (h - a_z)) / n_y;
@@ -1544,6 +1544,23 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             onRange(float height) const noexcept
             { return __vertex_A -> getZ() > height
                   && __vertex_C -> getZ() < height; }
+
+            static void
+            onTerm(const std::shared_ptr < Triangle >& triangle) noexcept
+            {
+                std::cout << "NORMAL\t" << triangle -> getNormal()   .  getX() << '\t';
+                std::cout               << triangle -> getNormal()   .  getY() << '\t';
+                std::cout               << triangle -> getNormal()   .  getZ() << '\n';
+                std::cout << "VERT_A\t" << triangle -> getVertex_A() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_A() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_A() -> getZ() << '\n';
+                std::cout << "VERT_B\t" << triangle -> getVertex_B() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_B() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_B() -> getZ() << '\n';
+                std::cout << "VERT_C\t" << triangle -> getVertex_C() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_C() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_C() -> getZ() << "\n\n";
+            }
 
 
         private:    // INTERNAL_METHOD

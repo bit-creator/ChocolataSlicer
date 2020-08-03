@@ -43,6 +43,7 @@ static void __preSettingUp(ci::app::App::Settings* settings ) {
 int main(int argc, char* argv[] ) {
     ci::app::RendererGl::Options _options = ci::app::RendererGl::Options().msaa(16);
     _options.stencil(true );
+    _options.setVersion(3,2);
 	cinder::app::RendererRef renderer( new ci::app::RendererGl(_options ) );
 	cinder::app::AppLinux::main<ChocolataSlicer>( renderer, "ChocolataSlicer", argc, argv, __preSettingUp );
 	return 0;

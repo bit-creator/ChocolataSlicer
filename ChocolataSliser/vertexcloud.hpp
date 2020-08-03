@@ -24,16 +24,37 @@
  * Abstract:
  */
 
-#ifndef VERTEXCLOUD_H
-#define VERTEXCLOUD_H
+#ifndef VERTEXCLOUD_HPP
+#define VERTEXCLOUD_HPP
 
 #include <map>
 #include <list>
+#include <vector>
 #include <algorithm>
 
-#include "../docLoader/geometry.hpp"
-#include "../docLoader/ChocolataSlicerMesh.h"
-#include "../ContentTree.h"
+#include "geometry.hpp"
+#include "ChocolataSlicerMesh.h"
+// #include "ContentTree.h"
+
+//  ____________________TEMPORARY________________________ //
+
+class ContentItem { public: Mesh::_meshPtr_t _meshPtr; };
+
+class ContentTree
+{
+    public:
+        static ContentTree&
+        getInstance()
+        { static ContentTree tree; return tree; }
+
+    public:
+        std::vector < std::shared_ptr < ContentItem > >        _items;
+
+    private:
+        ContentTree() {  }
+};
+
+//  ________________END_OF_TEMPORARY_____________________ //
 
 namespace Slicer
 {
@@ -44,52 +65,106 @@ namespace Slicer
   using vertexCloud = std::map  <   height, layer  >;
   using tempLayer   = std::list <  Geometry::cut_t >;
 
+  namespace
+  {
+      void
+      generateStaticLayerHeight(vertexCloud& cloud) noexcept
+      {
+
+      }
+
+      void
+      generateDynamicLayerHeight(vertexCloud& cloud) noexcept
+      {
+          float max = 0.3;  // need defined configs value
+
+          cloud.clear();
+
+          cloud.emplace
+          (
+            std::make_pair
+            (
+                0.2,
+                layer()
+            )
+          );
+
+          auto gabarits =
+          (*std::max_element
+            (
+                ContentTree::getInstance()._items.cbegin(),
+                ContentTree::getInstance()._items.cend(),
+                [] (auto item_1, auto item_2) -> bool
+                { return item_1 -> _meshPtr -> getModelHeights() >
+                         item_2 -> _meshPtr -> getModelHeights(); }
+            )
+          ) -> _meshPtr -> getModelHeights();
+
+          while(cloud.rbegin() -> first < gabarits - max)
+            std::for_each
+            (
+                ContentTree::getInstance()._items.cbegin(),
+                ContentTree::getInstance()._items.cend(),
+                [&cloud] (auto item) -> void
+                {
+                    if (auto layHeigh = item -> _meshPtr
+                        -> nextLayerHeight(cloud.rbegin() -> first);
+                    layHeigh)           // condition
+                    cloud.emplace
+                    (
+                        std::make_pair
+                        (
+                            *layHeigh,
+                            layer()
+                        )
+                    );
+                }
+            );
+      }
+  };
+
   void
   generateVertexCloud(vertexCloud& cloud) noexcept
   {
-      cloud.clear();
+      generateDynamicLayerHeight(cloud);
 
-      cloud.emplace
-      (
-        std::make_pair
-        (
-            0.2,
-            layer()
-        )
-      );
-
-      std::for_each
-      (
-        ContentTree::getInstance()._items.cbegin(),
-        ContentTree::getInstance()._items.cend(),
-        [] (auto item) -> void
-        {
-            if(true);
-        }
-    );
-
-      std::for_each
-      (
-        ContentTree::getInstance()._items.cbegin(),
-        ContentTree::getInstance()._items.cend(),
-        [] (auto item) -> void
-        {
-            // if(true);
-
-
-            std::for_each
-            (
-                item -> _meshPtr -> getTriangleArray().cbegin(),
-                item -> _meshPtr -> getTriangleArray().cend(),
-                [] (auto triangle) -> void
-                {
-
-                }
-            );
-        }
-    );
+  //     std::for_each
+  //     (
+  //       ContentTree::getInstance()._items.cbegin(),
+  //       ContentTree::getInstance()._items.cend(),
+  //       [] (auto item) -> void
+  //       {
+  //           std::for_each
+  //           (
+  //               item -> _meshPtr -> getTriangleArray().cbegin(),
+  //               item -> _meshPtr -> getTriangleArray().cend(),
+  //               [] (auto triangle) -> void
+  //               {
+  //
+  //               }
+  //           );
+  //       }
+  //   );
   }
 
-}; // Slice
+//  ____________________TEMPORARY________________________ //
 
-#endif //VERTEXCLOUD_H
+  void
+  heightInTerminal(vertexCloud& cloud) noexcept
+  {
+      int count = 0;
+      auto prev = cloud.begin();
+      std::for_each
+      (
+        ++cloud.cbegin(),
+        cloud.cend(),
+        [&count, &prev] (auto layer) -> void
+        { std::cout << ++count << "\t" << layer.first << '\t' << (layer.first - prev->first) << '\n'; ++prev; }
+      );
+  }
+
+//  ________________END_OF_TEMPORARY_____________________ //
+
+}; // Slicer
+
+#endif //VERTEXCLOUD_HPP

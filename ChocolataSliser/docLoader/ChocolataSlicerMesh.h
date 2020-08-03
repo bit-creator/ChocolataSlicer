@@ -30,19 +30,22 @@
 #include <map>
 #include <list>
 #include <cmath>
-#include <string>
+#include <bitset>
+#include <future>
+#include <cstring>
 #include <optional>
 #include <algorithm>
 
 #include "geometry.hpp"
 // #include "../vertexCloud/vertexcloud.h"
 
-#include "../Cinder/include/cinder/TriMesh.h"
+// #include "../Cinder/include/cinder/TriMesh.h"
 
 using               Geometry::_vectorPtr;         // Pointer on geometric Vector
 using               Geometry::_vertexPtr;         // Pointer on geometric Vertex
 using               Geometry::_trianglePtr;       // Pointer on triangle
-using               cinder::TriMesh;              // Visualizing Mesh
+using               dim_t = float;                // Type of coord data
+// using               cinder::TriMesh;              // Visualizing Mesh
 
 /**
  * @class Mesh is abstract base for 3D Mesh objects
@@ -51,7 +54,8 @@ using               cinder::TriMesh;              // Visualizing Mesh
  * Mesh this is a cinder::TriMesh derived class,
  * TriMesh improve visualize Mesh
  */
-class Mesh : public TriMesh
+class Mesh
+// : public TriMesh
 {
     public:
         /**
@@ -75,13 +79,15 @@ class Mesh : public TriMesh
             size_t
             operator()(const _vertexPtr value) const noexcept
             {
-                char bit[sizeof(*value)];
+                std::bitset < 32 >  bit_x(*(int32_t*)(&(value -> getX())));
+                std::bitset < 32 >  bit_y(*(int32_t*)(&(value -> getY())));
+                std::bitset < 32 >  bit_z(*(int32_t*)(&(value -> getZ())));
 
-                std::memcpy(bit, value.get(), 32);
+                std::string bits = bit_x.to_string();
+                bits.append(bit_y.to_string());
+                bits.append(bit_z.to_string());
 
-                std::hash < std::string > hesher;
-
-                return hesher(bit);
+                return  std::hash < std::bitset < 96 > > { } (std::bitset < 96 >(bits));
             }
         }; // STRUCT_HESHER
 
@@ -91,8 +97,9 @@ class Mesh : public TriMesh
         struct _Equal
         {
                 bool
-                operator()(const _vertexPtr lhr, const _vertexPtr rhr) const noexcept
-                { return *lhr == *rhr; }
+                operator()(const _vertexPtr& lhr, const _vertexPtr& rhr) const noexcept
+                { return *(static_cast<Geometry::Primitive*>(lhr.get()))
+                          == *(static_cast<Geometry::Primitive*>(rhr.get())); }
         }; // STRUCT__EQUAL
 
     public:    // TYPES
