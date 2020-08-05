@@ -25,7 +25,10 @@ void ShaderTree::initShaders() {
 
     // Solid shader
     try {
-        _solidShader = ci::gl::getStockShader(ci::gl::ShaderDef().color() );
+        _solidShader = ci::gl::GlslProg::create(
+            ci::loadFile("assets/shaders/Solid.vs.glsl"),
+            ci::loadFile("assets/shaders/Solid.fs.glsl")
+        );
     }
     catch (ci::Exception& e) {
         CI_LOG_EXCEPTION("Shade loading", e );

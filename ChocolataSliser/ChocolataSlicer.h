@@ -82,7 +82,7 @@ class ChocolataSlicer : public ci::app::App {
         int                     _viewMode = 0;
 
         bool                    m_sliced = false;
-        
+
 
 };
 

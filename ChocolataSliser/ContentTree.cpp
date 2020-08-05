@@ -1,7 +1,7 @@
 #include "ContentTree.h"
 
 #include "ui/uiComponents.h"
-
+#include "ShaderTree.h"
 
 
 void ContentTree::__tooltip(const char* tx) {
@@ -81,18 +81,26 @@ void ContentTree::drawObjectsToUiList() {
 
 
 void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
-    for (auto _itemIt : _items ) {
-        if (_itemIt->_batchPtr == nullptr ) continue;
+    for (int i = 0; i < _items.size(); i++ ) {
+        ci::gl::GlslProgRef sl = _items.at(i)->_batchPtr->getGlslProg();
 
         ci::gl::setModelMatrix(glm::mat4(1.0) );
         ci::gl::color(0.7,0.7,0.7);
-        ci::gl::translate(_itemIt->_position );
-        ci::gl::rotate(_itemIt->_rotate );
-        ci::gl::scale(_itemIt->_scale );
+        ci::gl::translate(_items.at(i)->_position );
+        ci::gl::rotate(_items.at(i)->_rotate );
+        ci::gl::scale(_items.at(i)->_scale );
 
-        _itemIt->_batchPtr->getGlslProg()->uniform("ciEyePos", _camera->getEyePoint() );
-        _itemIt->_batchPtr->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(_camera->getViewDirection() ), glm::vec3(1,0,0)) );
-        _itemIt->_batchPtr->draw();
+        if (i == _selected ) {
+            ci::gl::color(0.988235294118, 0.729411764706, 0.164705882353);
+            _items.at(i)->_batchPtr->replaceGlslProg(ShaderTree::getInstance().colorShader());
+        }
+
+        _items.at(i)->_batchPtr->getGlslProg()->uniform("ciEyePos", _camera->getEyePoint() );
+        _items.at(i)->_batchPtr->getGlslProg()->uniform("ciCameraUp", glm::cross(glm::normalize(_camera->getViewDirection() ), glm::vec3(1,0,0)) );
+        _items.at(i)->_batchPtr->draw();
+
+        if (i == _selected )
+            ContentTree::getInstance()._items.at(i)->_batchPtr->replaceGlslProg(sl);
     }
 
 }

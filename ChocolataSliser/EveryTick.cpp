@@ -211,13 +211,10 @@ void ChocolataSlicer::drawUI() {
                         ImGui::TextColored(ImVec4(0,0,0,0.7), "  Mesh");
 
 
-                        ImGui::Text("Vertices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getNumVertices() );
-                        ImGui::Text("Indices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getNumIndices() );
+                        ImGui::Text("Vertices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getVertices() );
+                        ImGui::Text("Triangles : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getTriangles() );
 
                         ImGui::Spacing();
-                        // ImGui::Button("Edit", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20) );
-
-                        // ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr->getVao()->getLabel();
                     }
                     else {
                         if (ImGui::Button("Add", ImVec2(ImGui::GetWindowSize().x-(ImGui::GetStyle().WindowPadding.x*2), 20)) ) {

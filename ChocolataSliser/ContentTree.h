@@ -5,6 +5,8 @@
 
 #include "cinder/gl/gl.h"
 
+#include "docLoader/ChocolataSlicerMesh.h"
+
 class ContentItem;
 typedef std::shared_ptr<class ContentItem>      ContentItemRef;
 
@@ -62,6 +64,8 @@ class ContentItem {
         const char*                         _nameRef; // Name of current object. It will be as a key for processing
 
         ci::gl::Texture2dRef                _texturePtr = nullptr; // Texture of this model
+
+        Mesh::_meshPtr_t                    _meshPtr = nullptr; // ...
 
         ci::gl::BatchRef                    _batchPtr = nullptr; // Graphic Model
 
