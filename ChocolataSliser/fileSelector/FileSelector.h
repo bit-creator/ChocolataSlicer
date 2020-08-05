@@ -14,6 +14,8 @@
 
 #include "jsonConfig.h"
 
+#include "../docLoader/ChocolataSlicerMesh.h"
+
 /**
  * @brief Singleton class with window for viewing and loading objects to programs objects buffer.
  * You can call it by one line "FileSelector::getInstance.open()"
@@ -33,7 +35,7 @@ class FileSelector {
 
 
         /**
-         * @brief Function to set default values of singleton class 
+         * @brief Function to set default values of singleton class
         */
         void initFileSelector();
 
@@ -45,7 +47,7 @@ class FileSelector {
         /**
          * @brief Setting FileSelector's parant window. Main window of FileSelector refers to scale of main
          * viewport.
-         * 
+         *
          * @param perent_wnd It's reference to main window of program
         */
         void setPerentWindow(ci::app::WindowRef perent_wnd) { _perentWindowPtr = perent_wnd; }
@@ -53,9 +55,9 @@ class FileSelector {
 
         /**
          * @brief Opens system FileSelector to load files by extentions
-         * 
+         *
          * @param extentions Extentions of files which can be loaded. Write it by line ex: "*.png | *.jpg"
-         * 
+         *
          * @return Returns true if some path selected
         */
         bool openLoadingFileSelector(_File_Extention extention );
@@ -64,14 +66,14 @@ class FileSelector {
         /**
          * @brief Function for opening FileSelector and systems FileSelector. You selecting
          * a file and choosing which object will refers on it
-         * 
+         *
          * @return Returns 1 if loaded something, or 0
         */
         bool open(_FileSelector_Type type );
 
         /**
          * @brief Function for opening FileSelector without systems FileSelector
-         * 
+         *
          * @return Returns 1 if loaded something, or 0
         */
         bool open(const char* path );
@@ -94,7 +96,7 @@ class FileSelector {
 
         /**
          * @brief Function check if FileSelector is open
-         * 
+         *
          * @return Returns m_opened vale
         */
         bool isOpen() { return m_opened; }
@@ -102,7 +104,7 @@ class FileSelector {
 
         /**
          * @brief Function check if FileSelector is empty from objects
-         * 
+         *
          * @return Returns true if every object of FileSelector is nullptr
         */
         bool isEmpty() { return (_texturePtr == nullptr ? true : false); }      // && _batchPtr == nullptr
@@ -114,8 +116,10 @@ class FileSelector {
 
         ci::app::WindowRef                  _perentWindowPtr; // Parant window. Main programs wnd
 
-    private : // Parts of previewing area and actual objects for drawing 
+    private : // Parts of previewing area and actual objects for drawing
         ci::gl::Texture2dRef                _texturePtr;
+
+        Mesh::_meshPtr_t                    _mesh;
 
         ci::gl::BatchRef                    _batch;
 
@@ -131,7 +135,7 @@ class FileSelector {
     private : // Variables for users access
         bool m_opened;
 
-    public: // 
+    public: //
         Json::Value                         _recentFiles;
 
 };
@@ -139,5 +143,3 @@ class FileSelector {
 
 
 #endif // __CHOCOLATA_SLICER_FILE_SELECTOR_
-
-
