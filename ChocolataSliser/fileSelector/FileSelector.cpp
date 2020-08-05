@@ -23,13 +23,13 @@ void FileSelector::initFileSelector() {
     CI_LOG_D("initialize");
     _lastPath = (char*)malloc(sizeof(char) * 1024);
 
-    // UI preparing
+    // UI preparing 
     _windowPtr = ui::uiWindow::create( ImVec2(), ImVec2(60,60), "FileSelector", ui::uiLocation_None,
                                        ImGuiWindowFlags_NoResize |
                                        ImGuiWindowFlags_NoCollapse
     );
 
-    _windowBlurPtr = ui::uiWindow::create( ImVec2(), ImVec2(), "FileSelectorBlur", ui::uiLocation_None,
+    _windowBlurPtr = ui::uiWindow::create( ImVec2(), ImVec2(), "FileSelectorBlur", ui::uiLocation_None, 
                                         ImGuiWindowFlags_NoDecoration |
                                         ImGuiWindowFlags_NoNavInputs |
                                         ImGuiWindowFlags_NoFocusOnAppearing
@@ -114,9 +114,9 @@ void FileSelector::draw() {
             /**
              * Priviewing loaded objects in scale of priviewing area.
              * Texture draws as 2d plate on screen without additional objects.
-             *
+             * 
              * Meshes draws to separate FBO with other nonmove camera.
-             *
+             * 
             */
             if (_lastPathExtention == _File_Extention::_File_Extention_Texture ) {
                 ImVec2 st_pos = ImGui::GetCursorScreenPos();
@@ -139,16 +139,16 @@ void FileSelector::draw() {
             /**
              * Buttons for applying actions. Before loading object you should choice it in Object tree.
              * After selecting object you will be given some info about loading.
-             *
+             * 
              * It contains two buttons: Cancel, Load
-             *
+             * 
             */  {
                 ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200, winSize.y+offsets.y-40) );
                 ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetColorU32(ImGuiCol_WindowBg) );
                 if (ImGui::Button("Cancel", ImVec2(90,30))) {
                     m_opened = false; ContentTree::getInstance()._selected = -1;
                 }
-
+                
                 if (ContentTree::getInstance()._selected >= 0)
                     ImGui::PopStyleColor();
 
@@ -160,22 +160,16 @@ void FileSelector::draw() {
                         m_opened = false;
                     }
                     if (ContentTree::getInstance()._selected != -1 && _lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-                        if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr == nullptr
-                        &&  ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr  == nullptr)
-                        {
+                        if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr == nullptr )
                             ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr = _batch;
-                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr  = _mesh;
-                        }
-                        else
-                        {
+
+                        else 
                             ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr.swap(_batch);
-                            ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr = _mesh;
-                        }
 
                         m_opened = false;
                     }
                 }
-
+                
                 if (ContentTree::getInstance()._selected == -1)
                     ImGui::PopStyleColor();
             }
@@ -184,7 +178,7 @@ void FileSelector::draw() {
             /**
              * Users information about loading mode of current object. You can replace or
              * create new object in model
-             *
+             * 
             */
             if (_lastPathExtention == _File_Extention::_File_Extention_Texture && ContentTree::getInstance()._selected >= 0 ) {
                 if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_texturePtr == nullptr ) {
@@ -237,7 +231,7 @@ void FileSelector::draw() {
 bool FileSelector::open(_FileSelector_Type type ) {
     _texturePtr.reset();
 
-    CI_LOG_D("File selector opened in mode : " << (type == _FileSelector_Type_Load ? "FileSelector_Type_Load" : "FileSelector_Type_Save") );
+    CI_LOG_D("File selector opened in mode : " << (type == _FileSelector_Type_Load ? "FileSelector_Type_Load" : "FileSelector_Type_Save") ); 
     m_opened = true;
 
     openLoadingFileSelector(_File_Extention::_File_Extention_None );
@@ -245,9 +239,9 @@ bool FileSelector::open(_FileSelector_Type type ) {
 }
 
 bool FileSelector::open(const char* path ) {
-    _texturePtr.reset();
+    _texturePtr.reset(); 
 
-    CI_LOG_D("File selector opened in mode : " << "FileSelector_Type_Load" );
+    CI_LOG_D("File selector opened in mode : " << "FileSelector_Type_Load" ); 
     m_opened = true;
 
     strcpy(_lastPath, path);
@@ -273,13 +267,13 @@ bool FileSelector::open(const char* path ) {
 
 
 bool FileSelector::openLoadingFileSelector(_File_Extention extention ) {
-    std::string title = (extention == _File_Extention::_File_Extention_None ? "Select an object" :
-        (extention == _File_Extention::_File_Extention_Texture ? "Select a Texture" : "Select a Mesh" )
+    std::string title = (extention == _File_Extention::_File_Extention_None ? "Select an object" : 
+        (extention == _File_Extention::_File_Extention_Texture ? "Select a Texture" : "Select a Mesh" ) 
     );
 
-    std::string extentions = (extention == _File_Extention::_File_Extention_None ? "*3mf, *amf, *stl, *obj, *png, *jpg, *jpeg | *3mf | *amf | *stl | *obj | *png | *jpg | *jpeg" :
-        (extention == _File_Extention::_File_Extention_Texture ? "*png, *jpg, *jpeg | *png | *jpg | *jpeg" :
-        "*3mf, *amf, *stl, *obj | *3mf | *amf | *stl | *obj" )
+    std::string extentions = (extention == _File_Extention::_File_Extention_None ? "*3mf, *amf, *stl, *obj, *png, *jpg, *jpeg | *3mf | *amf | *stl | *obj | *png | *jpg | *jpeg" : 
+        (extention == _File_Extention::_File_Extention_Texture ? "*png, *jpg, *jpeg | *png | *jpg | *jpeg" : 
+        "*3mf, *amf, *stl, *obj | *3mf | *amf | *stl | *obj" ) 
     );
 
     _lastPathExtention = extention;
@@ -307,6 +301,7 @@ bool FileSelector::openLoadingFileSelector(_File_Extention extention ) {
 
     // Load an object
     loadObject();
+
 
     return true;
 }
@@ -341,7 +336,7 @@ void FileSelector::loadObject( ) {
     }
 
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
-        // Mesh::_meshPtr_t _mesh;
+        Mesh::_meshPtr_t _mesh;
 
         if (_str_find(_lastPath, ".stl") == 0 )
             _mesh = make_mesh(Mesh::File::_STL, _lastPath );
@@ -354,6 +349,7 @@ void FileSelector::loadObject( ) {
 
         else if (_str_find(_lastPath, ".3mf") == 0 )
             _mesh = make_mesh(Mesh::File::_3MF, _lastPath );
+
 
 
         if (_mesh->isEmpty() ) {

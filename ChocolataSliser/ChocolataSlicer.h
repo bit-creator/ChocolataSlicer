@@ -12,7 +12,6 @@
 #include "ContentTree.h"
 #include "ObjectPicker.h"
 #include "docLoader/ChocolataSlicerMesh.h"
-#include "vertexcloud.hpp"
 
 #include "ShaderTree.h"
 

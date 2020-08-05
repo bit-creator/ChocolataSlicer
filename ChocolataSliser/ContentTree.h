@@ -65,9 +65,9 @@ class ContentItem {
 
         ci::gl::Texture2dRef                _texturePtr = nullptr; // Texture of this model
 
-        Mesh::_meshPtr_t                    _meshPtr    = nullptr; // mesh of this model
+        Mesh::_meshPtr_t                    _meshPtr = nullptr; // ...
 
-        ci::gl::BatchRef                    _batchPtr   = nullptr; // Graphic Model
+        ci::gl::BatchRef                    _batchPtr = nullptr; // Graphic Model
 
 
     public : // Transforms
@@ -97,7 +97,7 @@ class ContentTree {
             ci::gl::Fbo::Format fboFormat;
             fboFormat.samples(8 );
             glm::ivec2 fboResolution = glm::ivec2(1280, 960);
-	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );
+	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );    
         }
 
     public :
@@ -127,7 +127,7 @@ class ContentTree {
 
 
         /**
-         * @brief Draw objects to scene
+         * @brief Draw objects to scene 
         */
         void drawObjectsToScene(ci::CameraPersp* _camera );
 

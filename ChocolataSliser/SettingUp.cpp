@@ -81,12 +81,12 @@ void ChocolataSlicer::setup() {
     itm0->_position = {2,0,0};
 
 
-
     // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/Pantera.stl" );
     // ci::gl::BatchRef _panteraBatch = ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() );
     // ContentTree::getInstance().pushItem(
-    //     ContentItem::create("Pantera:1",
+    //     ContentItem::create("Pantera:1", 
     //         _panteraBatch
     //     )
     // );
+
 }

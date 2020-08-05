@@ -28,7 +28,7 @@ function buildDeps() {
         cd ${CINDER_PATH}
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug || exitWithError ". . . Cannot run CMake on Cinder"
+        cmake .. -DCMAKE_BUILD_TYPE=Release || exitWithError ". . . Cannot run CMake on Cinder"
         make -j4 || exitWithError ". . . Error building Cinder"
         cd ../../../
     fi
@@ -66,7 +66,7 @@ function buildSlicer() {
         echo ". . . ChocolataSlicer has not been configure, running cmake ..."
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug || exitWithError ". . . Cannot run CMake on ChocolataSclicer"
+        cmake .. -DCMAKE_BUILD_TYPE=Release || exitWithError ". . . Cannot run CMake on ChocolataSclicer"
         make -j 4 || exitWithError ". . . Error building ChocolataSlicer"
     fi
 
