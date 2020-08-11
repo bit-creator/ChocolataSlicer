@@ -17,6 +17,7 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ObjectPicker.cpp
 	${APP_PATH}/config/cstringFunctions.cpp
 	${APP_PATH}/config/jsonConfig.cpp
+	# ${APP_PATH}/config/configs.cpp
 
 	# DocLoader
 	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp

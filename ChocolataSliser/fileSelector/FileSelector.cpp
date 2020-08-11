@@ -11,6 +11,24 @@
 
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
+bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false ) {
+    ImVec2 size = ImGui::CalcTextSize(text, NULL, true);
+    ImDrawList* dw = ImGui::GetWindowDrawList();
+    float fontSize = 8;
+
+    ImGui::SetCursorScreenPos(pos );
+    ImGui::InvisibleButton(text, size);
+
+    if (ImGui::IsItemHovered() ) fontSize = 10;
+
+    if (drawText ) {
+        dw->AddText(ImGui::GetFont(), fontSize, pos, ImGui::GetColorU32(ImVec4(0,0,0,1)), text );
+    }
+
+    if (ImGui::IsItemDeactivated() ) return true;
+    return false;
+}
+
 void FileSelector::destroy() {
     _texturePtr.reset();
     // _shaderPtr.reset();
@@ -59,18 +77,6 @@ void FileSelector::initFileSelector() {
     _cameraPersp.lookAt({0,0,0});
 
 
-    // Shader
-    // try {
-    //     _shaderPtr = ci::gl::GlslProg::create( ci::loadFile("assets/shaders/Velvety.vs.glsl"),
-    //                                            ci::loadFile("assets/shaders/Velvety.fs.glsl")
-    //     );
-    //     // _shaderPtr = 
-    // }
-    // catch (ci::Exception& e ) {
-    //     CI_LOG_EXCEPTION("FileSelector shader loading", e);
-    // }
-
-
     _batch = ci::gl::Batch::create(ci::geom::Teapot().subdivisions(16), ShaderTree::getInstance().velvetyShader() );
 
 }
@@ -78,8 +84,6 @@ void FileSelector::initFileSelector() {
 
 
 
-
-// FIXME:
 void FileSelector::draw() {
     ImVec2 offsets = ImVec2(35,35);
 
@@ -100,6 +104,21 @@ void FileSelector::draw() {
             ContentTree::__tooltip("Select item to which tou  want load an object");
             ImGui::Spacing(); ImGui::Spacing();
             ContentTree::getInstance().drawObjectsToUiList();
+
+            // FIXME:
+            if (_lastPathExtention == _File_Extention_Mesh ) {
+                ImGui::Spacing();
+                if (ui::__ui_invisible_button(ImGui::GetCursorScreenPos(), "New object", true) ) {
+                    // std::string path = std::string(_lastPath );
+                    // path = path.substr(path.find_last_not_of('/') );
+
+                    // ContentTree::getInstance().pushItem( ContentItem::create(path.c_str(), ci::gl::BatchRef(nullptr) )
+                    // );
+
+                    // ContentTree::getInstance()._selected = ContentTree::getInstance()._items.size()-1; 
+                }
+            }
+
         ImGui::NextColumn();                                           // Main Previewing area for loaded objects to program
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Previewing area");
             ImGui::SameLine();
@@ -230,6 +249,7 @@ void FileSelector::draw() {
 
 bool FileSelector::open(_FileSelector_Type type ) {
     _texturePtr.reset();
+    _batch.reset();
 
     CI_LOG_D("File selector opened in mode : " << (type == _FileSelector_Type_Load ? "FileSelector_Type_Load" : "FileSelector_Type_Save") ); 
     m_opened = true;

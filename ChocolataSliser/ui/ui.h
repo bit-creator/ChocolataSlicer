@@ -41,6 +41,9 @@ namespace ui {
         uiLocation_Down
     };
 
+
+    bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false );
+
 };
 
 

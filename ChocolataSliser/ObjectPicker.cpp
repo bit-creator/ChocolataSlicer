@@ -26,6 +26,8 @@ void ObjectPicker::drawToPickerFbo(ci::CameraPersp* cm ) {
 
 
         for (int i = 0; i < ContentTree::getInstance()._items.size(); i++ ) {
+            if (!ContentTree::getInstance()._items.at(i)->_batchPtr ) continue;
+
             ci::gl::GlslProgRef sl = ContentTree::getInstance()._items.at(i)->_batchPtr->getGlslProg();
             ContentTree::getInstance()._items.at(i)->_batchPtr->replaceGlslProg(ShaderTree::getInstance().colorShader());
 

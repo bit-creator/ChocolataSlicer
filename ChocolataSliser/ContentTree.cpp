@@ -3,6 +3,7 @@
 #include "ui/uiComponents.h"
 #include "ShaderTree.h"
 
+#include "cinder/app/App.h"
 
 void ContentTree::__tooltip(const char* tx) {
     if (ImGui::IsItemHovered() ) {
@@ -45,20 +46,31 @@ void ContentTree::drawObjectsToUiList() {
         if (i == _selected ) node_flags |= ImGuiTreeNodeFlags_Selected;
         if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
 
+        float _x = ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - 50;
         bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef, (i+1) );
         if (ImGui::IsItemClicked()) _selected = i;
 
-        // Draw elements content
+
         if (node_open) {
             if (_items.at(i)->_batchPtr != nullptr) {
+                ImVec2 nodePos = ImGui::GetCursorScreenPos();
                 ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
                 ImGui::SameLine();
                 ImGui::Text("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
 
-                // TODO: Object highlight
+                if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), " ", true ) ) {
+                    _items.at(i)->_batchPtr.reset();
+
+                    if (_items.at(i)->isEmpty() ) { _items.erase(_items.end() - i );
+                        goto endContentTree;
+                    }
+
+                } __tooltip("Remove item");
+
             }
 
             if (_items.at(i)->_texturePtr != nullptr) {
+                ImVec2 nodePos = ImGui::GetCursorScreenPos();
                 ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
                 ImGui::SameLine();
                 ImGui::Text("%p", _items.at(i)->_texturePtr ); __tooltip("Texture object");
@@ -70,10 +82,22 @@ void ContentTree::drawObjectsToUiList() {
                     ImGui::Image(_items.at(i)->_texturePtr, _items.at(i)->_texturePtr->getSize()/2, {0,1}, {1,0} );
                     ImGui::EndTooltip();
                 }
+
+                if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), "  ", true ) ) {
+                    _items.at(i)->_texturePtr.reset();
+
+                    if (_items.at(i)->isEmpty() ) { _items.erase(_items.end() - i );
+                        goto endContentTree;
+                    }
+
+                } __tooltip("Remove item");
+
             }
 
             ImGui::TreePop();
             if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
+
+            endContentTree: continue;
         }
     }
 }
@@ -82,6 +106,8 @@ void ContentTree::drawObjectsToUiList() {
 
 void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
     for (int i = 0; i < _items.size(); i++ ) {
+        if (!_items.at(i)->_batchPtr ) continue;
+
         ci::gl::GlslProgRef sl = _items.at(i)->_batchPtr->getGlslProg();
 
         ci::gl::setModelMatrix(glm::mat4(1.0) );

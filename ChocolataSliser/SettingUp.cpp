@@ -5,7 +5,6 @@
 #include "cinder/CinderImGui.h"
 
 
-
 #include "ChocolataSlicer.h"
 
 #include "ui/uiWindow.h"
@@ -20,6 +19,7 @@ void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> DisplaySize : " << getDisplay()->getSize().x << "px | " << getDisplay()->getSize().y << "px" );
     CI_LOG_I("ChocolataApp ~> WindowSize : " << getWindowSize().x << "px | " << getWindowSize().y << "px\n" );
 
+    _logger.write(ci::log::Metadata(), "ChocolataApps -> ChocolataSlicer executed version = " __ChocolataSlicer_Version_ );
 
 
     // Window preparing
@@ -52,6 +52,7 @@ void ChocolataSlicer::setup() {
     config.MergeMode = true;
     ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 12.0f, &config, ranges);
     ImGui::GetIO().Fonts->AddFontFromFileTTF("assets/fonts/fa-brands-400.ttf", 12.0f, &config, ranges);
+    _logger.write(ci::log::Metadata(), "ImGui is initialized -> Fonts loaded(assets/fonts/fa-solid-900.ttf | assets/fonts/fa-brands-400.ttf)" );
 
 
     // Main Ui Initializing
@@ -63,30 +64,23 @@ void ChocolataSlicer::setup() {
     m_handler_main = ui::uiWindowHandler::create(getWindow(), ui::uiLocation_Right, {250,250}, {0,19} );
     m_handler_main->pushWnd(m_window_editor );
     m_handler_main->pushWnd(m_window_content );
-
+    _logger.write(ci::log::Metadata(), "Main UI is initialized -> Windows opened(Editor | Content bar)" );
 
 
     // Test object
-    ContentTree::getInstance().pushItem(
-        ContentItem::create("Cube:1",
-            ci::gl::Batch::create(ci::geom::Cube().subdivisions(2), ShaderTree::getInstance().velvetyShader() )
-        )
-    );
-
-    ContentItemRef itm0 = ContentTree::getInstance().pushItem(
-        ContentItem::create("Sphere:1",
-            ci::gl::Batch::create(ci::geom::Sphere().subdivisions(2), ShaderTree::getInstance().velvetyShader() )
-        )
-    );
-    itm0->_position = {2,0,0};
-
-
-    // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/Pantera.stl" );
-    // ci::gl::BatchRef _panteraBatch = ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() );
-    // ContentTree::getInstance().pushItem(
+    // Mesh::_meshPtr_t loadedMesh = make_mesh(Mesh::File::_STL, "test/Pantera.stl" );
+    // ContentItemRef loadedObject = ContentTree::getInstance().pushItem(
     //     ContentItem::create("Pantera:1", 
-    //         _panteraBatch
+    //         ci::gl::Batch::create(*loadedMesh, ShaderTree::getInstance().velvetyShader() )
     //     )
     // );
+    // loadedObject->_scale = {0.02,0.02,0.02};
+    // loadedObject->_rotate = {-1.6,0,0};
+
+
+
+    ContentTree::getInstance().pushItem(
+        ContentItem::create("Pantera:2", ci::gl::BatchRef(nullptr) )
+    );
 
 }

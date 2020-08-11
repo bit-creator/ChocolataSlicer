@@ -12,6 +12,8 @@
 #include "ui/uiWindow.h"
 #include "ContentTree.h"
 
+// #include "ui/uiComponents.h"
+
 #include "jsonConfig.h"
 
 /**
@@ -76,7 +78,7 @@ class FileSelector {
         */
         bool open(const char* path );
 
-        // TODO:
+
         void loadObject();
 
         /**

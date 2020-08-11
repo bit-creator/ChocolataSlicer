@@ -7,6 +7,7 @@
 #include "ContentTree.h"
 
 #include "ui/uiBarWindows.h"
+#include "cinder/linux/input_redef.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -20,7 +21,7 @@ void ChocolataSlicer::resize() {
 
 void ChocolataSlicer::update() {
     drawUI();
-    
+
 }
 
 void ChocolataSlicer::drawUI() {
@@ -37,7 +38,7 @@ void ChocolataSlicer::drawUI() {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
 
-                if (ImGui::MenuItem("Open...", "Ctrl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
+                if (ImGui::MenuItem("Open...", "Altl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
 
 
                 // showing list of recent files
@@ -211,8 +212,8 @@ void ChocolataSlicer::drawUI() {
                         ImGui::TextColored(ImVec4(0,0,0,0.7), "  Mesh");
 
 
-                        ImGui::Text("Vertices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getVertices() );
-                        ImGui::Text("Triangles : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getTriangles() );
+                        // ImGui::Text("Vertices : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getVertices() );
+                        // ImGui::Text("Triangles : %d", ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_meshPtr->getTriangles() );
 
                         ImGui::Spacing();
                     }
@@ -310,5 +311,9 @@ void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
 
 
 void ChocolataSlicer::keyDown(ci::app::KeyEvent event ) {
-    if(event.getCode() == ci::app::KeyEvent::KEY_ESCAPE ) quit();
+    if (event.getModifiers() & (ci::app::KeyEvent::CTRL_DOWN | ci::app::KeyEvent::SHIFT_DOWN) ) {
+        if (event.getCode() == ci::app::KeyEvent::KEY_q ) quit();
+    }
+
 }
+ 

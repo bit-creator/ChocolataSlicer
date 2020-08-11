@@ -7,10 +7,22 @@ namespace ui {
 
 
 
-bool __ui_invisible_button(ImVec2 pos, const char* text, ImVec2 plus_size = {0,0}) {
+bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false ) {
     ImVec2 size = ImGui::CalcTextSize(text, NULL, true);
+    ImDrawList* dw = ImGui::GetWindowDrawList();
+    float fontSize = 8;
+
     ImGui::SetCursorScreenPos(pos );
     ImGui::InvisibleButton(text, size);
+
+    if (ImGui::IsItemHovered() ) fontSize = 10;
+
+    if (drawText ) {
+        dw->AddText(ImGui::GetFont(), fontSize, pos, ImGui::GetColorU32(ImVec4(0,0,0,1)), text );
+    }
+
+    if (ImGui::IsItemDeactivated() ) return true;
+    return false;
 }
 
 
