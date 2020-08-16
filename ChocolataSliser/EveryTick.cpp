@@ -9,6 +9,8 @@
 #include "ui/uiBarWindows.h"
 #include "cinder/linux/input_redef.h"
 
+#include "printingContext.h"
+
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
 	ci::gl::setMatrices(m_camera );
@@ -89,7 +91,7 @@ void ChocolataSlicer::drawUI() {
             if (ImGui::BeginMenu("Tools"))  {
                 if (ImGui::MenuItem("Slice", "Ctrl+Shift+L" )) {  }
 
-                if (ImGui::MenuItem("Print", "Ctrl+Shift+P" )) {  }
+                if (ImGui::MenuItem("Print", "Ctrl+Shift+P" )) { PrintingContext::getInstance().open(); }
 
 
                 // TODO:
@@ -206,6 +208,10 @@ void ChocolataSlicer::drawUI() {
 
 
                 // Mesh
+
+
+
+
                 if (ImGui::TreeNode("Mesh") ) {
                     if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr != nullptr ) {
                         ImGui::Spacing();
@@ -236,6 +242,7 @@ void ChocolataSlicer::drawUI() {
 
         m_window_editor->End();
     }
+
     if (m_window_content->_opened ) {
         m_window_content->Begin();
         ContentTree::getInstance().drawObjectsToUiList();
@@ -247,20 +254,14 @@ void ChocolataSlicer::drawUI() {
     }
 
 
+    if (PrintingContext::getInstance().isOpen() ) {
+        PrintingContext::getInstance().draw();
+    }
+
 
     if (ui::UiWindows.about == true ) {
         ui::showAboutWindow();
     }
-
-    // General Info
-    // ImGui::TextColored(ImVec4(1,1,1,0.4), "Vertices: %d   Fragments: %d", 0, 0);
-
-    // Slice/Print button
-    // ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-    // ImGui::SetCursorScreenPos(ImVec2(10, getWindow()->getSize().y - 30 -10  ));
-    // if (!m_sliced ) { if (ImGui::Button("Slice", ImVec2(120, 30) ))             { m_sliced = true; } }      // Slice
-    // else if (ImGui::Button("Print", ImVec2(120, 30) ))                          { }                         // Print
-    // ImGui::PopStyleVar();
 
 }
 

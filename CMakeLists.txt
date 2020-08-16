@@ -23,6 +23,12 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
 	${APP_PATH}/fileSelector/FileSelector.cpp
 
+	# Context
+	${APP_PATH}/context/printingContext.cpp
+	${APP_PATH}/context/SerialHard/SerialHard.cpp
+	${APP_PATH}/context/Communicator/Transmitter.cpp
+	${APP_PATH}/context/Communicator/Receiver.cpp
+
 	# UI
 	${APP_PATH}/ui/uiWindiw.cpp
 	${APP_PATH}/ui/uiViewport.cpp
@@ -39,6 +45,9 @@ set(INC_CHOCOLATA_SLICER
 
 	# DocLoader
 	${APP_PATH}/docLoader
+	
+	# Contenxt
+	${APP_PATH}/context
 	
 )
 

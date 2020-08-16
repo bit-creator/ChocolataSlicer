@@ -16,8 +16,7 @@
 #include "ShaderTree.h"
 
 
-#define __ChocolataSlicer_Version_ "0.1.1"
-#define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
+#include "definitions.h"
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior
@@ -84,7 +83,7 @@ class ChocolataSlicer : public ci::app::App {
         bool                    m_sliced = false;
 
     public :
-        ci::log::LoggerFile _logger = ci::log::LoggerFile("assets/config/cinder.log", false);
+        ci::log::LoggerFile _logger = ci::log::LoggerFile("assets/config/ChocolataSlicer.log", false);
 
 };
 

@@ -13,6 +13,7 @@
 #include "ContentTree.h"
 
 #include "ShaderTree.h"
+#include "cinder/Serial.h"
 
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
@@ -67,20 +68,12 @@ void ChocolataSlicer::setup() {
     _logger.write(ci::log::Metadata(), "Main UI is initialized -> Windows opened(Editor | Content bar)" );
 
 
-    // Test object
-    // Mesh::_meshPtr_t loadedMesh = make_mesh(Mesh::File::_STL, "test/Pantera.stl" );
-    // ContentItemRef loadedObject = ContentTree::getInstance().pushItem(
-    //     ContentItem::create("Pantera:1", 
-    //         ci::gl::Batch::create(*loadedMesh, ShaderTree::getInstance().velvetyShader() )
-    //     )
-    // );
-    // loadedObject->_scale = {0.02,0.02,0.02};
-    // loadedObject->_rotate = {-1.6,0,0};
-
-
 
     ContentTree::getInstance().pushItem(
         ContentItem::create("Pantera:2", ci::gl::BatchRef(nullptr) )
     );
+
+
+    PrintingContext::getInstance().initPrinterBoard();
 
 }

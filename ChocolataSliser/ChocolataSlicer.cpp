@@ -7,7 +7,10 @@
 #include "cinder/app/AppBase.h"
 
 void ChocolataSlicer::cleanup() {
-    CI_LOG_D("End program. Memory cleaning : ");
+    CI_LOG_D("End program. Memory cleaning...");
+
+    // PrintingContext
+    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
 
     // ContentTree
     ContentTree::getInstance().destroy();
