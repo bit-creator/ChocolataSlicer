@@ -1,12 +1,12 @@
-|info   | 2020-08-16.20:18:20 [93946133972800] PrinterContext -> Firmware log
-|debug  | 2020-08-16.20:18:20 [9465212321907715328] Receiver connected to log...
-|verbose| 2020-08-16.20:18:21 [0] <- ÿ0.000.000.000.000.00
-|debug  | 2020-08-16.20:18:21 [9465212321907715328] Transmitter connected to log...
-|verbose| 2020-08-16.20:18:21 [0] -> þ0.0000001.0000001.000000
-|info   | 2020-08-16.20:18:21 [93946125627938] PrinterBoard connected. Version checking
-|verbose| 2020-08-16.20:18:21 [0] -> û
-|verbose| 2020-08-16.20:18:21 [0] <- û0.001.001.000.000.00
-|info   | 2020-08-16.20:18:21 [93946125627938] Versions of software are compatible, work continue
+|info   | 2020-08-16.20:25:07 [93905954043712] PrinterContext -> Firmware log
+|debug  | 2020-08-16.20:25:07 [204309106648336384] Receiver connected to log...
+|verbose| 2020-08-16.20:25:07 [0] <- ÿ0.000.000.000.000.00
+|debug  | 2020-08-16.20:25:07 [204309106648336384] Transmitter connected to log...
+|verbose| 2020-08-16.20:25:07 [0] -> þ0.0000001.0000001.000000
+|info   | 2020-08-16.20:25:07 [93905945698850] PrinterBoard connected. Version checking
+|verbose| 2020-08-16.20:25:07 [0] -> û
+|verbose| 2020-08-16.20:25:08 [0] <- û0.001.001.000.000.00
+|info   | 2020-08-16.20:25:08 [93905945698850] Versions of software are compatible, work continue
 =============================
 
-|verbose| 2020-08-16.20:18:47 [0] -> ü
+|verbose| 2020-08-16.20:25:17 [0] -> ü

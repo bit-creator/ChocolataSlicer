@@ -9,8 +9,8 @@
 
 #include "SerialHard/SerialHard.h"
 
-#include "Transmitter.h"
-#include "Receiver.h"
+#include "Communicator/Transmitter.h"
+#include "Communicator/Receiver.h"
 #include "opcodes.h"
 
 class PrintingContext {
