@@ -1,12 +1,9 @@
-|info   | 2020-08-16.20:25:07 [93905954043712] PrinterContext -> Firmware log
-|debug  | 2020-08-16.20:25:07 [204309106648336384] Receiver connected to log...
-|verbose| 2020-08-16.20:25:07 [0] <- ÿ0.000.000.000.000.00
-|debug  | 2020-08-16.20:25:07 [204309106648336384] Transmitter connected to log...
-|verbose| 2020-08-16.20:25:07 [0] -> þ0.0000001.0000001.000000
-|info   | 2020-08-16.20:25:07 [93905945698850] PrinterBoard connected. Version checking
-|verbose| 2020-08-16.20:25:07 [0] -> û
-|verbose| 2020-08-16.20:25:08 [0] <- û0.001.001.000.000.00
-|info   | 2020-08-16.20:25:08 [93905945698850] Versions of software are compatible, work continue
-=============================
-
-|verbose| 2020-08-16.20:25:17 [0] -> ü
+|info   | 2020-08-20.12:43:08 [94801357596544] PrinterContext -> Firmware log
+|warning| 2020-08-20.12:43:08 [140725792296960] WARNING : Printer board was not connected
+|error  | 2020-08-20.12:43:08 [94801349252958] ERR : cant sent command, board didn't connect
+|error  | 2020-08-20.12:43:08 [94801349252958] ERR : cant sent command, board didn't connect
+|error  | 2020-08-20.12:43:08 [94801357595808] ERR : cant read command, board didn't connect
+|error  | 2020-08-20.12:43:40 [94801349252958] ERR : cant sent command, board didn't connect
+|error  | 2020-08-20.12:43:40 [94801349252958] ERR : cant sent command, board didn't connect
+|error  | 2020-08-20.12:43:40 [94801349254037] ERR : cant read command, board didn't connect
+|error  | 2020-08-20.12:43:40 [94801349252958] ERR : cant sent command, board didn't connect

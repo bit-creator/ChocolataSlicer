@@ -34,7 +34,7 @@ void PrintingContext::connectPrinterBoard() {
 
     Command _request = Receiver::getInstance().readCommand();
     if (_request.__cmd == OP_CONNECT_REQUEST ) {
-        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_CONNECT_ACCEPT, .__args = { 0, 1, 1 } } );
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_CONNECT_ACCEPT } );
     }
 
 
@@ -69,7 +69,7 @@ void PrintingContext::initPrinterBoard() {
         }
 
 
-        _printerBoard = ci::Serial::create(ci::Serial::findDeviceByNameContains("USB0", true ), 9600 );
+        _printerBoard = ci::Serial::create(ci::Serial::findDeviceByNameContains("USB0", true ), 19200 );
 
 
         connectPrinterBoard();

@@ -9,8 +9,14 @@
 void ChocolataSlicer::cleanup() {
     CI_LOG_D("End program. Memory cleaning...");
 
-    // PrintingContext
+    // FIXME: PrintingContext
+    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISABLE_LED } );
+
+    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
+    Receiver::getInstance().readCommand();
+
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
+
 
     // ContentTree
     ContentTree::getInstance().destroy();

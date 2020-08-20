@@ -17,10 +17,6 @@ class PrintingContext {
     private :
         PrintingContext()  : _open(false) { initPrintingContext(); }
 
-
-        /**
-         * @brief Function to set default values of singleton class 
-        */
         void initPrintingContext();
 
         void connectPrinterBoard();
@@ -31,6 +27,8 @@ class PrintingContext {
 
 
         void initPrinterBoard();
+
+
 
         void draw();
 

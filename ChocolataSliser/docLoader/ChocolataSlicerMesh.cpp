@@ -91,6 +91,9 @@ void Mesh::conf() noexcept
     recalculateNormals();
     recalculateTangents();
     recalculateBitangents();
+
+    printf("Conf function is okey\n");
+
 }
 
 bool Mesh::isEmpty() noexcept {

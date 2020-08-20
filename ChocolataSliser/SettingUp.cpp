@@ -15,6 +15,8 @@
 #include "ShaderTree.h"
 #include "cinder/Serial.h"
 
+#include "ChocolataSlicerMesh.h"
+
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
     CI_LOG_I("ChocolataApp ~> DisplaySize : " << getDisplay()->getSize().x << "px | " << getDisplay()->getSize().y << "px" );
@@ -68,12 +70,23 @@ void ChocolataSlicer::setup() {
     _logger.write(ci::log::Metadata(), "Main UI is initialized -> Windows opened(Editor | Content bar)" );
 
 
-
-    ContentTree::getInstance().pushItem(
-        ContentItem::create("Pantera:2", ci::gl::BatchRef(nullptr) )
+    Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/printersHouseLogo.stl" );
+    ContentItemRef it0 = ContentTree::getInstance().pushItem(
+        ContentItem::create(
+            "HouseLogo",
+            ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() )
+        ) 
     );
+    ContentTree::getInstance()._items.back()->_rotate = {-1.6,0,0};
 
 
+    // Printing Context
     PrintingContext::getInstance().initPrinterBoard();
+
+
+    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_ENABLE_LED } );
+
+    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
+    Receiver::getInstance().readCommand();
 
 }

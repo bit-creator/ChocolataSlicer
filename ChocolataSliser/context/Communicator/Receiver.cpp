@@ -37,6 +37,7 @@ Command Receiver::readCommand(Command* _cmd ) {
 
 
     std::string lg = "<- "; lg += _request;
+    if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
     _logger->write(ci::log::Metadata(), lg );
 
 

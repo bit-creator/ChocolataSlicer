@@ -237,7 +237,7 @@ void ChocolataSlicer::drawUI() {
 
             }
             else {
-                ImGui::TextColored(ImVec4(0,0,0,0.7), "  No selected object");
+                ImGui::TextColored(ImVec4(0,0,0,0.4), "  No selected object");
             }
 
         m_window_editor->End();
@@ -246,6 +246,7 @@ void ChocolataSlicer::drawUI() {
     if (m_window_content->_opened ) {
         m_window_content->Begin();
         ContentTree::getInstance().drawObjectsToUiList();
+        if (ContentTree::getInstance()._items.size() < 1 ) { ImGui::TextColored(ImVec4(0,0,0, 0.4), "No objects"); }
         m_window_content->End();
     }
 

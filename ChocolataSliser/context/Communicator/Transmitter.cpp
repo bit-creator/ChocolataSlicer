@@ -38,9 +38,10 @@ void Transmitter::sendCommand(Command _cmd ) {
     std::string sentCommand = "-> ";
     sentCommand += (char)_cmd.__cmd;
     if (_cmd.__args.size() >= 1 ) {
-        sentCommand += (char)OP_SEPARATOR;
-        for (int i = 0; i < _cmd.__args.size(); i++ )
+        for (int i = 0; i < _cmd.__args.size(); i++ ) {
+            sentCommand += (char)OP_SEPARATOR;
             sentCommand += std::to_string(_cmd.__args.at(i));
+        }
     }
     sentCommand += (char)OP_TERMINATOR;
     _logger->write(ci::log::Metadata(), sentCommand );
@@ -48,12 +49,11 @@ void Transmitter::sendCommand(Command _cmd ) {
 
 
     _printerBoard->writeByte(_cmd.__cmd );
-    if (_cmd.__args.size() >= 1) {
-        for (int i = 0; i < _cmd.__args.size(); i++ ) {
-            _printerBoard->writeByte(OP_SEPARATOR);
-            _printerBoard->writeString(std::to_string(_cmd.__args.at(i)) );
-        }
+    for (int i = 0; i < _cmd.__args.size(); i++ ) {
+        _printerBoard->writeByte(OP_SEPARATOR);
+        _printerBoard->writeString(std::to_string(_cmd.__args.at(i)) );
     }
+
     _printerBoard->writeByte(OP_TERMINATOR);
     std::this_thread::sleep_for(std::chrono::milliseconds(OP_INTERUPTION) );
 

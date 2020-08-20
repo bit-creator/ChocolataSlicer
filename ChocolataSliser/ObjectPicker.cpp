@@ -63,5 +63,6 @@ int ObjectPicker::calculateSelection(ci::CameraPersp* cm, ci::app::MouseEvent &e
 
         }
     }
+    else ContentTree::getInstance()._selected = -1;
 }
 
