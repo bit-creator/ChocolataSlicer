@@ -6,10 +6,11 @@
 #include "ui/uiWindowHandler.h"
 #include "ContentTree.h"
 
-#include "ui/uiBarWindows.h"
+#include "ui/BarWindows/uiBarWindows.h"
 #include "cinder/linux/input_redef.h"
 
 #include "printingContext.h"
+#include "ui/Notification/Notification.h"
 
 void ChocolataSlicer::resize() {
     m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
@@ -259,6 +260,8 @@ void ChocolataSlicer::drawUI() {
         PrintingContext::getInstance().draw();
     }
 
+
+    Notifications::GetInstance().draw();
 
     if (ui::UiWindows.about == true ) {
         ui::showAboutWindow();

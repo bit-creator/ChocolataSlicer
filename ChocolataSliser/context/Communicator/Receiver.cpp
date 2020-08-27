@@ -36,32 +36,53 @@ Command Receiver::readCommand(Command* _cmd ) {
     }
 
 
-    std::string lg = "<- "; lg += _request;
-    if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
-    _logger->write(ci::log::Metadata(), lg );
-
 
     // Parsing
     Command _command;
-    _command.__native = _request;
     _command.__cmd = (uint8_t)_request.at(0);
 
 
+    #ifndef _OP_ARGS_AS_BYTES
+        std::string lg = "<- "; lg += _request;
+        if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
+        _logger->write(ci::log::Metadata(), lg );
 
-    if (_request.find((char)OP_SEPARATOR) != std::string::npos ) {
-        size_t pos = 0;
-        std::string token;
-        while ((pos = _request.find((char)OP_SEPARATOR)) != std::string::npos) {
-            token = _request.substr(0, pos);
-            _request.erase(0, pos + 1);
+        
+        if (_request.find((char)OP_SEPARATOR) != std::string::npos ) {
+            size_t pos = 0;
+            std::string token;
+            while ((pos = _request.find((char)OP_SEPARATOR)) != std::string::npos) {
+                token = _request.substr(0, pos);
+                _request.erase(0, pos + 1);
 
 
-            if (pos == 1 ) continue;
-            if (token.at(token.size()-1) == char(OP_TERMINATOR) ) token.pop_back();
+                if (pos == 1 ) continue;
+                if (token.at(token.size()-1) == char(OP_TERMINATOR) ) token.pop_back();
 
-            _command.__args.push_back(atof(token.c_str()) );
+                _command.__args.push_back(atof(token.c_str()) );
+            }
         }
-    }
+    #else
+        if (_request.find((char)OP_SEPARATOR) != std::string::npos ) {
+            size_t pos = 0;
+            std::string token;
+            while ((pos = _request.find((char)OP_SEPARATOR)) != std::string::npos) {
+                token = _request.substr(0, pos);
+                _request.erase(0, pos + 1);
+
+
+                if (pos == 1 ) continue;
+                if (token.at(token.size()-1) == char(OP_TERMINATOR) ) token.pop_back();
+
+                _command.__args.push_back(*((float*)token.data()) );
+            }
+        }
+
+        std::string lg = "<- ";
+        for (float it : _command.__args ) { lg += OP_SEPARATOR; lg += it; }
+        if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
+        _logger->write(ci::log::Metadata(), lg );
+    #endif
 
 
     if (_cmd ) { *_cmd = _command; }

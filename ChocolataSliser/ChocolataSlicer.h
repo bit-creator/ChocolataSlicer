@@ -14,9 +14,9 @@
 #include "docLoader/ChocolataSlicerMesh.h"
 
 #include "ShaderTree.h"
+#include "Notification/Notification.h"
 
-
-#include "definitions.h"
+#include "definitions.h" 
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior

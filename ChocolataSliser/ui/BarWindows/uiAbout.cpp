@@ -1,5 +1,5 @@
 #include "uiBarWindows.h"
-#include "uiWindow.h"
+#include "../uiWindow.h"
 
 #include "cinder/app/App.h"
 

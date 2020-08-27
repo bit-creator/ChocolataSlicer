@@ -15,8 +15,6 @@
 #include "ShaderTree.h"
 #include "cinder/Serial.h"
 
-#include "ChocolataSlicerMesh.h"
-
 void ChocolataSlicer::setup() {
     CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
     CI_LOG_I("ChocolataApp ~> DisplaySize : " << getDisplay()->getSize().x << "px | " << getDisplay()->getSize().y << "px" );
@@ -70,14 +68,16 @@ void ChocolataSlicer::setup() {
     _logger.write(ci::log::Metadata(), "Main UI is initialized -> Windows opened(Editor | Content bar)" );
 
 
-    Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/printersHouseLogo.stl" );
-    ContentItemRef it0 = ContentTree::getInstance().pushItem(
-        ContentItem::create(
-            "HouseLogo",
-            ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() )
-        ) 
-    );
-    ContentTree::getInstance()._items.back()->_rotate = {-1.6,0,0};
+    // Mesh::_meshPtr_t ms = make_mesh(Mesh::File::_STL, "test/printersHouseLogo.stl" );
+    // ContentItemRef it0 = ContentTree::getInstance().pushItem(
+        // ContentItem::create(
+            // "HouseLogo",
+            // ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() )
+        // ) 
+    // );
+    // ContentTree::getInstance()._items.back()->_rotate = {-1.6,0,0};
+
+
 
 
     // Printing Context
@@ -85,8 +85,18 @@ void ChocolataSlicer::setup() {
 
 
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_ENABLE_LED } );
-
+ 
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
     Receiver::getInstance().readCommand();
+
+
+
+    // Notifications
+    Notifications::GetInstance().addNotif( Notif { "Slicer version", "Current version is : 14.0.9", "", ci::log::LEVEL_INFO  } );
+    Notifications::GetInstance().addNotif( Notif { "Firmware", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
+
+    Notifications::GetInstance().addNotif( Notif { "gge", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
+
+
 
 }

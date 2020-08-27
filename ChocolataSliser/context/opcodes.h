@@ -3,6 +3,8 @@
 
 #define _OP_IS_EXECUTABLE(x)    ( ((x < OP_STACK_EXECUTE) && (x >= OP_DISABLE_LED)) ? true : false )
 
+#define _OP_ARGS_AS_BYTES       true            // float args will transfer as (sizeof(float)). iy means float value transfers as 4 bytes
+
 /*  General/Executable/Geters/Exceptions  */
 
 /** General(systems) opcodes */

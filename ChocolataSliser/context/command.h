@@ -10,7 +10,7 @@ struct Command {
 
     std::vector<float>          __args; // Arguments
 
-    std::string                 __native; // String command
+    // std::string                 __native; // String command
 
 };
 

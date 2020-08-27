@@ -9,6 +9,8 @@
 #include "docLoader/ChocolataSlicerMesh.h"
 #include "ShaderTree.h"
 
+#include <thread>
+
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
 bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false ) {
@@ -358,17 +360,21 @@ void FileSelector::loadObject( ) {
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
         Mesh::_meshPtr_t _mesh;
 
-        if (_str_find(_lastPath, ".stl") == 0 )
-            _mesh = make_mesh(Mesh::File::_STL, _lastPath );
-
-        else if (_str_find(_lastPath, ".obj") == 0 )
-            _mesh = make_mesh(Mesh::File::_OBJ, _lastPath );
-
-        else if (_str_find(_lastPath, ".amf") == 0 )
-            _mesh = make_mesh(Mesh::File::_AMF, _lastPath );
-
-        else if (_str_find(_lastPath, ".3mf") == 0 )
-            _mesh = make_mesh(Mesh::File::_3MF, _lastPath );
+        std::thread loading([&_mesh](char* path) {
+            if (_str_find(path, ".stl") == 0 )
+                _mesh = make_mesh(Mesh::File::_STL, path );
+    
+            else if (_str_find(path, ".obj") == 0 )
+                _mesh = make_mesh(Mesh::File::_OBJ, path );
+    
+            else if (_str_find(path, ".amf") == 0 )
+                _mesh = make_mesh(Mesh::File::_AMF, path );
+    
+            else if (_str_find(path, ".3mf") == 0 )
+                _mesh = make_mesh(Mesh::File::_3MF, path );
+            }, _lastPath
+        );
+        loading.join();
 
 
 

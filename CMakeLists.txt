@@ -33,8 +33,9 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ui/uiWindiw.cpp
 	${APP_PATH}/ui/uiViewport.cpp
 	${APP_PATH}/ui/uiWindowHandler.cpp
+	${APP_PATH}/ui/Notification/Notification.cpp
 
-	${APP_PATH}/ui/uiAbout.cpp
+	${APP_PATH}/ui/BarWindows/uiAbout.cpp
 
 )
 set(INC_CHOCOLATA_SLICER
@@ -48,6 +49,9 @@ set(INC_CHOCOLATA_SLICER
 	
 	# Contenxt
 	${APP_PATH}/context
+
+	# UI
+	${APP_PATH}/ui
 	
 )
 
