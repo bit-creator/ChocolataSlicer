@@ -3,6 +3,7 @@
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
 
+#include "definitions.h"
 
 bool Notif::draw() {
     static bool _canClose = false;
@@ -44,6 +45,26 @@ bool Notif::draw() {
 
         _dr->AddLine({ _pos.x + Notifications::GetInstance()._notifSize.x - _lineThickness - 1, _pos.y }, { _pos.x + Notifications::GetInstance()._notifSize.x - _lineThickness - 1, _pos.y + Notifications::GetInstance()._notifSize.y }, ImGui::GetColorU32(_cl), _lineThickness );
 
+        if (!_dateilsLink.empty() ) {
+            ImVec2 _textPos = ImVec2(ImGui::GetCursorScreenPos().x + 10, _pos.y + Notifications::GetInstance()._notifSize.y - ImGui::GetFontSize() - 4);
+            ImVec2 _textSize = ImGui::CalcTextSize("details", NULL, false);
+            _dr->AddText(ImGui::GetFont(), ImGui::GetFontSize() - 2, _textPos, ImGui::GetColorU32(ImVec4(0.259,0.282,0.659,1.0) ), "details" );
+            _dr->AddLine({_textPos.x, _textPos.y+_textSize.y-2}, {_textPos.x+_textSize.x-8, _textPos.y+_textSize.y-2}, ImGui::GetColorU32(ImVec4(0.259,0.282,0.659,1.0) ), 1 );
+
+            ImGui::SetCursorScreenPos(_textPos);
+            if (ImGui::InvisibleButton(_title.c_str(), _textSize) ) {
+                std::thread _sys( 
+                    [](std::string _link) { 
+                        std::string _cmd = "xdg-open "; _cmd += _link;
+                        system(_cmd.c_str() );
+                    },
+                    _dateilsLink
+                );
+
+                _sys.detach();
+            }
+        }
+        
 
         ImGui::PopStyleVar();
     ImGui::End();

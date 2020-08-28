@@ -157,7 +157,8 @@ void ChocolataSlicer::drawUI() {
             ImGui::EndMenuBar();
         }
 
-        // ImGui::ColorPicker4("wd", &Notifications::GetInstance()._errorCl.x );
+        // static ImVec4 _testCl;
+        // ImGui::ColorPicker4("_testCl", &_testCl.x );
 
     m_ui_viewport->End();
 

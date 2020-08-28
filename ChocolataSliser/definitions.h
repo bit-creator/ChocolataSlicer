@@ -6,3 +6,5 @@
 
 #define __ChocolataSlicer_Version_ "0.1.1"
 #define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
+
+#define __ChocolataSlicer_Documentation_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"

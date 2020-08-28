@@ -81,7 +81,7 @@ void ChocolataSlicer::setup() {
 
     // Notifications
     std::string _vs = "Current version is : "; _vs += __ChocolataSlicer_Version_;
-    Notifications::GetInstance().addNotif( Notif { "Slicer version", _vs.c_str(), "", ci::log::LEVEL_INFO  } );
+    Notifications::GetInstance().addNotif( Notif { "Slicer version", _vs.c_str(), __ChocolataSlicer_Link_, ci::log::LEVEL_INFO  } );
 
 
     // Printing Context
