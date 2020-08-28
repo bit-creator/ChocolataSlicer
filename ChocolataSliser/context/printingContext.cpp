@@ -2,6 +2,8 @@
 #include "cinder/app/App.h"
 
 #include "definitions.h"
+#include "Notification/Notification.h"
+
 
 void PrintingContext::open() { 
     initPrinterBoard();
@@ -76,6 +78,7 @@ void PrintingContext::initPrinterBoard() {
 
     }
     catch (ci::Exception& ex ) {
+        Notifications::GetInstance().addNotif( Notif { "Firmware", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
         _logger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Printer board was not connected" );
         CI_LOG_EXCEPTION("Serial device didn't init. Connect printer board", ex );
     }

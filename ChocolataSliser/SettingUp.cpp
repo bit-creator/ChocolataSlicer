@@ -79,6 +79,10 @@ void ChocolataSlicer::setup() {
 
 
 
+    // Notifications
+    std::string _vs = "Current version is : "; _vs += __ChocolataSlicer_Version_;
+    Notifications::GetInstance().addNotif( Notif { "Slicer version", _vs.c_str(), "", ci::log::LEVEL_INFO  } );
+
 
     // Printing Context
     PrintingContext::getInstance().initPrinterBoard();
@@ -88,15 +92,6 @@ void ChocolataSlicer::setup() {
  
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
     Receiver::getInstance().readCommand();
-
-
-
-    // Notifications
-    Notifications::GetInstance().addNotif( Notif { "Slicer version", "Current version is : 14.0.9", "", ci::log::LEVEL_INFO  } );
-    Notifications::GetInstance().addNotif( Notif { "Firmware", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
-
-    Notifications::GetInstance().addNotif( Notif { "gge", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
-
 
 
 }

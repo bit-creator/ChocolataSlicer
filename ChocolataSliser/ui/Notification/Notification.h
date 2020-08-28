@@ -8,14 +8,17 @@
 #include <cinder/Log.h>
 #include <cinder/CinderImGui.h>
 
-#include "ui/uiWindow.h"
 #include "Notif.h"
-
 
 
 class Notifications {
     private :
         std::vector<Notif>       _notifications;
+
+    public :
+        ImVec2                  _notifSize = { 273, 68 };
+
+        uint                    _maxNotifs = 3;
 
     public :
         static Notifications& GetInstance() { static Notifications nt; return nt; }

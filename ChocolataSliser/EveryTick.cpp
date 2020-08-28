@@ -157,6 +157,8 @@ void ChocolataSlicer::drawUI() {
             ImGui::EndMenuBar();
         }
 
+        // ImGui::ColorPicker4("wd", &Notifications::GetInstance()._errorCl.x );
+
     m_ui_viewport->End();
 
     // update all other
