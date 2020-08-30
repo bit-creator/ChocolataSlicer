@@ -73,6 +73,7 @@ void ChocolataSlicer::setup() {
         // ContentItem::create(
             // "HouseLogo",
             // ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() )
+            // ci::gl::Texture2d::create(ci::loadImage("test/Ico.png") )
         // ) 
     // );
     // ContentTree::getInstance()._items.back()->_rotate = {-1.6,0,0};
@@ -89,7 +90,7 @@ void ChocolataSlicer::setup() {
 
 
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_ENABLE_LED } );
- 
+
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
     Receiver::getInstance().readCommand();
 

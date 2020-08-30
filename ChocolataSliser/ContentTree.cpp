@@ -41,7 +41,7 @@ void ContentTree::drawObjectsToUiList() {
 
     static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    for (int i = (_items.size() -1); i >= 0; i-- ) {
+    for (int i = (_items.size() - 1); i >= 0; i-- ) {
         ImGuiTreeNodeFlags node_flags = base_flags;
         if (i == _selected ) node_flags |= ImGuiTreeNodeFlags_Selected;
         if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
@@ -61,8 +61,8 @@ void ContentTree::drawObjectsToUiList() {
                 if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), " ", true ) ) {
                     _items.at(i)->_batchPtr.reset();
 
-                    if (_items.at(i)->isEmpty() ) { _items.erase(_items.end() - i );
-                        goto endContentTree;
+                    if (_items.at(i)->isEmpty() ) {
+                        _items.erase(_items.end() - i - 1 );
                     }
 
                 } __tooltip("Remove item");
@@ -86,8 +86,8 @@ void ContentTree::drawObjectsToUiList() {
                 if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), "  ", true ) ) {
                     _items.at(i)->_texturePtr.reset();
 
-                    if (_items.at(i)->isEmpty() ) { _items.erase(_items.end() - i );
-                        goto endContentTree;
+                    if (_items.at(i)->isEmpty() ) {
+                        _items.erase(_items.end() - i - 1 );
                     }
 
                 } __tooltip("Remove item");
@@ -95,9 +95,8 @@ void ContentTree::drawObjectsToUiList() {
             }
 
             ImGui::TreePop();
-            if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
+            // if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
 
-            endContentTree: continue;
         }
     }
 }
