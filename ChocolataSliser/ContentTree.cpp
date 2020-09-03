@@ -47,7 +47,7 @@ void ContentTree::drawObjectsToUiList() {
         if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
 
         float _x = ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - 50;
-        bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef, (i+1) );
+        bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef.c_str(), (i+1) );
         if (ImGui::IsItemClicked()) _selected = i;
 
 

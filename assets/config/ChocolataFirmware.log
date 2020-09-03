@@ -1,9 +1,9 @@
-|info   | 2020-08-30.10:36:31 [93958318561216] PrinterContext -> Firmware log
-|warning| 2020-08-30.10:36:31 [0] WARNING : Printer board was not connected
-|error  | 2020-08-30.10:36:31 [93958310210070] ERR : cant sent command, board didn't connect
-|error  | 2020-08-30.10:36:31 [93958310210070] ERR : cant sent command, board didn't connect
-|error  | 2020-08-30.10:36:31 [93958318560480] ERR : cant read command, board didn't connect
-|error  | 2020-08-30.10:36:38 [93958310210070] ERR : cant sent command, board didn't connect
-|error  | 2020-08-30.10:36:38 [93958310210070] ERR : cant sent command, board didn't connect
-|error  | 2020-08-30.10:36:38 [93958310198039] ERR : cant read command, board didn't connect
-|error  | 2020-08-30.10:36:38 [93958310210070] ERR : cant sent command, board didn't connect
+|info   | 2020-09-03.12:00:00 [93909218412480] PrinterContext -> Firmware log
+|warning| 2020-09-03.12:00:00 [0] WARNING : Printer board was not connected
+|error  | 2020-09-03.12:00:00 [93909210057244] ERR : cant sent command, board didn't connect
+|error  | 2020-09-03.12:00:00 [93909210057244] ERR : cant sent command, board didn't connect
+|error  | 2020-09-03.12:00:00 [93909218411744] ERR : cant read command, board didn't connect
+|error  | 2020-09-03.12:00:22 [93909210057244] ERR : cant sent command, board didn't connect
+|error  | 2020-09-03.12:00:22 [93909210057244] ERR : cant sent command, board didn't connect
+|error  | 2020-09-03.12:00:22 [93909210045213] ERR : cant read command, board didn't connect
+|error  | 2020-09-03.12:00:22 [93909210057244] ERR : cant sent command, board didn't connect

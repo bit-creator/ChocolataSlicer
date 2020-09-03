@@ -99,11 +99,6 @@ void ChocolataSlicer::drawUI() {
                 ImGui::Separator();
 
 
-                if (ImGui::BeginMenu("View mode")) {
-                    ImGui::EndMenu();
-                }
-
-
                 if (ImGui::BeginMenu("Addons", false)) {
                     ImGui::EndMenu();
                 }
@@ -156,9 +151,6 @@ void ChocolataSlicer::drawUI() {
 
             ImGui::EndMenuBar();
         }
-
-        // static ImVec4 _testCl;
-        // ImGui::ColorPicker4("_testCl", &_testCl.x );
 
     m_ui_viewport->End();
 

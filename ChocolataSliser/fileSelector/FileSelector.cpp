@@ -46,7 +46,9 @@ void FileSelector::initFileSelector() {
     // UI preparing 
     _windowPtr = ui::uiWindow::create( ImVec2(), ImVec2(60,60), "FileSelector", ui::uiLocation_None,
                                        ImGuiWindowFlags_NoResize |
-                                       ImGuiWindowFlags_NoCollapse
+                                       ImGuiWindowFlags_NoCollapse |
+                                       ImGuiWindowFlags_NoScrollbar |
+                                       ImGuiWindowFlags_NoScrollWithMouse
     );
 
     _windowBlurPtr = ui::uiWindow::create( ImVec2(), ImVec2(), "FileSelectorBlur", ui::uiLocation_None, 
@@ -103,21 +105,17 @@ void FileSelector::draw() {
             ImGui::TextColored(ImVec4(0,0,0,0.8), "Content tree");
             ImGui::SameLine();
             ImGui::Text("(?)");
-            ContentTree::__tooltip("Select item to which tou  want load an object");
+            ContentTree::__tooltip("Select item to which you  want load an object");
             ImGui::Spacing(); ImGui::Spacing();
             ContentTree::getInstance().drawObjectsToUiList();
 
-            // FIXME:
-            if (_lastPathExtention == _File_Extention_Mesh ) {
-                ImGui::Spacing();
-                if (ui::__ui_invisible_button(ImGui::GetCursorScreenPos(), "New object", true) ) {
-                    // std::string path = std::string(_lastPath );
-                    // path = path.substr(path.find_last_not_of('/') );
-
-                    // ContentTree::getInstance().pushItem( ContentItem::create(path.c_str(), ci::gl::BatchRef(nullptr) )
-                    // );
-
-                    // ContentTree::getInstance()._selected = ContentTree::getInstance()._items.size()-1; 
+            if (!ContentTree::getInstance()._items.size() )
+                ImGui::TextColored(ImVec4(0,0,0,0.5), "No objects" );
+            else {
+                ImVec2 _scPos = ImGui::GetCursorScreenPos();
+                ImVec2 _sz = { ImGui::GetColumnWidth(), _windowPtr->_size.y + _windowPtr->_pos.y - _scPos.y };
+                if (ImGui::InvisibleButton("toselectNotsc", _sz ) ) {
+                    ContentTree::getInstance()._selected = -1;
                 }
             }
 
@@ -189,6 +187,25 @@ void FileSelector::draw() {
 
                         m_opened = false;
                     }
+
+                    // If no selected object it will load the model to newly created objet
+                    else if (ContentTree::getInstance()._selected == -1 && _lastPathExtention == _File_Extention_Mesh ) {
+                        std::string name = basename(_lastPath);
+
+                        if (_texturePtr ) {
+                            ContentTree::getInstance()._items.push_back(
+                                ContentItem::create(name, _texturePtr )
+                            );
+                        }
+                        else {
+                            ContentTree::getInstance()._items.push_back(
+                                ContentItem::create(name, _batch )
+                            );
+                        }
+
+                        m_opened = false;
+                    }
+
                 }
                 
                 if (ContentTree::getInstance()._selected == -1)
@@ -211,8 +228,15 @@ void FileSelector::draw() {
                     ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace texture item of object" );
                 }
             }
-            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh && ContentTree::getInstance()._selected >= 0 ) {
-                /* ... */
+            else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
+                if (ContentTree::getInstance()._selected == -1 || ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr == nullptr ) {
+                    ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Insert object texture to object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Insert object texture to object").y/2)) );
+                    ImGui::TextColored(ImVec4(0,0,0,0.5), "Load as new object" );
+                }
+                else {
+                    ImGui::SetCursorScreenPos(ImVec2(winSize.x+offsets.x-200-ImGui::CalcTextSize("Replace model item of object ").x, winSize.y+offsets.y-20-(ImGui::CalcTextSize("Replace model item of object").y/2)) );
+                    ImGui::TextColored(ImVec4(0,0,0,0.5), "Replace model item of object" );
+                }
             }
 
 

@@ -26,11 +26,11 @@ class ContentItem {
          *
          * @return Returns pointer to new created object
         */
-        static ContentItemRef create(const char* name, ci::gl::Texture2dRef texture = nullptr) {
+        static ContentItemRef create(std::string name, ci::gl::Texture2dRef texture = nullptr) {
             return ContentItemRef(new ContentItem{name, texture} );
         }
 
-        static ContentItemRef create(const char* name, ci::gl::BatchRef mesh = nullptr) {
+        static ContentItemRef create(std::string name, ci::gl::BatchRef mesh = nullptr) {
             return ContentItemRef(new ContentItem{name, mesh} );
         }
 
@@ -41,10 +41,10 @@ class ContentItem {
          * @param name It's name of current model. It will be key for it
          * @param texture Is pointer to texture which should be stored in current model
         */
-        ContentItem(const char* name, ci::gl::Texture2dRef texture = nullptr ) : _nameRef(name), _texturePtr(texture), _batchPtr(nullptr) {
+        ContentItem(std::string name, ci::gl::Texture2dRef texture = nullptr ) : _nameRef(name), _texturePtr(texture), _batchPtr(nullptr) {
         }
 
-        ContentItem(const char* name, ci::gl::BatchRef mesh = nullptr ) : _nameRef(name), _batchPtr(mesh), _texturePtr(nullptr) {
+        ContentItem(std::string name, ci::gl::BatchRef mesh = nullptr ) : _nameRef(name), _batchPtr(mesh), _texturePtr(nullptr) {
         }
 
 
@@ -61,7 +61,7 @@ class ContentItem {
         void destroy() { _texturePtr.~__shared_ptr(); _batchPtr.~__shared_ptr(); _texturePtr = nullptr; _batchPtr = nullptr; }
 
     public : // Lines of class
-        const char*                         _nameRef; // Name of current object. It will be as a key for processing
+        std::string                         _nameRef; // Name of current object. It will be as a key for processing
 
         ci::gl::Texture2dRef                _texturePtr = nullptr; // Texture of this model
 
