@@ -83,7 +83,7 @@ class ChocolataSlicer : public ci::app::App {
         bool                    m_sliced = false;
 
     public :
-        ci::log::LoggerFile _logger = ci::log::LoggerFile("assets/config/ChocolataSlicer.log", false);
+        ci::log::LoggerFile _logger = ci::log::LoggerFile(__ChocolataSlicer_LogFile_, false);
 
 };
 
