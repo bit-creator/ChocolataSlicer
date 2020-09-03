@@ -1,5 +1,5 @@
-#ifndef _PLANET_MOV_LABLES_H
-#define _PLANET_MOV_LABLES_H
+#ifndef __CHOCOLATA_SLICER_LABLES_H
+#define __CHOCOLATA_SLICER_LABLES_H
 
 
 #include <vector>
@@ -8,8 +8,9 @@
 enum Label_ {
     Label_winSize = 0,
     Label_winPos,
-    Label_winFrameRate
+    Label_winFrameRate,
 
+    Label_recentFiles
 };
 
 static std::vector<std::pair<const char*, const char*> > Labels = std::initializer_list<std::pair<const char*, const char*> > {
@@ -17,12 +18,14 @@ static std::vector<std::pair<const char*, const char*> > Labels = std::initializ
 
     { "windowPosition", "winPos" },                             // Label_winPos
 
-    { "windowFrameRate", "winFrameRate" },                         // Label_winFrameRate
+    { "windowFrameRate", "winFrameRate" },                      // Label_winFrameRate
+
+    { "recentFiles", "" },                                      // Label_recentFiles
 
 };
 
 
 
-#endif // _PLANET_MOV_LABLES_H
+#endif // __CHOCOLATA_SLICER_LABLES_H
 
 

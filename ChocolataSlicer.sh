@@ -1,7 +1,15 @@
 #!/bin/bash
 
-./${pwd}/build/Debug/ChocolataSlicer/ChocolataSlicer
-# if [[ ! "$(./${pwd}/build/Debug/ChocolataSlicer/ChocolataSlicer)" ]]; then
-    # echo ". . . Executable didnt find"
-    # echo "Try to build project again"
-# fi
+
+if [[ -e "build/Release/ChocolataSlicer/ChocolataSlicer" ]]; then 
+    ./${pwd}/build/Release/ChocolataSlicer/ChocolataSlicer
+
+elif [[ -e "build/Debug/ChocolataSlicer/ChocolataSlicer" ]]; then
+    ./${pwd}/build/Debug/ChocolataSlicer/ChocolataSlicer
+
+else 
+    echo "Try to compile ChocolataSlicer again...
+    ERR : Executable file didn't find.
+    "
+
+fi 

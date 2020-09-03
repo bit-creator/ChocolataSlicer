@@ -21,23 +21,28 @@ namespace ui {
 
 
 
-    class uiContentItem;
-    typedef std::shared_ptr<uiContentItem>                           uiContentItemRef;
+    typedef struct uiWindows {
+        bool about          = false;
+        bool welcome        = false;
 
-    class uiContentTree;
-    typedef std::shared_ptr<class ui::uiContentTree>                uiContentTreeRef;
-
-
-
-    // uiLoaction_ enum for controlling general position of any viewable objects in some local space
-    enum uiLoaction_ {
-        uiLoaction_None,
-        uiLoaction_Left,
-        uiLoaction_Right,
-
-        uiLoaction_Top,
-        uiLoaction_Down
+        bool shortCuts      = false;
     };
+
+    static struct uiWindows UiWindows;
+
+
+    // uiLocation_ enum for controlling general position of any viewable objects in some local space
+    enum uiLocation_ {
+        uiLocation_None,
+        uiLocation_Left,
+        uiLocation_Right,
+
+        uiLocation_Top,
+        uiLocation_Down
+    };
+
+
+    bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false );
 
 };
 

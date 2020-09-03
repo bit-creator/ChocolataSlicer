@@ -8,14 +8,20 @@
 
 
 #include "ui/ui.h"
-#include "ChocolataSlicerFileSelector.h"
+#include "FileSelector.h"
+#include "ContentTree.h"
+#include "ObjectPicker.h"
+#include "docLoader/ChocolataSlicerMesh.h"
 
-#define __ChocolataSlicer_Version_ "0.1.1"
+#include "ShaderTree.h"
+#include "Notification/Notification.h"
+
+#include "definitions.h" 
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior
  * and manipulating all functionality
- * 
+ *
 */
 class ChocolataSlicer : public ci::app::App {
     public :
@@ -30,7 +36,7 @@ class ChocolataSlicer : public ci::app::App {
         void update() override;
 
         /**
-         * Executes every tick and contains camera rersizing and fbos
+         * Executes every tick and contains camera resizing and FBOs
         */
         void resize() override;
 
@@ -40,7 +46,12 @@ class ChocolataSlicer : public ci::app::App {
         void draw() override;
 
         /**
-         * // Function for drawing all programs ui
+         * Cleans dynamicall reserved memory before programs end
+        */
+        void cleanup() override;
+
+        /**
+         * Function for drawing all programs ui
         */
         void drawUI();
 
@@ -48,6 +59,9 @@ class ChocolataSlicer : public ci::app::App {
 	    void mouseDown(ci::app::MouseEvent event ) override;
 	    void mouseDrag(ci::app::MouseEvent event ) override;
         void mouseWheel(ci::app::MouseEvent event ) override;
+
+	    void keyDown(ci::app::KeyEvent event ) override;
+	    // void keyUp(ci::app::KeyEvent event ) override;
 
     public :  // Ui components of Slicer
         ui::uiViewportRef       m_ui_viewport;
@@ -63,11 +77,16 @@ class ChocolataSlicer : public ci::app::App {
         ci::CameraPersp         m_camera;
         ci::CameraUi			m_cameraui;
 
+
+        int                     _viewMode = 0;
+
         bool                    m_sliced = false;
+
+    public :
+        ci::log::LoggerFile _logger = ci::log::LoggerFile(__ChocolataSlicer_LogFile_, false);
 
 };
 
 
 
 #endif // __CHOCOLATA_SLICER_
-

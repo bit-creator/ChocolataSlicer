@@ -16,10 +16,12 @@
 #ifndef GEOMETRY_HPP
 #define GEOMETRY_HPP
 
+#include <optional>
 #include <memory>
 #include <cmath>
+#include <iostream>
 
-constexpr float F_TOL = 0.01;  // TOLERANCE_FOR_FLOAT_COMPARING
+constexpr float F_TOL = 0.000001;  // TOLERANCE_FOR_FLOAT_COMPARING
 
 /** BAGFIX
  * 1. using a global constant for bed plate normal
@@ -41,13 +43,43 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
      * this function is embeded
      */
     inline constexpr bool
-    is_equal(const float& first, const float& second) noexcept
-    { return  abs ( first - second ) < F_TOL; }
+    is_equal(const float first, const float second) noexcept
+    { return  (std::abs ( first - second ) < 0.000001); }
+
+    /**
+     * @struct Point2d impliment point on face 
+     * 
+     */
+    struct Point2d
+    {
+        Point2d() 
+            : _x(0.)
+            , _y(0.)
+        {  }
+
+        Point2d(const float& x, const float y)
+            : _x(x)
+            , _y(y)
+        {  }
+        
+        float _x;
+        float _y;
+    };
 
     /**
      * Texture coordinate is pair has two float value: u & v respectivetly
     */
     using uv_t = std::pair < const float&, const float& >;
+
+    /**
+     * optional point is point who may be or not maybe and all version correct
+     */
+    using optPoint2d = std::optional < Point2d >;
+
+    /**
+     * cut_t this is type triangle intersection  
+     */
+    using cut_t = std::optional < std::pair < optPoint2d, optPoint2d > >;
 
     /**
      * @class Primitive is abstract base for real geometric object
@@ -1396,6 +1428,99 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             { return !(*this == oth); }
 
 
+            /**
+             * @brief 
+            */
+            cut_t cut(const float& Height) noexcept
+            {
+                fixTriangle();
+
+                std::cout << '\n' << "CUT" << '\n' << '\n';
+
+                if (__vertex_A -> getZ() < Height 
+                 || __vertex_C -> getZ() > Height)
+                    return {};
+
+                if (is_equal(__vertex_A -> getZ(), Height)
+                 && is_equal(__vertex_B -> getZ(), Height))
+                    return std::pair ( Point2d( __vertex_A -> getX(), 
+                                                __vertex_A -> getY() ),
+                                       Point2d( __vertex_B -> getX(), 
+                                                __vertex_B -> getY() ) );
+
+                if (is_equal(__vertex_C -> getZ(), Height)
+                 && is_equal(__vertex_B -> getZ(), Height))
+                    return std::pair ( Point2d ( __vertex_B -> getX(),
+                                                 __vertex_B -> getY() ),
+                                       Point2d ( __vertex_C -> getX(),
+                                                 __vertex_C -> getY() ) );  
+                
+                if (is_equal(__vertex_A -> getZ(), Height))
+                    return std::pair ( Point2d ( __vertex_A -> getX(),
+                                                 __vertex_A -> getY() ),
+                                       std::nullopt );
+
+                if (is_equal(__vertex_C -> getZ(), Height))
+                    return std::pair ( Point2d ( __vertex_C -> getX(),
+                                                 __vertex_C -> getY() ),
+                                       std::nullopt );
+                
+                float h              =             Height            ;
+                float n_x            =           __normal   -> getX();
+                float n_y            =           __normal   -> getY();
+                float n_z            =           __normal   -> getZ();
+                float a_x            =           __vertex_A -> getX();
+                float a_y            =           __vertex_A -> getY();
+                float a_z            =           __vertex_A -> getZ();
+                float b_x            =           __vertex_B -> getX();
+                float b_y            =           __vertex_B -> getY();
+                float b_z            =           __vertex_B -> getZ();
+                float c_x            =           __vertex_C -> getX();
+                float c_y            =           __vertex_C -> getY();
+                float c_z            =           __vertex_C -> getZ();
+
+                float k = - n_x / n_y;
+                float p = (n_x * a_x + n_y * a_y - n_z * (h - a_z)) / n_y;
+
+                float Kac = (a_y - c_y) / (a_x - c_x);
+                float Bac = (c_y * (a_x - c_x) - c_x * (a_y - c_y)) / (a_x - c_x);
+
+                float l_x = (p - Bac) / (k - Kac);
+                float l_y = k * l_x + p;
+
+                if(is_equal(__vertex_B -> getZ(), Height))
+                    return std::pair ( Point2d ( __vertex_B -> getX(),
+                                                 __vertex_B -> getY() ),
+                                       Point2d ( l_x, l_y ) );
+
+                float x_1 = __vertex_B -> getX();
+                float y_1 = __vertex_B -> getY();
+                
+                float x_2 = 0.;
+                float y_2 = 0.;
+
+                if(__vertex_B -> getZ() < Height)
+                {
+                    x_2 = __vertex_A -> getX();
+                    y_2 = __vertex_A -> getY();
+                }
+                else
+                {
+                    x_2 = __vertex_C -> getX();
+                    y_2 = __vertex_C -> getY();
+                }
+
+                float K12 = (y_2 - y_1) / (x_2 - x_1);
+                float B12 = (y_1 * (x_2 - x_1) - x_1 * (y_2 - y_1)) / (x_2 - x_1);
+
+                float k_x = (p - B12) / (k - K12);
+                float k_y = k * k_x + p;
+
+                return std::pair ( Point2d ( k_x, k_y ),
+                                   Point2d ( l_x, l_y ) );
+            }
+
+
         private:    // INTERNAL_METHOD
             /**
              * @brief 
@@ -1433,11 +1558,18 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 auto z_b = __vertex_B -> getZ();
                 auto z_c = __vertex_C -> getZ();
 
-                // if(z_c >= z_b) 
-                //     if(z_c >= z_a) std::swap(__vertex_A, __vertex_C);
-                //     else std::swap(__vertex_B, __vertex_C);
-                // else 
-
+                if(z_c >= z_b) 
+                    if(z_c >= z_a) 
+                    {
+                        std::swap(__vertex_A, __vertex_C);
+                        if(z_a >= z_b) std::swap(__vertex_C, __vertex_B);
+                    }
+                    else std::swap(__vertex_B, __vertex_A);
+                else if(z_b >= z_a) 
+                {
+                    std::swap(__vertex_B, __vertex_A);
+                    if(z_c >= z_a) std::swap(__vertex_C, __vertex_B);
+                }
             }
     }; // CLASS_TRIANGLE
 

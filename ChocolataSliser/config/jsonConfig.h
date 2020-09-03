@@ -1,5 +1,5 @@
-#ifndef _PLANET_MOV_JSON_CONFIG_H
-#define _PLANET_MOV_JSON_CONFIG_H
+#ifndef __CHOCOLATA_SLICER_JSON_CONFIG_H
+#define __CHOCOLATA_SLICER_JSON_CONFIG_H
 
 #include "jsoncpp/json.h"
 #include "labels.h"
