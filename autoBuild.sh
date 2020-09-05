@@ -18,3 +18,8 @@ echo "Platform : ${CURRENT_PLATFORM}"
 
 # Required tools deteching
 . scipts/detectTools.sh
+
+
+
+# Install packages
+. scipts/installPackages.sh
