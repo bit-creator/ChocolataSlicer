@@ -22,3 +22,6 @@ detectTools() {
         exit $_errs
     fi
 }
+
+echo ""
+detectTools

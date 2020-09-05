@@ -1,19 +1,20 @@
 #!/bin/bash
 
-. tools/scipts/detectTools.sh
-
 # Detect architecture
 CURRENT_ARCHITECTURE=""
+. tools/scipts/detectArchitecture.sh
 
-CURRENT_FULL_ARCHITECTURE=$(dpkg --print-architecture)
-if [[ $CURRENT_FULL_ARCHITECTURE =~ "arm" ]]; then
-    CURRENT_ARCHITECTURE="arm"
-else
-    CURRENT_ARCHITECTURE="x86_64"
-fi
-
-echo "${CURRENT_FULL_ARCHITECTURE} architecture was detected..."
+echo "Architecture : ${CURRENT_ARCHITECTURE}"
 
 
-# Detect required tools
-detectTools
+
+# Platform deteching
+CURRENT_PLATFORM=""
+. tools/scipts/detectPlatform.sh
+
+echo "Platform : ${CURRENT_PLATFORM}"
+
+
+
+# Required tools deteching
+. tools/scipts/detectTools.sh
