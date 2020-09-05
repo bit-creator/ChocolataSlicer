@@ -4,7 +4,7 @@ build
 
 ChocolataSliser/Cinder
 
-assets/config/imGuiReserveConfig.ini
-assets/config/recentFiles.json
 
+*.log
+*.ini
 *.gch
