@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. tools/scipts/detectTools.sh
+
 # Detect architecture
 CURRENT_ARCHITECTURE=""
 
@@ -11,3 +13,7 @@ else
 fi
 
 echo "${CURRENT_FULL_ARCHITECTURE} architecture was detected..."
+
+
+# Detect required tools
+detectTools
