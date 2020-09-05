@@ -2,7 +2,7 @@
 
 # Detect architecture
 CURRENT_ARCHITECTURE=""
-. tools/scipts/detectArchitecture.sh
+. scipts/detectArchitecture.sh
 
 echo "Architecture : ${CURRENT_ARCHITECTURE}"
 
@@ -10,7 +10,7 @@ echo "Architecture : ${CURRENT_ARCHITECTURE}"
 
 # Platform deteching
 CURRENT_PLATFORM=""
-. tools/scipts/detectPlatform.sh
+. scipts/detectPlatform.sh
 
 echo "Platform : ${CURRENT_PLATFORM}"
 
