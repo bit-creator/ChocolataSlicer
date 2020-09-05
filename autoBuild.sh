@@ -17,4 +17,4 @@ echo "Platform : ${CURRENT_PLATFORM}"
 
 
 # Required tools deteching
-. tools/scipts/detectTools.sh
+. scipts/detectTools.sh
