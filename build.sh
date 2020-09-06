@@ -1,34 +1,50 @@
 #!/bin/bash
 
-# Detect architecture
 CURRENT_ARCHITECTURE=""
-. scipts/detectArchitecture.sh
-echo "Architecture : ${CURRENT_ARCHITECTURE}"
-
-# Platform deteching
 CURRENT_PLATFORM=""
-. scipts/detectPlatform.sh
-echo "Platform : ${CURRENT_PLATFORM}"
-
-
 
 BUILD_TYPE="Release"
 GL_TARGET="ogl"
+
+
+
+. scipts/detectArchitecture.sh
+echo "Architecture : ${CURRENT_ARCHITECTURE}"
+
+
+. scipts/detectPlatform.sh
+echo "Platform : ${CURRENT_PLATFORM}"
+echo ""
+
+
+
+if [[ $CURRENT_ARCHITECTURE == "arm" ]]; then
+    GL_TARGET="es2-rpi"
+fi
+
+
+
 for i in "$@"
 do
 case $i in
-    --buildtype=*)
+    -buildtype=*)
         if [[ ${i#*=} == "Release" || ${i#*=} == "Debug" ]]; then
             BUILD_TYPE="${i#*=}"
         else
-            echo "Build type is unknown. Use default type - Release"
+            echo "Err : Build type is unknown. Use default type - Release"
         fi
     ;;
-    --gltarget=*)
-        CINDER_GL_TARGET="${i#*=}"
-    ;;
     --arch=*)
-        CURRENT_ARCHITECTURE="${i#*=}"
+        if [[ ${i#*=} == "arm" || ${i#*=} == "x86_64" ]]; then
+            CURRENT_ARCHITECTURE="${i#*=}"
+        else
+            echo "Err : Seted architecture is unknown. Use default arch - x86_64"
+            CURRENT_ARCHITECTURE="x86_64"
+        fi
+    ;;
+
+    -gltarget=*)
+        GL_TARGET="${i#*=}"
     ;;
     --platform=*)
         CURRENT_PLATFORM="${i#*=}"
@@ -38,11 +54,8 @@ done
 
 
 
-# Required tools deteching
-. scipts/detectTools.sh
 
-# Install packages
+. scipts/detectTools.sh
 . scipts/installPackages.sh
 
-# Install and build Cinder
 . scipts/installCinder.sh
