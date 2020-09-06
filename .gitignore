@@ -3,3 +3,6 @@
 *.gch
 
 .vscode
+
+Release
+build

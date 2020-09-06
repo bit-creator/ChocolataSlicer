@@ -22,7 +22,7 @@
 #include <map>
 
 #include "geometry.hpp"
-#include "../Cinder/include/cinder/TriMesh.h"
+#include "cinder/TriMesh.h"
 
 using Geometry::_vectorPtr;
 using Geometry::_vertexPtr;

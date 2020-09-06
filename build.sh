@@ -59,3 +59,7 @@ done
 . scipts/installPackages.sh
 
 . scipts/installCinder.sh
+
+. scipts/installSlicer.sh
+echo "
+ChocolataSlicer ready to work!"
