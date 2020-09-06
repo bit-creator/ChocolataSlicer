@@ -3,7 +3,7 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 
 project(ChocolataApps )
 
-get_filename_component( CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ChocolataSliser/Cinder" ABSOLUTE )
+get_filename_component( CINDER_PATH "$ENV{HOME}/Cinder" ABSOLUTE )
 get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/ChocolataSliser" ABSOLUTE )
 
 
@@ -40,6 +40,7 @@ set(SRC_CHOCOLATA_SLICER
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
+	${CINDER_PATH}/include
 	${APP_PATH}/
 	${APP_PATH}/config
 	${APP_PATH}/fileSelector

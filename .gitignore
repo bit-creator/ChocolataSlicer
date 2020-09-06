@@ -1,10 +1,8 @@
-build
+*.log
+*.ini
+*.gch
 
 .vscode
 
-ChocolataSliser/Cinder
-
-assets/config/imGuiReserveConfig.ini
-assets/config/recentFiles.json
-
-*.gch
+Release
+build

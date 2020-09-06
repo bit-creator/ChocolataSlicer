@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <cstring>
 
-#include "../Cinder/include/cinder/ObjLoader.h"
+#include "cinder/ObjLoader.h"
 #include "geometry.hpp"
 #include "ChocolataSlicerMesh.h"
 

@@ -1,79 +1,65 @@
 #!/bin/bash
 
-CURRENT_PATH=$(pwd)
-CINDER_PATH=${CURRENT_PATH}/ChocolataSliser/Cinder
-function exitWithError() {
-    echo "Error:" "$@" >&2
-    exit 1
-}
+CURRENT_ARCHITECTURE=""
+CURRENT_PLATFORM=""
+
+BUILD_TYPE="Release"
+GL_TARGET="ogl"
 
 
-function buildDeps() {
-    for tool in git make cmake; do
-        command -v "${tool}" &> /dev/null || exitWithError ". . . Missing required tool ${tool}"
-    done
 
-    # Clone LibCinder to folder
-    if [[ ! -s "${CINDER_PATH}" ]]; then
-        echo ". . . Cinder is not cloned yet, cloning now"
-        git clone --recursive https://github.com/cinder/Cinder.git \
-            || exitWithError "Cannot clone Cinder"
+. scipts/detectArchitecture.sh
+echo "Architecture : ${CURRENT_ARCHITECTURE}"
 
-        mv "${CURRENT_PATH}/Cinder" "${CINDER_PATH}"
-    fi
 
-    # Build LibCinder
-    if [ ! -f "${CINDER_PATH}/build/CMakeCache.txt" ] ; then
-        echo ". . . Cinder has not been configure, running cmake ..."
-        cd ${CINDER_PATH}
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug || exitWithError ". . . Cannot run CMake on Cinder"
-        make -j4 || exitWithError ". . . Error building Cinder"
-        cd ../../../
-    fi
+. scipts/detectPlatform.sh
+echo "Platform : ${CURRENT_PLATFORM}"
+echo ""
 
-}
 
-function prepareEnv() {
-    sudo apt-get install libxcursor-dev \
-    libxrandr-dev \
-    libxinerama-dev \
-    libxi-dev \
-    libgl1-mesa-dev \
-    libglu1-mesa-dev \
-    zlib1g-dev \
-    libfontconfig1-dev \
-    libmpg123-dev \
-    libsndfile1 \
-    libsndfile1-dev \
-    libpulse-dev \
-    libasound2-dev \
-    libcurl4-gnutls-dev \
-    libgstreamer1.0-dev \
-    libgstreamer-plugins-bad1.0-dev \
-    libgstreamer-plugins-base1.0-dev \
-    gstreamer1.0-libav \
-    gstreamer1.0-alsa \
-    gstreamer1.0-pulseaudio \
-    gstreamer1.0-plugins-bad \
-    libboost-filesystem-dev \
-    zenity
-}
 
-function buildSlicer() {
-    if [[ ! -e "${CURRENT_PATH}/CMakeCache.txt" ]]; then
-        echo ". . . ChocolataSlicer has not been configure, running cmake ..."
-        mkdir build
-        cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug || exitWithError ". . . Cannot run CMake on ChocolataSclicer"
-        make -j 4 || exitWithError ". . . Error building ChocolataSlicer"
-    fi
+if [[ $CURRENT_ARCHITECTURE == "arm" ]]; then
+    GL_TARGET="es2-rpi"
+fi
 
-}
 
-# Entry point
-prepareEnv
-buildDeps
-buildSlicer
-echo ". . . Dependencies successfully built"
+
+for i in "$@"
+do
+case $i in
+    -buildtype=*)
+        if [[ ${i#*=} == "Release" || ${i#*=} == "Debug" ]]; then
+            BUILD_TYPE="${i#*=}"
+        else
+            echo "Err : Build type is unknown. Use default type - Release"
+        fi
+    ;;
+    --arch=*)
+        if [[ ${i#*=} == "arm" || ${i#*=} == "x86_64" ]]; then
+            CURRENT_ARCHITECTURE="${i#*=}"
+        else
+            echo "Err : Seted architecture is unknown. Use default arch - x86_64"
+            CURRENT_ARCHITECTURE="x86_64"
+        fi
+    ;;
+
+    -gltarget=*)
+        GL_TARGET="${i#*=}"
+    ;;
+    --platform=*)
+        CURRENT_PLATFORM="${i#*=}"
+    ;;
+esac
+done
+
+
+
+
+. scipts/detectTools.sh
+. scipts/installPackages.sh
+
+. scipts/installCinder.sh
+
+. scipts/installSlicer.sh
+echo "
+ChocolataSlicer ready to work!"

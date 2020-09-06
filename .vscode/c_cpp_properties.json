@@ -4,12 +4,10 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
+                "/home/deins_one/Cinder/include/",
                 "${workspaceFolder}/ChocolataSliser/include",
                 "${workspaceFolder}/ChocolataSliser/include/ui",
                 "${workspaceFolder}/ChocolataSliser/src",
-                "${workspaceFolder}/ChocolataSliser/Cinder/include",
-                "${workspaceFolder}/ChocolataSliser/Cinder/include/cinder",
-                "${workspaceFolder}/ChocolataSliser/Cinder/include/glfw",
                 "${workspaceFolder}/ChocolataSliser/ui"
             ],
             "defines": [],

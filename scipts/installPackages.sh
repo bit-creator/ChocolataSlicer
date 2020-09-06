@@ -56,6 +56,7 @@ installPackages() {
         echo "  Err : current platform : ${CURRENT_PLATFORM}"
     fi
 
+    echo ""
 }
 
 installPackages
