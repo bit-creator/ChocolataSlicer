@@ -1,10 +1,5 @@
-build
+.vscode/
 
-.vscode
-
-ChocolataSliser/Cinder
-
-
-*.log
-*.ini
-*.gch
+**.log
+**.ini
+**.gch
