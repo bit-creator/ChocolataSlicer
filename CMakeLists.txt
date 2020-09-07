@@ -37,6 +37,8 @@ set(SRC_CHOCOLATA_SLICER
 
 	${APP_PATH}/ui/BarWindows/uiAbout.cpp
 
+	${APP_PATH}/ui/drawUI.cpp
+
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
