@@ -23,6 +23,7 @@ if [[ $CURRENT_ARCHITECTURE == "arm" ]]; then
 fi
 
 
+INSTALL_PACKAGES="true"
 
 for i in "$@"
 do
@@ -34,12 +35,19 @@ case $i in
             echo "Err : Build type is unknown. Use default type - Release"
         fi
     ;;
-    --arch=*)
+    -arch=*)
         if [[ ${i#*=} == "arm" || ${i#*=} == "x86_64" ]]; then
             CURRENT_ARCHITECTURE="${i#*=}"
         else
             echo "Err : Seted architecture is unknown. Use default arch - x86_64"
             CURRENT_ARCHITECTURE="x86_64"
+        fi
+    ;;
+    -installpackages=*)
+        if [[ ${i#*=} == "true" || ${i#*=} == "false" ]]; then
+            INSTALL_PACKAGES="${i#*=}"
+        else
+            echo "Err : Seted flag is unknown. Use default arch - x86_64"
         fi
     ;;
 
@@ -56,7 +64,9 @@ done
 
 
 . scipts/detectTools.sh
-. scipts/installPackages.sh
+if [[ $INSTALL_PACKAGES == "true" ]]; then
+    . scipts/installPackages.sh
+fi
 
 . scipts/installCinder.sh
 
