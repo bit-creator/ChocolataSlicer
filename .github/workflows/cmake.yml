@@ -4,21 +4,25 @@ on: [push]
 
 env:
   BUILD_TYPE: Release
+
   GL_TARGET: ogl
 
+
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-
     - name: Build ChocolataSlicer
       working-directory: ${{runner.workspace}}
       shell: bash
       run: ./build.sh -buildtype=$BUILD_TYPE -installpackages=false -gltarget=$GL_TARGET
 
-    # - name: Test
-      # working-directory: ${{runner.workspace}}/build
-      # shell: bash
-      # run: ctest -C $BUILD_TYPE
+
+
+  Test:
+    runs-on: ubuntu-latest
+
+    - name: Test
+      shell: bash
+      run: echo No test...
