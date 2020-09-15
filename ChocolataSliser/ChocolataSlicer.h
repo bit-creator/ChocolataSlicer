@@ -80,8 +80,6 @@ class ChocolataSlicer : public ci::app::App {
 
         int                     _viewMode = 0;
 
-        bool                    m_sliced = false;
-
     public :
         ci::log::LoggerFile _logger = ci::log::LoggerFile(__ChocolataSlicer_LogFile_, false);
 

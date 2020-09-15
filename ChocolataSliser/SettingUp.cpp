@@ -88,11 +88,4 @@ void ChocolataSlicer::setup() {
     // Printing Context
     PrintingContext::getInstance().initPrinterBoard();
 
-
-    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_ENABLE_LED } );
-
-    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
-    Receiver::getInstance().readCommand();
-
-
 }

@@ -41,7 +41,7 @@ class PrintingContext {
 
 
     private : // UI
-        bool                            _open;
+        bool                            _open = false;
 
         ui::uiWindowRef                 _windowPtr;
 
@@ -52,6 +52,12 @@ class PrintingContext {
         ci::log::LoggerFile             _logger = ci::log::LoggerFile(__ChocolataSlicer_FirmwareLogFile_, false);
 
         ci::SerialRef                   _printerBoard;
+
+    public : // Printirng
+        bool                            _sliced = false;
+
+        bool                            _printing = false;
+
 
 };
 

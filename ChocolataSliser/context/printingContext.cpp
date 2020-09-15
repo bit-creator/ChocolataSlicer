@@ -101,10 +101,10 @@ void PrintingContext::draw() {
     _windowPtr->Begin();
         ImGui::Columns(2, "printingWindowColumns" ); {
             ImGui::SetColumnWidth(0, _windowPtr->_size.x - 250 );
-            ImGui::Text("Layer previewing");
+            ImGui::TextColored(ImVec4(0,0,0,0.4), "Layer previewing");
 
 
-            std::string _lb = "No connection";
+            std::string _lb = "No connected printer board";
             ImVec4 _cl = ImVec4(1,0,0, 0.4);
             ImVec2 _pos = ImGui::GetCursorScreenPos();
             ImGui::SetCursorScreenPos(ImVec2(_pos.x, _windowPtr->_pos.y + _windowPtr->_size.y - 9 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
@@ -118,12 +118,35 @@ void PrintingContext::draw() {
         }
 
         ImGui::NextColumn(); {
-            ImGui::Text("Commands log");
-
-
+            ImGui::TextColored(ImVec4(0,0,0,0.4), "Commands log");
             ImVec2 _pos = ImGui::GetCursorScreenPos();
+            ImVec2 _size = ImVec2(ImGui::GetColumnWidth() - (ImGui::GetStyle().WindowPadding.x * 2), 32);
+
             ImGui::SetCursorScreenPos(ImVec2(_pos.x, _windowPtr->_pos.y + _windowPtr->_size.y - 32 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
-            ImGui::Button("Pause", ImVec2(ImGui::GetColumnWidth() - (ImGui::GetStyle().WindowPadding.x * 2), 32) );
+
+            if (!_printing) {
+                _size = ImVec2(ImGui::GetColumnWidth()/2 - (ImGui::GetStyle().WindowPadding.y/2), 32 );
+                ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_WindowBg) );
+                if (ImGui::Button("Cancel", _size ) ) {
+                    // TODO: cleanup context
+                    _open = false;
+                }
+                ImGui::PopStyleColor();
+
+                ImGui::SetCursorScreenPos(ImVec2(_pos.x + _size.x + (ImGui::GetStyle().WindowPadding.y/2),  _windowPtr->_pos.y + _windowPtr->_size.y - 32 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
+            }
+
+
+            ImGui::PushStyleColor(ImGuiCol_Button, (_printerBoard == nullptr) ? ImGui::GetStyleColorVec4(ImGuiCol_WindowBg) : ImGui::GetStyleColorVec4(ImGuiCol_Button) );
+            if (ImGui::Button((_printing) ? "Pause" : "Print", _size )) {
+                if (_printerBoard != nullptr) {
+                    // TODO: begin printing
+                    _printing = true;
+                }
+
+            }
+            ImGui::PopStyleColor();
+
         }
 
         ImGui::Columns(1);
