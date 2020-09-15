@@ -17,10 +17,14 @@ jobs:
           BUILD_TYPE: Release
           GL_TARGET: ogl
 
-        working_directory: /go/src/github.com/ACLzz/src/keystore
+        working_directory: /ChocolataSlicer
 
         steps:
           - checkout
+
+          - run:
+            name: Hello
+            command: echo "Hello"
 
           - run:
               name: Build ChocolataSlicer
