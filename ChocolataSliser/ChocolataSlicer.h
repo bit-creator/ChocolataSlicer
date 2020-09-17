@@ -16,7 +16,7 @@
 #include "ShaderTree.h"
 #include "Notification/Notification.h"
 
-#include "definitions.h" 
+#include "core.h" 
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior
@@ -79,9 +79,6 @@ class ChocolataSlicer : public ci::app::App {
 
 
         int                     _viewMode = 0;
-
-    public :
-        ci::log::LoggerFile _logger = ci::log::LoggerFile(__ChocolataSlicer_LogFile_, false);
 
 };
 

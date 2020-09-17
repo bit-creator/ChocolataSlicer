@@ -1,7 +1,7 @@
 #include "printingContext.h"
 #include "cinder/app/App.h"
 
-#include "definitions.h"
+#include "core.h"
 #include "Notification/Notification.h"
 
 
@@ -26,7 +26,7 @@ void PrintingContext::initPrintingContext() {
 
 
 
-    _logger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_INFO }, "PrinterContext -> Firmware log" );
+    Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_INFO }, "PrinterContext -> Firmware log" );
 
 }
 
@@ -41,7 +41,7 @@ void PrintingContext::connectPrinterBoard() {
 
 
 
-    _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "PrinterBoard connected. Version checking");
+    Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "PrinterBoard connected. Version checking");
     Transmitter::getInstance().sendCommand( Command { .__cmd = OP_GET_VERSION } );
     Command _version = Receiver::getInstance().readCommand();
     if (_version.__args.at(0) != __ChocolataSlicer_Release_Version_  &&
@@ -49,10 +49,10 @@ void PrintingContext::connectPrinterBoard() {
         _version.__args.at(2) != __ChocolataSlicer_Minor_Version_
     ) {    // FIXME: Check version
         Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
-        _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Firmware version and slicer version are not compatible\n");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Firmware version and slicer version are not compatible\n");
     }
     else {
-        _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "Versions of software are compatible, work continue\n=============================\n");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "Versions of software are compatible, work continue\n=============================\n");
     }
 
 }
@@ -79,7 +79,7 @@ void PrintingContext::initPrinterBoard() {
     }
     catch (ci::Exception& ex ) {
         Notifications::GetInstance().addNotif( Notif { "Firmware", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
-        _logger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Printer board was not connected" );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Printer board was not connected" );
         CI_LOG_EXCEPTION("Serial device didn't init. Connect printer board", ex );
     }
 
@@ -141,8 +141,9 @@ void PrintingContext::draw() {
             if (ImGui::Button((_printing) ? "Pause" : "Print", _size )) {
                 if (_printerBoard != nullptr) {
                     // TODO: begin printing
-                    _printing = true;
+                    _printing = !_printing;
                 }
+
 
             }
             ImGui::PopStyleColor();

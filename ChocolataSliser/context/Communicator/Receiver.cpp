@@ -6,19 +6,17 @@
 #include "cinder/Serial.h"
 
 Receiver::Receiver() {
-    ci::log::LoggerFile* _logger = &PrintingContext::getInstance()._logger;
     if (PrintingContext::getInstance()._printerBoard )
-        _logger->write(ci::log::Metadata{ ci::log::LEVEL_DEBUG }, "Receiver connected to log..." );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ ci::log::LEVEL_DEBUG }, "Receiver connected to log..." );
 
 }
 
 Command Receiver::readCommand(Command* _cmd ) {
-    ci::log::LoggerFile* _logger = &PrintingContext::getInstance()._logger;
     ci::SerialRef _printerBoard = PrintingContext::getInstance()._printerBoard;
 
 
     if (!_printerBoard ) {
-        _logger->write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_ERROR }, "ERR : cant read command, board didn't connect");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_ERROR }, "ERR : cant read command, board didn't connect");
         return Command();
     }
 
@@ -45,7 +43,7 @@ Command Receiver::readCommand(Command* _cmd ) {
     #ifndef _OP_ARGS_AS_BYTES
         std::string lg = "<- "; lg += _request;
         if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
-        _logger->write(ci::log::Metadata(), lg );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata(), lg );
 
         
         if (_request.find((char)OP_SEPARATOR) != std::string::npos ) {
@@ -81,7 +79,7 @@ Command Receiver::readCommand(Command* _cmd ) {
         std::string lg = "<- ";
         for (float it : _command.__args ) { lg += OP_SEPARATOR; lg += it; }
         if (((uint8_t)_request.at(0) == OP_STACK_EXECUTE) || ((uint8_t)_request.at(0) == OP_STACK_END_FILLING) ) lg += '\n';
-        _logger->write(ci::log::Metadata(), lg );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata(), lg );
     #endif
 
 
