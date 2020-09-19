@@ -4,7 +4,6 @@
 #include "ShaderTree.h"
 
 #include "cinder/app/App.h"
-#include "core.h"
 
 void ContentTree::__tooltip(const char* tx) {
     if (ImGui::IsItemHovered() ) {
@@ -18,18 +17,10 @@ void ContentTree::__tooltip(const char* tx) {
 
 
 void ContentTree::destroy() {
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+    _FboPtr.reset();
 
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("resetFbo");
-        _FboPtr.reset();
-    }
-
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("removeItems");
-        for (int i = 0; i < getInstance()._items.size(); i++ ) {
-            _items.at(i)->destroy();
-        }
+    for (int i = 0; i < getInstance()._items.size(); i++ ) {
+        _items.at(i)->destroy();
     }
 }
 

@@ -7,67 +7,43 @@
 #include "cinder/app/AppBase.h"
 
 void ChocolataSlicer::cleanup() {
-    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("ChocolataSlicerApp", "assets/config/appCloseProfiling.json");
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();
-
     CI_LOG_D("End program. Memory cleaning...");
 
-
+    // FIXME: PrintingContext
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISABLE_LED } );
+
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
+    Receiver::getInstance().readCommand();
 
     Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
 
 
     // ContentTree
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("cleanupContentTree");
-        ContentTree::getInstance().destroy();
-    }
+    ContentTree::getInstance().destroy();
 
     // FileSelector
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("cleanupFileSelector");
-        FileSelector::getInstance().destroy();
-    }
+    FileSelector::getInstance().destroy();
 
     // ShaderTree
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("cleanupShaderTree");
-        ShaderTree::getInstance().destroy();
-    }
+    ShaderTree::getInstance().destroy();
 
     // ObjectPicker
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("cleanupObjectPicker");
-        ObjectPicker::getInstance().destroy();
-    }
+    ObjectPicker::getInstance().destroy();
 
-    CHOCOLATA_SLIER_PROFILE_END_SESSION();
 }
 
 /**
  * @brief General function for Setting up ChocolataSlicer before program will be loaded
 */
 static void __preSettingUp(ci::app::App::Settings* settings ) {
-    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("ChocolataSlicerApp", "assets/config/appStartProfiling.json");
-
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();
-
     Json::Value windowCfg;
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("LoadWindowConfigs");Json::Value windowCfg;
-        std::ifstream configFile("assets/config/windowSettings.json" );
-        configFile >> windowCfg;
-        configFile.close();
-    }
+    std::ifstream configFile("assets/config/windowSettings.json" );
+    configFile >> windowCfg;
+    configFile.close();
 
-    {
-        // Loading arguments or set default values
-        CHOCOLATA_SLIER_PROFILE_SCOPE("SetWindowSettings");
-        settings->setWindowSize(getValueByLabel(windowCfg, Label_winSize, glm::vec2(1124, 590)) );
-        settings->setFrameRate(getValueByLabel(windowCfg, Label_winFrameRate, 45) );
-    }
+    // Loading arguments or set default values
+    settings->setWindowSize(getValueByLabel(windowCfg, Label_winSize, glm::vec2(1124, 590)) );
+    settings->setFrameRate(getValueByLabel(windowCfg, Label_winFrameRate, 45) );
 }
 
 
@@ -78,10 +54,10 @@ int main(int argc, char* argv[] ) {
     _options.stencil(true );
     _options.setVersion(3, 2);
 
-
 	cinder::app::RendererRef renderer( new ci::app::RendererGl(_options ) );
 	cinder::app::AppLinux::main<ChocolataSlicer>( renderer, "ChocolataSlicer", argc, argv, __preSettingUp );
-
-    
 	return 0;
 }
+
+// Insted
+// CINDER_APP(ChocolataSlicer, ci::app::RendererGl(ci::app::RendererGl::Options().msaa(16) ) , __preSettingUp )

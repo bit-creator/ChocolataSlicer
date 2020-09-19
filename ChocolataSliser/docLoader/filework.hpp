@@ -1,24 +1,12 @@
 /**
- * Copyright (C) 2020 Chocolata Printer oficial software, All right reserved.
+ * Copyright (C) 2020 Chocolata Printer oficial software (Autor Abernihin Ilia & Velichko Bohdan)
  *
- * Autors: Abernihin Ilia & Velichko Bohdan
+ * All right reserved.
  *
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided
- * that the following conditions are met:
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted provided that the following conditions are met:
  *
- *  * Redistributions of source code must retain the above copyright notice, this list of conditions and
- * the following disclaimer.
- *  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
- * the following disclaimer in the documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
- * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
+ * 1. something :)
  *
  *
  * Abstract: this is declaretion of file reader/writer
@@ -32,15 +20,13 @@
 #include <iostream>
 #include <bitset>
 #include <unordered_set>
-// #include <future>
+#include <future>
 #include <algorithm>
 #include <cstring>
 
-// #include "../Cinder/include/cinder/ObjLoader.h"
+#include "cinder/ObjLoader.h"
 #include "geometry.hpp"
 #include "ChocolataSlicerMesh.h"
-
-#include "core.h"
 
 /**
  * My ideas
@@ -118,9 +104,9 @@ namespace Filework
                     void operator()(STL& model) const noexcept
                     { model.__triangleData.emplace_back ( std::make_shared < Geometry::Triangle > (
                                              Geometry::Vector ( normalX,   normalY,   normalZ   ),
-                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_A_X, point_A_Y, point_A_Z ))),
-                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_B_X, point_B_Y, point_B_Z ))),
-                        model.findOrCreate ( std::move ( Geometry::Vertex ( point_C_X, point_C_Y, point_C_Z ))))); }
+                        model.findOrCreate ( Geometry::Vertex ( point_A_X, point_A_Y, point_A_Z )),
+                        model.findOrCreate ( Geometry::Vertex ( point_B_X, point_B_Y, point_B_Z )),
+                        model.findOrCreate ( Geometry::Vertex ( point_C_X, point_C_Y, point_C_Z )))); }
 
                     void operator()(const _trianglePtr& triangle) noexcept
                     {
@@ -140,9 +126,8 @@ namespace Filework
             }; // STRUCT_POLIGON
 
         private:  //SPECIFIC_STL_INFO
-                           _header_t                    __header[80];           // 80 byte of header in file begin
-                           _number_t                    __number;               // triangle number in model
-            inline static  _number_t                    __index        = 0;     // vertex index
+            _header_t __header[80];     // 80 byte of header in file begin
+            _number_t __number;     // triangle number in model
 
         public:   // CONSTRUCTOR_DESTRUCTOR_ASSIGNMENT_OPERATOR
             /**
@@ -190,18 +175,20 @@ namespace Filework
             virtual bool
             open() noexcept final
             {
-                CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("open STL file", "assets/config/appLoadSTL.json");
-                CHOCOLATA_SLIER_PROFILE_FUNCTION();
                 bool result = false;
+
+                // std::async
 
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
-
-                fixAllTriangle(); calculateGabarit();
-
                 _valid = true;
 
-                CHOCOLATA_SLIER_PROFILE_END_SESSION();
+                //end async
+
+                stat();
+
+                std::cout << "\n\n" << getVertices() << "\t" << getTriangles() << "\n\n";
+
                 return result;
             }
 
@@ -271,11 +258,11 @@ namespace Filework
             {
                 auto [iterator, insert] = __vertexData.emplace
                     (
-                        std::move ( std::make_pair
+                        std::make_pair
                         (
                             std::make_shared<Geometry::Vertex>(std::move(vertex)),
-                            ++__index
-                        ) )
+                            __vertexData.size()
+                        )
                     );
                 return iterator -> first;
             }
@@ -346,7 +333,7 @@ namespace Filework
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-
+                stat();
 
                 result = true;
                 return result;
@@ -465,7 +452,7 @@ namespace Filework
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-
+                stat();
 
                 result = true;
                 return result;
@@ -584,7 +571,7 @@ namespace Filework
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-
+                stat();
 
                 result = true;
                 return result;
@@ -703,7 +690,7 @@ namespace Filework
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-
+                stat();
 
                 result = true;
                 return result;
@@ -823,7 +810,7 @@ namespace Filework
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-
+                stat();
 
                 result = true;
                 return result;
@@ -918,11 +905,7 @@ namespace Filework
 
     std::ifstream& operator >> (std::ifstream& in, OBJ& model) noexcept
     {
-        // cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
-
-        // auto mesh = cinder::TriMesh::create(loader);
-
-        // model = cinder::TriMesh::create(loader);
+        cinder::ObjLoader loader(std::shared_ptr<cinder::IStreamCinder>(in));
 
         return in;
     }

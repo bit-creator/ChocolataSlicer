@@ -17,9 +17,7 @@ set(SRC_CHOCOLATA_SLICER
 	${APP_PATH}/ObjectPicker.cpp
 	${APP_PATH}/config/cstringFunctions.cpp
 	${APP_PATH}/config/jsonConfig.cpp
-	${APP_PATH}/config/configs.cpp
-	${APP_PATH}/config/configspecification.cpp
-
+	# ${APP_PATH}/config/configs.cpp
 
 	# DocLoader
 	${APP_PATH}/docLoader/ChocolataSlicerMesh.cpp
@@ -39,8 +37,6 @@ set(SRC_CHOCOLATA_SLICER
 
 	${APP_PATH}/ui/BarWindows/uiAbout.cpp
 
-	${APP_PATH}/ui/drawUI.cpp
-
 )
 set(INC_CHOCOLATA_SLICER
 	# Main include
@@ -51,13 +47,13 @@ set(INC_CHOCOLATA_SLICER
 
 	# DocLoader
 	${APP_PATH}/docLoader
-
+	
 	# Contenxt
 	${APP_PATH}/context
 
 	# UI
 	${APP_PATH}/ui
-
+	
 )
 
 ci_make_app(
