@@ -1,6 +1,8 @@
 #include "ShaderTree.h"
 #include "cinder/Log.h"
 
+#include "core.h"
+
 void ShaderTree::initShaders() {
     // Color shader
     try {
@@ -37,6 +39,8 @@ void ShaderTree::initShaders() {
 }
 
 void ShaderTree::destroy() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
     _colorShader.reset();
     _velvetyShader.reset();
 

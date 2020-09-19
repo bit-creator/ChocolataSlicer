@@ -30,6 +30,22 @@ void PrintingContext::initPrintingContext() {
 
 }
 
+void PrintingContext::disconnectPrinterBoard() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("lastCommands");
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISABLE_LED } );    
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
+        Receiver::getInstance().readCommand();
+    }
+    
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );");
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
+    }
+}
+
 
 void PrintingContext::connectPrinterBoard() {
     _printerBoard->flush();

@@ -30,6 +30,7 @@ class PrintingContext {
 
         void initPrinterBoard();
 
+        void disconnectPrinterBoard();
 
 
         void draw();

@@ -10,6 +10,7 @@
 #include "ShaderTree.h"
 
 #include <thread>
+#include "core.h"
 
 #define FBO_RESOLUTION glm::ivec2(1280, 960)
 
@@ -32,11 +33,18 @@ bool __ui_invisible_button(ImVec2 pos, const char* text, bool drawText = false )
 }
 
 void FileSelector::destroy() {
-    _texturePtr.reset();
-    // _shaderPtr.reset();
-    _FboPtr.reset();
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
 
-    _batch.reset();
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("destroyTextures");
+        _texturePtr.reset();
+        _FboPtr.reset();
+    }
+
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("_batch.reset()");
+        _batch.reset();
+    }
 }
 
 void FileSelector::initFileSelector() {
