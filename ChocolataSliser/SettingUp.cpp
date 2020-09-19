@@ -113,4 +113,5 @@ void ChocolataSlicer::setup() {
     }
 
     CHOCOLATA_SLIER_PROFILE_END_SESSION();
+    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("processProfiling", "assets/config/appProcessProfiling.json");
 }

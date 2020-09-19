@@ -16,7 +16,7 @@
 #include "ShaderTree.h"
 #include "Notification/Notification.h"
 
-#include "core.h" 
+#include "core.h"
 
 /**
  * @brief ChocolataSlicer is a main program's class for defining ChocolataApps behavior
@@ -25,34 +25,13 @@
 */
 class ChocolataSlicer : public ci::app::App {
     public :
-        /**
-         * Function for prepering anly slicers definitions
-        */
         void setup() override;
-
-        /**
-         * Executes every tick
-        */
-        void update() override;
-
-        /**
-         * Executes every tick and contains camera resizing and FBOs
-        */
-        void resize() override;
-
-        /**
-         * Executes every tick and draws scene
-        */
-        void draw() override;
-
-        /**
-         * Cleans dynamicall reserved memory before programs end
-        */
         void cleanup() override;
 
-        /**
-         * Function for drawing all programs ui
-        */
+        void resize() override;
+        void update() override;
+
+        void draw() override;
         void drawUI();
 
 
@@ -61,7 +40,6 @@ class ChocolataSlicer : public ci::app::App {
         void mouseWheel(ci::app::MouseEvent event ) override;
 
 	    void keyDown(ci::app::KeyEvent event ) override;
-	    // void keyUp(ci::app::KeyEvent event ) override;
 
     public :  // Ui components of Slicer
         ui::uiViewportRef       m_ui_viewport;

@@ -56,8 +56,6 @@ int main(int argc, char* argv[] ) {
 
 	cinder::app::RendererRef renderer( new ci::app::RendererGl(_options ) );
 	cinder::app::AppLinux::main<ChocolataSlicer>( renderer, "ChocolataSlicer", argc, argv, __preSettingUp );
+    CHOCOLATA_SLIER_PROFILE_END_SESSION();
 	return 0;
 }
-
-// Insted
-// CINDER_APP(ChocolataSlicer, ci::app::RendererGl(ci::app::RendererGl::Options().msaa(16) ) , __preSettingUp )

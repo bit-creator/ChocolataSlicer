@@ -23,11 +23,11 @@ void ChocolataSlicer::resize() {
 }
 
 void ChocolataSlicer::update() {
-    drawUI();
-
 }
 
 void ChocolataSlicer::drawUI() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
     // TODO: Update handlers!!!
     m_handler_main->update();
 
@@ -267,26 +267,31 @@ void ChocolataSlicer::drawUI() {
 
 
 void ChocolataSlicer::draw() {
-    ci::gl::clear(ci::Color::gray(0.2) );
-    ci::gl::setMatrices(m_camera );
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();    
 
+    drawUI();
 
-    // FIXME: Draw Grid + Axises
-    uint32_t lines = 6, offset = 2;
-    ci::gl::color(1,1,1, 0.4);
-    for (int i = 1; i <= lines; i ++ ) {
-        ci::gl::drawLine(glm::vec3((offset*i),0,0), glm::vec3((offset*i),0,(offset*lines)) );    
-        ci::gl::drawLine(glm::vec3(0,0,(offset*i)), glm::vec3((offset*lines),0,(offset*i)) );
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("Draw grid");
+        ci::gl::clear(ci::Color::gray(0.2) );
+        ci::gl::setMatrices(m_camera );
+
+        uint32_t lines = 6, offset = 2;
+        ci::gl::color(1,1,1, 0.4);
+        for (int i = 1; i <= lines; i ++ ) {
+            ci::gl::drawLine(glm::vec3((offset*i),0,0), glm::vec3((offset*i),0,(offset*lines)) );    
+            ci::gl::drawLine(glm::vec3(0,0,(offset*i)), glm::vec3((offset*lines),0,(offset*i)) );
+        }
+
+        ci::gl::color(1,0,0);
+        ci::gl::drawLine(glm::vec3(0), glm::vec3((offset*lines),0,0) );
+
+        ci::gl::color(0,1,0);
+        ci::gl::drawLine(glm::vec3(0), glm::vec3(0,(offset*lines),0) );
+
+        ci::gl::color(0,0,1);
+        ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
     }
-
-    ci::gl::color(1,0,0);
-    ci::gl::drawLine(glm::vec3(0), glm::vec3((offset*lines),0,0) );
-
-    ci::gl::color(0,1,0);
-    ci::gl::drawLine(glm::vec3(0), glm::vec3(0,(offset*lines),0) );
-
-    ci::gl::color(0,0,1);
-    ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
 
     ContentTree::getInstance().drawObjectsToScene(&m_camera );
 

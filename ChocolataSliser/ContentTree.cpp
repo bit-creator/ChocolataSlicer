@@ -113,6 +113,7 @@ void ContentTree::drawObjectsToUiList() {
 
 
 void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     for (int i = 0; i < _items.size(); i++ ) {
         if (!_items.at(i)->_batchPtr ) continue;
 
