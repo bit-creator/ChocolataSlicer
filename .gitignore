@@ -8,3 +8,4 @@ Release
 build
 
 assets/config/appCloseProfiling.json
+assets/config/appStartProfiling.json
