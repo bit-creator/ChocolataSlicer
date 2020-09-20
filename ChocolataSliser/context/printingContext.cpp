@@ -1,7 +1,7 @@
 #include "printingContext.h"
 #include "cinder/app/App.h"
 
-#include "definitions.h"
+#include "core.h"
 #include "Notification/Notification.h"
 
 
@@ -26,8 +26,24 @@ void PrintingContext::initPrintingContext() {
 
 
 
-    _logger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_INFO }, "PrinterContext -> Firmware log" );
+    Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_INFO }, "PrinterContext -> Firmware log" );
 
+}
+
+void PrintingContext::disconnectPrinterBoard() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("lastCommands");
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISABLE_LED } );    
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
+        Receiver::getInstance().readCommand();
+    }
+    
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );");
+        Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
+    }
 }
 
 
@@ -41,7 +57,7 @@ void PrintingContext::connectPrinterBoard() {
 
 
 
-    _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "PrinterBoard connected. Version checking");
+    Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "PrinterBoard connected. Version checking");
     Transmitter::getInstance().sendCommand( Command { .__cmd = OP_GET_VERSION } );
     Command _version = Receiver::getInstance().readCommand();
     if (_version.__args.at(0) != __ChocolataSlicer_Release_Version_  &&
@@ -49,10 +65,10 @@ void PrintingContext::connectPrinterBoard() {
         _version.__args.at(2) != __ChocolataSlicer_Minor_Version_
     ) {    // FIXME: Check version
         Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
-        _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Firmware version and slicer version are not compatible\n");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Firmware version and slicer version are not compatible\n");
     }
     else {
-        _logger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "Versions of software are compatible, work continue\n=============================\n");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_INFO }, "Versions of software are compatible, work continue\n=============================\n");
     }
 
 }
@@ -79,7 +95,7 @@ void PrintingContext::initPrinterBoard() {
     }
     catch (ci::Exception& ex ) {
         Notifications::GetInstance().addNotif( Notif { "Firmware", "Printer board didn't connected", "", ci::log::LEVEL_ERROR  } );
-        _logger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Printer board was not connected" );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata { .mLevel = ci::log::LEVEL_WARNING }, "WARNING : Printer board was not connected" );
         CI_LOG_EXCEPTION("Serial device didn't init. Connect printer board", ex );
     }
 
@@ -101,10 +117,10 @@ void PrintingContext::draw() {
     _windowPtr->Begin();
         ImGui::Columns(2, "printingWindowColumns" ); {
             ImGui::SetColumnWidth(0, _windowPtr->_size.x - 250 );
-            ImGui::Text("Layer previewing");
+            ImGui::TextColored(ImVec4(0,0,0,0.4), "Layer previewing");
 
 
-            std::string _lb = "No connection";
+            std::string _lb = "No connected printer board";
             ImVec4 _cl = ImVec4(1,0,0, 0.4);
             ImVec2 _pos = ImGui::GetCursorScreenPos();
             ImGui::SetCursorScreenPos(ImVec2(_pos.x, _windowPtr->_pos.y + _windowPtr->_size.y - 9 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
@@ -118,12 +134,36 @@ void PrintingContext::draw() {
         }
 
         ImGui::NextColumn(); {
-            ImGui::Text("Commands log");
-
-
+            ImGui::TextColored(ImVec4(0,0,0,0.4), "Commands log");
             ImVec2 _pos = ImGui::GetCursorScreenPos();
+            ImVec2 _size = ImVec2(ImGui::GetColumnWidth() - (ImGui::GetStyle().WindowPadding.x * 2), 32);
+
             ImGui::SetCursorScreenPos(ImVec2(_pos.x, _windowPtr->_pos.y + _windowPtr->_size.y - 32 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
-            ImGui::Button("Pause", ImVec2(ImGui::GetColumnWidth() - (ImGui::GetStyle().WindowPadding.x * 2), 32) );
+
+            if (!_printing) {
+                _size = ImVec2(ImGui::GetColumnWidth()/2 - (ImGui::GetStyle().WindowPadding.y/2), 32 );
+                ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_WindowBg) );
+                if (ImGui::Button("Cancel", _size ) ) {
+                    // TODO: cleanup context
+                    _open = false;
+                }
+                ImGui::PopStyleColor();
+
+                ImGui::SetCursorScreenPos(ImVec2(_pos.x + _size.x + (ImGui::GetStyle().WindowPadding.y/2),  _windowPtr->_pos.y + _windowPtr->_size.y - 32 - (ImGui::GetStyle().WindowPadding.y * 2) ) );
+            }
+
+
+            ImGui::PushStyleColor(ImGuiCol_Button, (_printerBoard == nullptr) ? ImGui::GetStyleColorVec4(ImGuiCol_WindowBg) : ImGui::GetStyleColorVec4(ImGuiCol_Button) );
+            if (ImGui::Button((_printing) ? "Pause" : "Print", _size )) {
+                if (_printerBoard != nullptr) {
+                    // TODO: begin printing
+                    _printing = !_printing;
+                }
+
+
+            }
+            ImGui::PopStyleColor();
+
         }
 
         ImGui::Columns(1);

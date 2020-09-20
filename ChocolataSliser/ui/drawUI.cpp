@@ -1,4 +1,8 @@
 #include "ChocolataSlicer.h"
+
+#include "printingContext.h"
+#include "ui/Notification/Notification.h"
+
 #include "cinder/CinderImGui.h"
 
 #include "ui/uiWindow.h"
@@ -7,27 +11,10 @@
 #include "ContentTree.h"
 
 #include "ui/BarWindows/uiBarWindows.h"
-#include "cinder/linux/input_redef.h"
 
-#include "printingContext.h"
-#include "ui/Notification/Notification.h"
 
-void ChocolataSlicer::resize() {
-    m_camera.setPerspective(25, getWindowAspectRatio(), 1, 600 );
-	ci::gl::setMatrices(m_camera );
-
-    m_cameraui.setWindowSize(getWindowSize() );
-
-    ObjectPicker::getInstance().resize();
-
-}
-
-void ChocolataSlicer::update() {
-}
 
 void ChocolataSlicer::drawUI() {
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();
-
     // TODO: Update handlers!!!
     m_handler_main->update();
 
@@ -38,7 +25,7 @@ void ChocolataSlicer::drawUI() {
 
             if (ImGui::BeginMenu("File")) {
                 // TODO: Clear all loaded files and buffers
-                if (ImGui::MenuItem("New", "Ctrl+N")) {  }
+                // if (ImGui::MenuItem("New", "Ctrl+N")) {  }
 
 
                 if (ImGui::MenuItem("Open...", "Altl+O")) { FileSelector::getInstance().open(FileSelector::_FileSelector_Type_Load ); }
@@ -57,23 +44,23 @@ void ChocolataSlicer::drawUI() {
 
 
                 // TODO: Saving off
-                ImGui::Separator();
-                if (ImGui::BeginMenu("Save", false )) { ImGui::EndMenu(); }
+                // ImGui::Separator();
+                // if (ImGui::BeginMenu("Save", false )) { ImGui::EndMenu(); }
 
 
                 // TODO: only binary suggestions file formats
-                if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S", nullptr, false )) {  }
+                // if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S", nullptr, false )) {  }
 
 
                 // TODO: Utf-8 formats of files
-                ImGui::Separator();
-                if (ImGui::MenuItem("Export", "", nullptr, false )) {  }
+                // ImGui::Separator();
+                // if (ImGui::MenuItem("Export", "", nullptr, false )) {  }
 
 
-                if (ImGui::BeginMenu("Export As...", false )) {
-                    ImGui::Text("Utf-8 formats from Export item");
-                    ImGui::EndMenu();
-                }
+                // if (ImGui::BeginMenu("Export As...", false )) {
+                    // ImGui::Text("Utf-8 formats from Export item");
+                    // ImGui::EndMenu();
+                // }
 
 
                 ImGui::Separator();
@@ -85,7 +72,14 @@ void ChocolataSlicer::drawUI() {
 
 
             // TODO:
-            if (ImGui::BeginMenu("Edit"))  { ImGui::EndMenu(); }
+            if (ImGui::BeginMenu("Edit"))  {
+
+                if (ImGui::MenuItem("Undo", "Ctrl+Z" )) {  }
+
+                if (ImGui::MenuItem("Redo", "Ctrl+Y" )) {  }
+
+                ImGui::EndMenu();
+            }
 
 
             // TODO:
@@ -97,11 +91,7 @@ void ChocolataSlicer::drawUI() {
 
                 // TODO:
                 ImGui::Separator();
-
-
-                if (ImGui::BeginMenu("Addons", false)) {
-                    ImGui::EndMenu();
-                }
+                // if (ImGui::BeginMenu("Addons", false)) { ImGui::EndMenu(); }
 
 
                 if (ImGui::MenuItem("Setings", "Ctrl+,")) {  }
@@ -113,16 +103,27 @@ void ChocolataSlicer::drawUI() {
             // TODO:
             if (ImGui::BeginMenu("Help"))  {
                 if (ImGui::MenuItem("Welcome", "")) { ui::UiWindows.welcome = true; }
-                if (ImGui::MenuItem("Documentation", "")) {  }
-                if (ImGui::MenuItem("Shortcuts", "Ctrl+Shift+O")) { ui::UiWindows.shortCuts = true; }
 
-                ImGui::Separator();
-                if (ImGui::MenuItem("Change log", "")) {  }
+                if (ImGui::MenuItem("Documentation", "")) { 
+                    std::thread _sys( 
+                        [](std::string _link) { 
+                            std::string _cmd = "xdg-open "; _cmd += _link;
+                            system(_cmd.c_str() );
+                        },
+                        __ChocolataSlicer_Documentation_Link_
+                    );
+                    _sys.detach();
+                }
 
-                if (ImGui::MenuItem("Report issue", "")) {  }
+                // if (ImGui::MenuItem("Shortcuts", "Ctrl+Shift+O")) { ui::UiWindows.shortCuts = true; }
 
-                ImGui::Separator();
-                if (ImGui::MenuItem("About", "Alt+A")) { ui::UiWindows.about = true; }
+                // ImGui::Separator();
+                // if (ImGui::MenuItem("Change log", "")) {  }
+
+                // if (ImGui::MenuItem("Report issue", "")) {  }
+
+                // ImGui::Separator();
+                // if (ImGui::MenuItem("About", "Alt+A")) { ui::UiWindows.about = true; }
                 ImGui::EndMenu();
             }
 
@@ -204,10 +205,6 @@ void ChocolataSlicer::drawUI() {
 
 
                 // Mesh
-
-
-
-
                 if (ImGui::TreeNode("Mesh") ) {
                     if (ContentTree::getInstance()._items.at(ContentTree::getInstance()._selected)->_batchPtr != nullptr ) {
                         ImGui::Spacing();
@@ -246,6 +243,7 @@ void ChocolataSlicer::drawUI() {
         m_window_content->End();
     }
 
+
     if (FileSelector::getInstance().isOpen() ) {
         FileSelector::getInstance().draw();
     }
@@ -263,62 +261,3 @@ void ChocolataSlicer::drawUI() {
     }
 
 }
-
-
-
-void ChocolataSlicer::draw() {
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();    
-
-    drawUI();
-
-    {
-        CHOCOLATA_SLIER_PROFILE_SCOPE("Draw grid");
-        ci::gl::clear(ci::Color::gray(0.2) );
-        ci::gl::setMatrices(m_camera );
-
-        uint32_t lines = 6, offset = 2;
-        ci::gl::color(1,1,1, 0.4);
-        for (int i = 1; i <= lines; i ++ ) {
-            ci::gl::drawLine(glm::vec3((offset*i),0,0), glm::vec3((offset*i),0,(offset*lines)) );    
-            ci::gl::drawLine(glm::vec3(0,0,(offset*i)), glm::vec3((offset*lines),0,(offset*i)) );
-        }
-
-        ci::gl::color(1,0,0);
-        ci::gl::drawLine(glm::vec3(0), glm::vec3((offset*lines),0,0) );
-
-        ci::gl::color(0,1,0);
-        ci::gl::drawLine(glm::vec3(0), glm::vec3(0,(offset*lines),0) );
-
-        ci::gl::color(0,0,1);
-        ci::gl::drawLine(glm::vec3(0), glm::vec3(0,0,(offset*lines)) );
-    }
-
-    ContentTree::getInstance().drawObjectsToScene(&m_camera );
-
-}
-
-
-void ChocolataSlicer::mouseDrag(ci::app::MouseEvent event ) {
-	m_cameraui.mouseDrag( event );
-}
-
-
-void ChocolataSlicer::mouseDown(ci::app::MouseEvent event ) {
-    m_cameraui.mouseDown( event );
-
-    ObjectPicker::getInstance().calculateSelection(&m_camera, event );
-
-}
-
-void ChocolataSlicer::mouseWheel(ci::app::MouseEvent event ) {
-    m_cameraui.mouseWheel( event );
-}
-
-
-void ChocolataSlicer::keyDown(ci::app::KeyEvent event ) {
-    if (event.getModifiers() & (ci::app::KeyEvent::CTRL_DOWN | ci::app::KeyEvent::SHIFT_DOWN) ) {
-        if (event.getCode() == ci::app::KeyEvent::KEY_q ) quit();
-    }
-
-}
- 

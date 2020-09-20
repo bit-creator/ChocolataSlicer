@@ -13,7 +13,7 @@
 #include "Communicator/Receiver.h"
 #include "opcodes.h"
 
-#include "definitions.h"
+#include "core.h"
 
 class PrintingContext {
     private :
@@ -30,6 +30,7 @@ class PrintingContext {
 
         void initPrinterBoard();
 
+        void disconnectPrinterBoard();
 
 
         void draw();
@@ -41,7 +42,7 @@ class PrintingContext {
 
 
     private : // UI
-        bool                            _open;
+        bool                            _open = false;
 
         ui::uiWindowRef                 _windowPtr;
 
@@ -49,9 +50,14 @@ class PrintingContext {
 
 
     public : // Firmware
-        ci::log::LoggerFile             _logger = ci::log::LoggerFile(__ChocolataSlicer_FirmwareLogFile_, false);
-
         ci::SerialRef                   _printerBoard;
+
+    public : // Printirng
+        bool                            _sliced = false;
+
+        bool                            _printing = false;
+
+        bool                            _printingPaused = false;
 
 };
 

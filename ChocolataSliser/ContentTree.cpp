@@ -4,6 +4,7 @@
 #include "ShaderTree.h"
 
 #include "cinder/app/App.h"
+#include "core.h"
 
 void ContentTree::__tooltip(const char* tx) {
     if (ImGui::IsItemHovered() ) {
@@ -17,10 +18,18 @@ void ContentTree::__tooltip(const char* tx) {
 
 
 void ContentTree::destroy() {
-    _FboPtr.reset();
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
 
-    for (int i = 0; i < getInstance()._items.size(); i++ ) {
-        _items.at(i)->destroy();
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("_FboPtr.reset()");
+        _FboPtr.reset();
+    }
+
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("_items.at(i)->destroy()");
+        for (int i = 0; i < getInstance()._items.size(); i++ ) {
+            _items.at(i)->destroy();
+        }
     }
 }
 
@@ -104,6 +113,7 @@ void ContentTree::drawObjectsToUiList() {
 
 
 void ContentTree::drawObjectsToScene(ci::CameraPersp* _camera ) {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     for (int i = 0; i < _items.size(); i++ ) {
         if (!_items.at(i)->_batchPtr ) continue;
 

@@ -7,21 +7,19 @@
 
 
 Transmitter::Transmitter() {
-    ci::log::LoggerFile* _logger = &PrintingContext::getInstance()._logger;
     if (PrintingContext::getInstance()._printerBoard )
-        _logger->write(ci::log::Metadata{ ci::log::LEVEL_DEBUG }, "Transmitter connected to log..." );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ ci::log::LEVEL_DEBUG }, "Transmitter connected to log..." );
 
 }
 
 void Transmitter::sendCommand(Command _cmd ) {
-    ci::log::LoggerFile* _logger = &PrintingContext::getInstance()._logger;
     ci::SerialRef _printerBoard = PrintingContext::getInstance()._printerBoard;
 
 
     _commandsLog.insert({ {_commandsLog.size(), _cmd} });
 
     if (!_printerBoard ) {
-        _logger->write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_ERROR }, "ERR : cant sent command, board didn't connect");
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata{ .mLevel = ci::log::LEVEL_ERROR }, "ERR : cant sent command, board didn't connect");
         return;
     }
 
@@ -37,7 +35,7 @@ void Transmitter::sendCommand(Command _cmd ) {
             }
         }
         sentCommand += (char)OP_TERMINATOR;
-        _logger->write(ci::log::Metadata(), sentCommand );
+        Instrumentor::Get()._firmwareLogger.write(ci::log::Metadata(), sentCommand );
 
 
 

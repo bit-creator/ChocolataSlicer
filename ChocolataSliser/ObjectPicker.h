@@ -5,6 +5,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/app/App.h"
 
+#include "core.h"
 
 /**
  * ObjectPicker is class to detect selected object in viewport. You should press on object to select it.
@@ -46,7 +47,7 @@ class ObjectPicker {
         void resize();
 
 
-        void destroy() { _fboPtr.reset(); }
+        void destroy() { CHOCOLATA_SLIER_PROFILE_FUNCTION(); _fboPtr.reset(); }
 
 
         ci::gl::FboRef                      _fboPtr;

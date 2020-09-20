@@ -7,29 +7,29 @@
 #include "cinder/app/AppBase.h"
 
 void ChocolataSlicer::cleanup() {
-    CI_LOG_D("End program. Memory cleaning...");
+    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("closeProfiling", "assets/config/profiling/appCloseProfiling.json");
 
-    // FIXME: PrintingContext
-    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISABLE_LED } );
-
-    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_STACK_EXECUTE } );
-    Receiver::getInstance().readCommand();
-
-    Transmitter::getInstance().sendCommand(Command { .__cmd = OP_DISCONNECT } );
+    {
+        CHOCOLATA_SLIER_PROFILE_FUNCTION();
 
 
-    // ContentTree
-    ContentTree::getInstance().destroy();
+        PrintingContext::getInstance().disconnectPrinterBoard();
 
-    // FileSelector
-    FileSelector::getInstance().destroy();
+        // ContentTree
+        ContentTree::getInstance().destroy();
 
-    // ShaderTree
-    ShaderTree::getInstance().destroy();
+        // FileSelector
+        FileSelector::getInstance().destroy();
 
-    // ObjectPicker
-    ObjectPicker::getInstance().destroy();
+        // ShaderTree
+        ShaderTree::getInstance().destroy();
 
+        // ObjectPicker
+        ObjectPicker::getInstance().destroy();
+    }
+
+
+    CHOCOLATA_SLIER_PROFILE_END_SESSION();
 }
 
 /**
@@ -56,8 +56,6 @@ int main(int argc, char* argv[] ) {
 
 	cinder::app::RendererRef renderer( new ci::app::RendererGl(_options ) );
 	cinder::app::AppLinux::main<ChocolataSlicer>( renderer, "ChocolataSlicer", argc, argv, __preSettingUp );
+    CHOCOLATA_SLIER_PROFILE_END_SESSION();
 	return 0;
 }
-
-// Insted
-// CINDER_APP(ChocolataSlicer, ci::app::RendererGl(ci::app::RendererGl::Options().msaa(16) ) , __preSettingUp )

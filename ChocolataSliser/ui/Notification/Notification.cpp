@@ -3,7 +3,7 @@
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
 
-#include "definitions.h"
+#include "core.h"
 
 bool Notif::draw() {
     static bool _canClose = false;
