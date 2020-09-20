@@ -7,6 +7,4 @@
 Release
 build
 
-assets/config/appCloseProfiling.json
-assets/config/appStartProfiling.json
-assets/config/appProcessProfiling.json
+assets/config/profiling

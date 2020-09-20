@@ -5,6 +5,7 @@
 #define __ChocolataSlicer_Minor_Version_ 43
 #define __ChocolataSlicer_Version_ "0.1.43"
 
+#define __ChocolataSlicer_Profiling_ 1
 
 #define __ChocolataSlicer_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
 #define __ChocolataSlicer_Documentation_Link_ "https://github.com/bit-creator/ChocolataSlicer.git"
@@ -158,8 +159,7 @@ class InstrumentationTimer {
 };
 
 
-#define CHOCOLATA_SLIER_PROFILING 1
-#if CHOCOLATA_SLIER_PROFILING
+#if __ChocolataSlicer_Profiling_
 	#if defined(__GNUC__) || (defined(__MWERKS__) && (__MWERKS__ >= 0x3000)) || (defined(__ICC) && (__ICC >= 600)) || defined(__ghs__)
 		#define CHOCOLATA_SLIER_FUNC_SIG __PRETTY_FUNCTION__
 	#elif defined(__DMC__) && (__DMC__ >= 0x810)

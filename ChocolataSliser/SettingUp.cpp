@@ -16,7 +16,8 @@
 #include "cinder/Serial.h"
 
 void ChocolataSlicer::setup() {
-    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("startProfiling", "assets/config/appStartProfiling.json");
+    system("mkdir assets/config/profiling");
+    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("startProfiling", "assets/config/profiling/appStartProfiling.json");
 
     {
         CI_LOG_I("ChocolataApp ~> ChocolataSlicer version : " << __ChocolataSlicer_Version_ );
@@ -113,5 +114,5 @@ void ChocolataSlicer::setup() {
     }
 
     CHOCOLATA_SLIER_PROFILE_END_SESSION();
-    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("processProfiling", "assets/config/appProcessProfiling.json");
+    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("processProfiling", "assets/config/profiling/appProcessProfiling.json");
 }

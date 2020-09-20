@@ -7,7 +7,7 @@
 #include "cinder/app/AppBase.h"
 
 void ChocolataSlicer::cleanup() {
-    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("closeProfiling", "assets/config/appCloseProfiling.json");
+    CHOCOLATA_SLIER_PROFILE_BEGIN_SESSION("closeProfiling", "assets/config/profiling/appCloseProfiling.json");
 
     {
         CHOCOLATA_SLIER_PROFILE_FUNCTION();
