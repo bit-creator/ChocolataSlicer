@@ -48,6 +48,7 @@ set(INC_CHOCOLATA_SLICER
 
 	# DocLoader
 	${APP_PATH}/docLoader
+	${APP_PATH}/docLoader/flat_hash_map
 
 	# Contenxt
 	${APP_PATH}/context

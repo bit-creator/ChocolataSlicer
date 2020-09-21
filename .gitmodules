@@ -1,0 +1,4 @@
+[submodule "ChocolataSliser/docLoader/flat_hash_map"]
+	path = ChocolataSliser/docLoader/flat_hash_map
+	url = ../../skarupke/flat_hash_map.git
+	branch = master
