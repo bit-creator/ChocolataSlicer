@@ -1,16 +1,28 @@
 /**
- * Copyright (C) 2020 Chocolata Printer oficial software (Autor Abernihin Ilia & Velichko Bohdan)
- * 
- * All right reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
- * 
- * 1. something :)
- * 
- * 
+ * Copyright (C) 2020 Chocolata Printer oficial software, All right reserved.
+ *
+ * Autors: Abernihin Ilia & Velichko Bohdan
+ *
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided
+ * that the following conditions are met:
+ *
+ *  * Redistributions of source code must retain the above copyright notice, this list of conditions and
+ * the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
+ * the following disclaimer in the documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ *
  * Abstract: this is declaretion of geometry types
- * 
+ *
  */
 
 #ifndef GEOMETRY_HPP
@@ -31,15 +43,15 @@ constexpr float F_TOL = 0.000001;  // TOLERANCE_FOR_FLOAT_COMPARING
 namespace Geometry  // GEOMETRIC_TYPES_IMPL
 {
     /**
-     * @brief Function for compare two float value  
-     * 
+     * @brief Function for compare two float value
+     *
      * @param first this is first comparing value (const ref)
      * @param second this is second comparing value (const ref)
-     * 
+     *
      * @return TRUE if param equal to F_TOL order, FALSE if no
-     * 
+     *
      * this function no throw exeption
-     * 
+     *
      * this function is embeded
      */
     inline constexpr bool
@@ -47,23 +59,59 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
     { return  (std::abs ( first - second ) < 0.000001); }
 
     /**
-     * @struct Point2d impliment point on face 
-     * 
+     * @struct Point2d impliment point on face
+     *
      */
     struct Point2d
     {
-        Point2d() 
-            : _x(0.)
-            , _y(0.)
+        Point2d()
+            : x(0.)
+            , y(0.)
         {  }
 
-        Point2d(const float& x, const float y)
-            : _x(x)
-            , _y(y)
+        // Point2d(Point2d&) noexcept default;
+
+        Point2d(const float& _x, const float _y)
+            : x(_x)
+            , y(_y)
         {  }
-        
-        float _x;
-        float _y;
+
+        Point2d(const Point2d& other) noexcept
+            : x (other.x)
+            , y (other.y)
+        {  }
+
+        Point2d(const Point2d&& other) noexcept
+            : x (std::move(other.x))
+            , y (std::move(other.y))
+        {  }
+
+        Point2d& operator = (const Point2d& other) noexcept
+        {
+            if(this == &other) return *this;
+
+            x = other.x;
+            y = other.y;
+
+            return *this;
+        }
+
+        Point2d& operator = (const Point2d&& other) noexcept
+        {
+            if(this == &other) return *this;
+
+            x = std::move(other.x);
+            y = std::move(other.y);
+
+            return *this;
+        }
+
+        friend bool
+        operator==(const Point2d& p, const Point2d& u)
+        { return is_equal(u.x, p.x) && is_equal(u.y, p.y); }
+
+        float x;
+        float y;
     };
 
     /**
@@ -77,15 +125,15 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
     using optPoint2d = std::optional < Point2d >;
 
     /**
-     * cut_t this is type triangle intersection  
+     * cut_t this is type triangle intersection
      */
     using cut_t = std::optional < std::pair < optPoint2d, optPoint2d > >;
 
     /**
      * @class Primitive is abstract base for real geometric object
-     * 
+     *
      * derived: @class Vertex, @class Vector
-     * 
+     *
      * cannot be constructing (have clear virtual function)
      */
     class Primitive
@@ -98,15 +146,15 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:    // DERIVED
             enum class simplyType // real geometric types
             {
-                GEOMETRIC_VERTEX, 
+                GEOMETRIC_VERTEX,
                 GEOMETRIC_VECTOR
             };
-            
+
         public:   // CONSTRUCT_DESTRUCT_ASSIGNMENT_OPERATORS
             /**
              * @brief default (constructor) for @class Primitive
              * initalize all coordinate as null
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -119,11 +167,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) for @class Primitive
              * initalize coordinate as @param
-             * 
+             *
              * @param x value x coordinate (const reference)
              * @param y value y coordinate (const reference)
              * @param z value z coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -136,11 +184,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) for @class Primitive
              * initalize coordinate as @param
-             * 
+             *
              * @param x value x coordinate (const r-value reference)
              * @param y value y coordinate (const r-value reference)
              * @param z value z coordinate (const r-value reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -152,9 +200,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy (constructor) for @class Primitive
-             * 
+             *
              * @param other Primitive object (const reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -166,9 +214,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move (constructor) for @class Primitive
-             * 
+             *
              * @param other Primitive object (const r-value reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -180,21 +228,21 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief virtual (destructor) for @class Primitive
-             * 
+             *
              * this method no throw exeption
             */
-            virtual 
+            virtual
             ~Primitive( ) noexcept
             { }
 
             /**
              * @brief copy assignment operator for @class Primitive
-             * 
+             *
              * @param other Primitive object (const reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr Primitive& 
+            constexpr Primitive&
             operator = (const Primitive& other) noexcept
             {
                 if(this == &other)
@@ -209,12 +257,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move assignment operator for @class Primitive
-             * 
+             *
              * @param other Primitive object (const r-value reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr Primitive& 
+            constexpr Primitive&
             operator = (const Primitive&& other) noexcept
             {
                 if(this == &other)
@@ -226,15 +274,15 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
                 return *this;
             }
-        
+
         public:     // SIMPLY_TYPE_GETER
             /**
              * @brief clear virtual function, definished in derived
-             * 
+             *
              * @return type of real geometric object
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             virtual const simplyType
@@ -243,82 +291,82 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:   // SETER_FOO
             /**
              * @brief this method set x coordinate
-             * 
+             *
              * @param x value x coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setX(const float& x) noexcept
             { _x = x; }
 
             /**
              * @brief this method set y coordinate
-             * 
+             *
              * @param y value y coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setY(const float& y) noexcept
             { _y = y; }
 
             /**
              * @brief this method set z coordinate
-             * 
+             *
              * @param z value z coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setZ(const float& z) noexcept
             { _z = z; }
 
             /**
              * @brief this method set all coordinate
-             * 
+             *
              * @param x value x coordinate (const reference)
              * @param y value y coordinate (const reference)
              * @param z value z coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setCoordinate(const float& x, const float& y, const float& z) noexcept
             { _x = x; _y = y; _z = z; }
-        
+
         public:    // GETER_FOO
             /**
              * @brief this method get x coordinate
-             * 
+             *
              * @return const reference on x coordinate
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr const float& 
+            constexpr const float&
             getX() const noexcept
             { return _x; }
 
             /**
              * @brief this method get y coordinate
-             * 
+             *
              * @return const reference on y coordinate
-             * 
+             *
              * this method no throw exeption
             */
             constexpr const float&
             getY() const noexcept
             { return _y; }
-            
+
             /**
              * @brief this method get z coordinate
-             * 
+             *
              * @return const reference on z coordinate
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr const float&
@@ -328,30 +376,30 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:     // LOGIC_OPERATORS
             /**
              * @brief equal operator compares two Primitive object
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return TRUE if all coordinates equal, another else
-             * 
+             *
              * this method no change object
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr bool
             operator == (const Primitive& oth) const noexcept
             { return (is_equal(_x, oth.getX())
-                   && is_equal(_y, oth.getY()) 
+                   && is_equal(_y, oth.getY())
                    && is_equal(_z, oth.getZ())); }
 
             /**
              * @brief equal operator compares two Primitive object
-             * 
+             *
              * @param oth left handle operand
-             * 
-             * @return FALSE if all coordinates equal, another TRUE 
-             * 
+             *
+             * @return FALSE if all coordinates equal, another TRUE
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr bool
@@ -360,10 +408,10 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
     }; // CLASS_PRIMITIVE
 
     /**
-     * @class Vertex implimented real geometric vertex, 
-     * 
+     * @class Vertex implimented real geometric vertex,
+     *
      * Vertex is derived @class Primitive
-     * 
+     *
      * construction with (constructor)
     */
     class Vertex : public Primitive
@@ -371,11 +419,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         private:   // DATA
             float _u;       // texture coordinate u
             float _v;       // texture coordinate v
-        
+
         public:   // CONSTRUCT_DESTRUCT_ASSIGNMENT_OPERATORS
             /**
              * @brief default (constructor) for Vertex
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -388,11 +436,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) initialize geometric coordinate
              * texture coordinate initialize null
-             * 
+             *
              * @param x value of x coordinate (const reference)
              * @param y value of y coordinate (const reference)
-             * @param z value of z coordinate (const reference) 
-             * 
+             * @param z value of z coordinate (const reference)
+             *
              * this method no throw exeption
             */
             constexpr
@@ -407,12 +455,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) initialize geometric coordinate
              * texture coordinate initialize null
-             * 
+             *
              * @param x value of x coordinate (const r-value reference)
              * @param y value of y coordinate (const r-value reference)
              * @param z value of z coordinate (const r-value reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr
             Vertex(const float&& x, const float&& y, const float&& z) noexcept
@@ -426,13 +474,13 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) initialize geometric coordinate
              * and texture coordinate
-             * 
+             *
              * @param x value of x coordinate (const reference)
              * @param y value of y coordinate (const reference)
              * @param z value of z coordinate (const reference)
              * @param u value of u coordinate (const reference)
              * @param v value of v coordinate (const reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -448,13 +496,13 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) initialize geometric coordinate
              * and texture coordinate
-             * 
+             *
              * @param x value of x coordinate (const r-value reference)
              * @param y value of y coordinate (const r-value reference)
              * @param z value of z coordinate (const r-value reference)
              * @param u value of u coordinate (const r-value reference)
              * @param v value of v coordinate (const r-value reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -466,12 +514,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 , _u(std::move ( u ))
                 , _v(std::move( v ))
             { }
-            
+
             /**
              * @brief copy (constructor) for class Vertex
-             * 
+             *
              * @param other object of class Vertex (const reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -483,9 +531,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move (constructor) for class Vertex
-             * 
+             *
              * @param other object of class Vertex (const r-value reference)
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -497,10 +545,10 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief virtual (destructor) for class Vertex
-             * 
+             *
              * this is the final in object in the base-derived sequence
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             virtual
             ~Vertex( ) noexcept final
@@ -508,11 +556,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy assignment operator for class Vertex
-             * 
+             *
              * @param other object of class Vertex (const reference)
-             * 
+             *
              * @return this Vertex object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr Vertex&
@@ -520,7 +568,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             {
                 if (this == &other)
                     return *this;
-                
+
                 _x = other.getX();
                 _y = other.getY();
                 _z = other.getZ();
@@ -532,11 +580,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move asignment operator for class Vertex
-             * 
+             *
              * @param other object of class Vertex (const r-value reference)
-             * 
+             *
              * @return this Vertex object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr Vertex&
@@ -544,7 +592,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             {
                 if (this == &other)
                     return *this;
-                
+
                 _x = std::move(other.getX());
                 _y = std::move(other.getY());
                 _z = std::move(other.getZ());
@@ -553,66 +601,66 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
                 return *this;
             }
-        
+
         public:   // SIMPLY_TYPE_GETTER
             /**
              * @brief this method get type of object
-             * 
+             *
              * @return real geometric type
-             * 
+             *
              * this method last in base-derived sequence
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            const simplyType 
+            const simplyType
             getSimplyType() const noexcept final
             { return simplyType::GEOMETRIC_VERTEX; }
-        
+
         public:   // SETTER_FOO
             /**
              * @brief this method set u texture coordinate
-             * 
+             *
              * @param u value of texture coordinate u
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setU(const float& u) noexcept
             { _u = u; }
 
             /**
              * @brief this method set v texture coordinate
-             * 
+             *
              * @param v value of texture coordinate v
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setV(const float& v) noexcept
             { _v = v; }
-            
+
             /**
              * @brief this method set texture coordinate
-             * 
+             *
              * @param u value of texture coordinate u
              * @param v value of texture coordinate v
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             setUV(const float& u, const float& v) noexcept
             { _u = u; _v = v; }
 
         public:    // GETTER_FOO
             /**
              * @brief this method get texture coordinate u
-             * 
+             *
              * @return const reference on u texture coordinate
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr const float&
@@ -621,11 +669,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method get texture coordinate v
-             * 
+             *
              * @return const reference on v texture coordinate
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr const float&
@@ -634,11 +682,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method get texture coordinate
-             * 
+             *
              * @return const pair as u, v texture coordinate
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr const uv_t
@@ -648,32 +696,32 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:     // LOGIC_OPERATORS
             /**
              * @brief equal operator compare two Vertex
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return TRUE if all coordinate is equal, enother FALSE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr bool
             operator == (const Vertex& oth) const noexcept
             { return (is_equal(_x, oth.getX())
-                   && is_equal(_y, oth.getY()) 
+                   && is_equal(_y, oth.getY())
                    && is_equal(_z, oth.getZ())
                    && is_equal(_u, oth.getU())
                    && is_equal(_v, oth.getV())); }
 
             /**
              * @brief equal operator compare two Vertex
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return FALSE if all coordinate is equal, enother TRUE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr bool
@@ -683,9 +731,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
     /**
      * @class Vector implimented real geometric vector
-     * 
+     *
      * Vector is derived @class Primitive
-     * 
+     *
      * construction with (constructor)
     */
     class Vector : public Primitive
@@ -693,7 +741,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:   // CONSTRUCT_DESTRUCT_ASSIGNMENT_OPERATOR
             /**
              * @brief defualt (constructor) for Vector
-             * 
+             *
              * this method no throw exeption
             */
             constexpr
@@ -704,12 +752,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) for Vector
              * initialize all vector coordinate
-             * 
+             *
              * @param x value of x coordinate (const reference)
              * @param y value of y coordinate (const reference)
              * @param z value of z coordinate (const reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr
             Vector(const float& x, const float& y, const float& z) noexcept
@@ -721,12 +769,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) for Vector
              * initialize all vector coordinate
-             * 
+             *
              * @param x value of x coordinate (const r-value reference)
              * @param y value of y coordinate (const r-value reference)
              * @param z value of z coordinate (const r-value reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr
             Vector(const float&& x, const float&& y, const float&& z) noexcept
@@ -737,10 +785,10 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy (constructor) for Vector
-             * 
+             *
              * @param other object of Vector (const reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr
             Vector(const Vector& other) noexcept
@@ -749,10 +797,10 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy (constructor) for Vector
-             * 
+             *
              * @param other object of Vector (const r-value reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             constexpr
             Vector(const Vector&& other) noexcept
@@ -761,23 +809,23 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief virtual (destructor) for Vector
-             * 
+             *
              * this method last in base-derived sequence
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             virtual
             ~Vector( ) noexcept final
             { }
-            
+
             /**
              * @brief copy assignment operator for Vector
-             * 
+             *
              * @param other object of Vector (const reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
-            constexpr Vector& 
+            constexpr Vector&
             operator = (const Vector& other) noexcept
             {
                 if(this == &other)
@@ -792,12 +840,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move assignment operator for Vector
-             * 
+             *
              * @param other object of Vector (const r-value reference)
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
-            constexpr Vector& 
+            constexpr Vector&
             operator = (const Vector&& other) noexcept
             {
                 if(this == &other)
@@ -813,41 +861,41 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:   // SIMPLY_TYPE_GETTER
             /**
              * @brief this method get type of object
-             * 
+             *
              * @return real geometric type
-             * 
+             *
              * this method last in base-derived sequence
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            virtual const simplyType 
+            virtual const simplyType
             getSimplyType() const noexcept final
             { return simplyType::GEOMETRIC_VECTOR; }
 
         public:   // VECTOR_WORK
             /**
              * @brief this method count length of vector
-             * 
+             *
              * @return vector length (aka float)
-             * 
+             *
              * this method no change object
-             * 
-             * this method no throw exeption  
+             *
+             * this method no throw exeption
             */
-            constexpr float 
+            constexpr float
             getLength() const noexcept
-            { return sqrt(pow(this -> getX(), 2) 
+            { return sqrt(pow(this -> getX(), 2)
                         + pow(this -> getY(), 2)
                         + pow(this -> getZ(), 2)); }
-            
+
             /**
              * @brief this method normalizing vector
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
-            constexpr void 
+            constexpr void
             normalize() noexcept
             {
                 float lenght = getLength();
@@ -861,26 +909,26 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method compare two vector on colinearity
-             * 
+             *
              * @param vec other Vector object
-             * 
+             *
              * @return TRUE if vectors colinear, enother FALSE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr bool 
+            constexpr bool
             isColinear(const Vector &vec) const noexcept
             { return ( is_equal(vec.getX() / this->getX(), vec.getY() / this->getY())
                     && is_equal(vec.getY() / this->getY(), vec.getZ() / this->getZ())
                     && is_equal(vec.getX() / this->getX(), vec.getZ() / this->getZ())); }
-                    
+
             /**
              * @brief operator asignment summ incrize this object on @param
-             * 
+             *
              * @param vec other Vector object
-             * 
+             *
              * this method no throw exeption
             */
             void
@@ -889,25 +937,25 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief operator summ for two Vector
-             * 
+             *
              * @param vec left handle vector
-             * 
+             *
              * @return new vector created as summ this & vec
-             * 
-             * this method no change object 
-             * 
+             *
+             * this method no change object
+             *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator + (const Vector& vec) const noexcept
-            { return std::move(Vector(_x + vec.getX(), _y + vec.getY(), _z + vec.getZ())); }
+            { return Vector(_x + vec.getX(), _y + vec.getY(), _z + vec.getZ()); }
 
             /**
              * @brief operator asignment multiply increase this vector
-             * 
+             *
              * @param lambda value has increases vector
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
             void
             operator *= (const float& lambda) noexcept
@@ -915,57 +963,57 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief operator multiply for two Vector
-             * 
+             *
              * @param lambda value has increase
-             * 
+             *
              * @return new vector created as multiply this & lambda
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator * (const float& lambda) const noexcept
-            { return std::move(Vector(_x * lambda, _y * lambda, _z * lambda)); }
+            { return Vector(_x * lambda, _y * lambda, _z * lambda); }
 
             /**
              * @brief operator assignment minus decrease this vector
-             * 
+             *
              * @param vec left handle operand
-             * 
-             * this method no throw exeption 
+             *
+             * this method no throw exeption
             */
-            void 
+            void
             operator -= (Vector &vec) noexcept
             { return *this += vec * (-1.); }
 
             /**
              * @brief operator minus for two vector
-             * 
+             *
              * @param vec left handle operand
-             * 
-             * @return new Vector created as difference this & vec 
-             * 
+             *
+             * @return new Vector created as difference this & vec
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            Vector&&
+            Vector
             operator - (Vector &vec) const noexcept
-            { return std::move(*this + vec * (-1.)); }
+            { return *this + vec * (-1.); }
 
             /**
              * @brief this method count scalar multiply
-             * 
+             *
              * @param vec other Vector object
-             * 
+             *
              * @return scalar multiple (aka float)
-             *  
-             * this method no change object 
-             * 
+             *
+             * this method no change object
+             *
              * this method no throw exeption
             */
-            constexpr float 
+            constexpr float
             scalarMultiplication(const Vector& vec) const noexcept
             { return vec.getX() * this->getX()
                    + vec.getY() * this->getY()
@@ -973,57 +1021,57 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method count cosinus angle for two vectors
-             * 
+             *
              * @param vec second vector
-             * 
+             *
              * @return angle value (aka float)
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            constexpr float 
+            inline constexpr float
             VectorAngle(const Vector& vec) const noexcept
-            { return (scalarMultiplication(vec) / (getLength() * vec.getLength())); } 
+            { return (scalarMultiplication(vec) / (getLength() * vec.getLength())); }
 
             /**
              * @brief this method count angle for this vector & surface(XZ)
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            float 
+            inline float
             normalAngle() const noexcept
-            { return VectorAngle(Vector(0., 1., 0.)); }
-        
+            { return VectorAngle(Vector(0., 0., 1.)); }
+
         public:     // LOGIC_OPERATORS
             /**
              * @brief equal operator compare two Vector
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return TRUE if all coordinate is equal, enother FALSE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr bool
             operator == (const Vector& oth) noexcept
             { return (is_equal(_x, oth.getX())
-                   && is_equal(_y, oth.getY()) 
+                   && is_equal(_y, oth.getY())
                    && is_equal(_z, oth.getZ())); }
 
             /**
              * @brief equal operator compare two Vector
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return FALSE if all coordinate is equal, enother TRUE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
             constexpr bool
@@ -1032,9 +1080,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
     }; // CLASS_VECTOR
 
     /**
-     * @class Triangle is real geometric type who declaredes as 
+     * @class Triangle is real geometric type who declaredes as
      * tree object Vertex type, and one normal Vector type
-     * 
+     *
      * construction with (constructor)
     */
     class Triangle
@@ -1055,7 +1103,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief default (constructor) for Triangle
              * allocation memory for variable
-             * 
+             *
              * this method can throw bedAlloc exeption
             */
             Triangle()
@@ -1067,12 +1115,12 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief (constructor) for triangle who init all data with r-value reference
-             * 
+             *
              * @param vector normal for this triangle
-             * @param vertex_A first vertex 
-             * @param vertex_B second vertex 
-             * @param vertex_C third vertex 
-             * 
+             * @param vertex_A first vertex
+             * @param vertex_B second vertex
+             * @param vertex_C third vertex
+             *
              * this method no throw exeption
             */
             Triangle(Vector&& vector, _vertexPtr&& vertex_A,
@@ -1085,9 +1133,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy (constructor) for Triangle
-             * 
+             *
              * @param other Triangle object
-             * 
+             *
              * this method no throw exeption
             */
             Triangle(const Triangle& other) noexcept
@@ -1098,9 +1146,9 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move (constructor) for Triangle
-             * 
+             *
              * @param other Triangle object
-             * 
+             *
              * this method no throw exeption
             */
             Triangle(const Triangle&& other) noexcept
@@ -1111,7 +1159,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief (destructor) for Triangle
-             * 
+             *
              * this method no throw exeption
             */
             ~Triangle() noexcept
@@ -1119,19 +1167,19 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief copy assignment operator for Triangle
-             * 
+             *
              * @param other Triangle object
-             * 
+             *
              * @return this object
-             * 
+             *
              * this method no throw exeption
             */
-            Triangle& 
+            Triangle&
             operator=(const Triangle &other) noexcept
             {
                 if(this == &other)
                     return *this;
- 
+
                 __vertex_A = other.__vertex_A;
                 __vertex_B = other.__vertex_B;
                 __vertex_C = other.__vertex_C;
@@ -1143,14 +1191,14 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief move assignment operator for Triangle
-             * 
+             *
              * @param other Triangle object
-             * 
+             *
              * @return this object
-             * 
+             *
              * this method no throw exeption
             */
-            Triangle& 
+            Triangle&
             operator=(const Triangle&& other) noexcept
             {
                 if(this == &other)
@@ -1168,106 +1216,106 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:   // SETTER_FOO
             /**
              * @brief this method set value for triangle normal
-             * 
+             *
              * @param vec vector object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setNormal(const Vector& vec) noexcept
             { *__normal = vec; }
 
             /**
              * @brief this method set value for vertex_A
-             * 
+             *
              * @param vertex_A vertex object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_A(const Vertex& vertex_A) noexcept
             { *__vertex_A = vertex_A; }
 
             /**
              * @brief this method set value for vertex_B
-             * 
+             *
              * @param vertex_B vertex object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_B(const Vertex& vertex_B) noexcept
             { *__vertex_B = vertex_B; }
 
             /**
              * @brief this method set value for vertex_C
-             * 
+             *
              * @param vertex_C vertex object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_C(const Vertex& vertex_C) noexcept
             { *__vertex_C = vertex_C; }
 
             /**
              * @brief this method set value for triangle normal via pointer
-             * 
+             *
              * @param vec vector pointer object (aka std::unique_ptr<vector>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setNormal(_vectorPtr&& vec) noexcept
             { __normal = std::move(vec); }
 
             /**
              * @brief this method set value for vertex_A via pointer
-             * 
+             *
              * @param vertex_A vertex pointer object (aka std::shared_ptr<vertex>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_A(_vertexPtr vertex_A) noexcept
             { __vertex_A = vertex_A; }
 
            /**
              * @brief this method set value for vertex_B via pointer
-             * 
+             *
              * @param vertex_B vertex pointer object (aka std::shared_ptr<vertex>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_B(_vertexPtr vertex_B) noexcept
             { __vertex_B = vertex_B; }
 
            /**
              * @brief this method set value for vertex_C via pointer
-             * 
+             *
              * @param vertex_C vertex pointer object (aka std::shared_ptr<vertex>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             setVertex_C(_vertexPtr vertex_C) noexcept
             { __vertex_C = vertex_C; }
 
            /**
              * @brief this method set value for all data via pointer
-             * 
+             *
              * @param vector   vector pointer object (aka std::shared_ptr<vector>)
              * @param vertex_A vertex pointer object (aka std::shared_ptr<vertex>)
              * @param vertex_B vertex pointer object (aka std::shared_ptr<vertex>)
              * @param vertex_C vertex pointer object (aka std::shared_ptr<vertex>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             set(_vectorPtr&& vector, _vertexPtr vertex_A,
                 _vertexPtr vertex_B, _vertexPtr vertex_C) noexcept
-            { 
+            {
                 __normal   = std::move(vector);
                 __vertex_A = vertex_A;
                 __vertex_B = vertex_B;
@@ -1276,18 +1324,18 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
            /**
              * @brief this method set value for all data
-             * 
+             *
              * @param vector   vector object
              * @param vertex_A vertex object
              * @param vertex_B vertex object
              * @param vertex_C vertex object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             set(const Vector& vector, const Vertex& vertex_A,
                 const Vertex& vertex_B, const Vertex& vertex_C) noexcept
-            { 
+            {
                 *__normal   = vector  ;
                 *__vertex_A = vertex_A;
                 *__vertex_B = vertex_B;
@@ -1296,36 +1344,36 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
            /**
              * @brief this method set value for all vertex via pointer
-             * 
+             *
              * @param vertex_A vertex pointer object (aka std::shared_ptr<vertex>)
              * @param vertex_B vertex pointer object (aka std::shared_ptr<vertex>)
              * @param vertex_C vertex pointer object (aka std::shared_ptr<vertex>)
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             set(_vertexPtr vertex_A, _vertexPtr vertex_B
                 , _vertexPtr vertex_C) noexcept
-            { 
+            {
                 __vertex_A = vertex_A;
-                __vertex_B = vertex_B; 
+                __vertex_B = vertex_B;
                 __vertex_C = vertex_C;
                 normal();
             }
 
            /**
              * @brief this method set value for all vertex
-             * 
+             *
              * @param vertex_A vertex object
              * @param vertex_B vertex object
              * @param vertex_C vertex object
-             * 
+             *
              * this method no throw exeption
             */
-            void 
+            void
             set(const Vertex& vertex_A, const Vertex& vertex_B
                 , const Vertex& vertex_C) noexcept
-            { 
+            {
                 *__vertex_A = vertex_A;
                 *__vertex_B = vertex_B;
                 *__vertex_C = vertex_C;
@@ -1335,24 +1383,24 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:   // GETTER_FOO
             /**
              * @brief this method get triangle normal
-             * 
+             *
              * @return triangle normal via pointer
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this methid no throw exeption
             */
-            const Vector& 
+            const Vector&
             getNormal() const noexcept
             { return *__normal; }
 
             /**
              * @brief this method get first triangle vertex
-             * 
+             *
              * @return triangle vertex via pointer
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this methid no throw exeption
             */
             const _vertexPtr
@@ -1361,11 +1409,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method get second triangle vertex
-             * 
+             *
              * @return triangle vertex via pointer
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this methid no throw exeption
             */
             const _vertexPtr
@@ -1374,11 +1422,11 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method get third triangle vertex
-             * 
+             *
              * @return triangle vertex via pointer
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this methid no throw exeption
             */
             const _vertexPtr
@@ -1387,7 +1435,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief this method standartization triangle
-             * 
+             *
              * this method no throw exeption
             */
             void fixTriangle() noexcept
@@ -1396,16 +1444,16 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
         public:
             /**
              * @brief equal operator compare two Vector
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return TRUE if all coordinate is equal, enother FALSE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            bool 
+            bool
             operator == (const Triangle& oth) const noexcept
             { return *__normal   ==  oth.getNormal()
                   && *__vertex_A == *oth.getVertex_A()
@@ -1414,122 +1462,168 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
 
             /**
              * @brief equal operator compare two Vector
-             * 
+             *
              * @param oth left handle operand
-             * 
+             *
              * @return FALSE if all coordinate is equal, enother TRUE
-             * 
+             *
              * this method no change object
-             * 
+             *
              * this method no throw exeption
             */
-            bool 
+            bool
             operator != (const Triangle& oth) noexcept
             { return !(*this == oth); }
 
 
             /**
-             * @brief 
+             * @brief calculate two 2d vertex on intersection triangles
+             * @brief and layer face
+             * @param Height layer face height
+             * @return two optional point
             */
-            cut_t cut(const float& Height) noexcept
+            cut_t cut(const float& Height) const noexcept
             {
-                fixTriangle();
+                // fixTriangle();
+                // std::cout << "\nCut\n";
 
-                std::cout << '\n' << "CUT" << '\n' << '\n';
-
-                if (__vertex_A -> getZ() < Height 
+                if (__vertex_A -> getZ() < Height
                  || __vertex_C -> getZ() > Height)
                     return {};
 
                 if (is_equal(__vertex_A -> getZ(), Height)
                  && is_equal(__vertex_B -> getZ(), Height))
-                    return std::pair ( Point2d( __vertex_A -> getX(), 
-                                                __vertex_A -> getY() ),
-                                       Point2d( __vertex_B -> getX(), 
-                                                __vertex_B -> getY() ) );
+                    return std::pair ( Point2d(__vertex_A -> getX(),
+                                               __vertex_A -> getY() ),
+                                       Point2d(__vertex_B -> getX(),
+                                               __vertex_B -> getY() ));
 
                 if (is_equal(__vertex_C -> getZ(), Height)
                  && is_equal(__vertex_B -> getZ(), Height))
-                    return std::pair ( Point2d ( __vertex_B -> getX(),
-                                                 __vertex_B -> getY() ),
-                                       Point2d ( __vertex_C -> getX(),
-                                                 __vertex_C -> getY() ) );  
-                
+                    return std::pair ( Point2d(__vertex_B -> getX(),
+                                               __vertex_B -> getY() ),
+                                       Point2d(__vertex_C -> getX(),
+                                               __vertex_C -> getY() ));
+
                 if (is_equal(__vertex_A -> getZ(), Height))
-                    return std::pair ( Point2d ( __vertex_A -> getX(),
-                                                 __vertex_A -> getY() ),
+                    return std::pair( Point2d(__vertex_A -> getX(),
+                                              __vertex_A -> getY() ),
                                        std::nullopt );
 
                 if (is_equal(__vertex_C -> getZ(), Height))
-                    return std::pair ( Point2d ( __vertex_C -> getX(),
-                                                 __vertex_C -> getY() ),
+                    return std::pair( Point2d(__vertex_C -> getX(),
+                                              __vertex_C -> getY() ),
                                        std::nullopt );
-                
-                float h              =             Height            ;
-                float n_x            =           __normal   -> getX();
-                float n_y            =           __normal   -> getY();
-                float n_z            =           __normal   -> getZ();
-                float a_x            =           __vertex_A -> getX();
-                float a_y            =           __vertex_A -> getY();
-                float a_z            =           __vertex_A -> getZ();
-                float b_x            =           __vertex_B -> getX();
-                float b_y            =           __vertex_B -> getY();
-                float b_z            =           __vertex_B -> getZ();
-                float c_x            =           __vertex_C -> getX();
-                float c_y            =           __vertex_C -> getY();
-                float c_z            =           __vertex_C -> getZ();
 
-                float k = - n_x / n_y;
-                float p = (n_x * a_x + n_y * a_y - n_z * (h - a_z)) / n_y;
+                if (is_equal(__vertex_C -> getZ(), __vertex_B -> getZ())
+                 && is_equal(__vertex_A -> getZ(), __vertex_B -> getZ()))
+                    return std::nullopt;
 
-                float Kac = (a_y - c_y) / (a_x - c_x);
-                float Bac = (c_y * (a_x - c_x) - c_x * (a_y - c_y)) / (a_x - c_x);
+                if(is_equal(__vertex_B -> getZ(), Height)) return std::pair
+                    (
+                        Point2d(__vertex_B -> getX(), __vertex_B -> getY() ),
 
-                float l_x = (p - Bac) / (k - Kac);
-                float l_y = k * l_x + p;
+                        Point2d (
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getX() - __vertex_C -> getX()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getX()),
 
-                if(is_equal(__vertex_B -> getZ(), Height))
-                    return std::pair ( Point2d ( __vertex_B -> getX(),
-                                                 __vertex_B -> getY() ),
-                                       Point2d ( l_x, l_y ) );
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getY() - __vertex_C -> getY()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getY()))
+                    );
 
-                float x_1 = __vertex_B -> getX();
-                float y_1 = __vertex_B -> getY();
-                
-                float x_2 = 0.;
-                float y_2 = 0.;
+                if(__vertex_B -> getZ() < Height) return std::pair
+                    (
+                        Point2d (
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getX() - __vertex_C -> getX()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getX()),
 
-                if(__vertex_B -> getZ() < Height)
-                {
-                    x_2 = __vertex_A -> getX();
-                    y_2 = __vertex_A -> getY();
-                }
-                else
-                {
-                    x_2 = __vertex_C -> getX();
-                    y_2 = __vertex_C -> getY();
-                }
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getY() - __vertex_C -> getY()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getY())),
 
-                float K12 = (y_2 - y_1) / (x_2 - x_1);
-                float B12 = (y_1 * (x_2 - x_1) - x_1 * (y_2 - y_1)) / (x_2 - x_1);
+                        Point2d (
+                            ((Height - __vertex_B -> getZ()) *
+                            (__vertex_A -> getX() - __vertex_B -> getX()) /
+                            (__vertex_A -> getZ() - __vertex_B -> getZ()) +
+                            __vertex_B -> getX()),
 
-                float k_x = (p - B12) / (k - K12);
-                float k_y = k * k_x + p;
+                            ((Height - __vertex_B -> getZ()) *
+                            (__vertex_A -> getY() - __vertex_B -> getY()) /
+                            (__vertex_A -> getZ() - __vertex_B -> getZ()) +
+                            __vertex_B -> getY()))
+                    );
 
-                return std::pair ( Point2d ( k_x, k_y ),
-                                   Point2d ( l_x, l_y ) );
+                else return std::pair
+                    (
+                        Point2d (
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getX() - __vertex_C -> getX()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getX()),
+
+                            ((Height - __vertex_C -> getZ()) *
+                            (__vertex_A -> getY() - __vertex_C -> getY()) /
+                            (__vertex_A -> getZ() - __vertex_C -> getZ()) +
+                            __vertex_C -> getY())),
+
+                        Point2d (
+                            ((Height - __vertex_B -> getZ()) *
+                            (__vertex_C -> getX() - __vertex_B -> getX()) /
+                            (__vertex_C -> getZ() - __vertex_B -> getZ()) +
+                            __vertex_B -> getX()),
+
+                            ((Height - __vertex_B -> getZ()) *
+                            (__vertex_C -> getY() - __vertex_B -> getY()) /
+                            (__vertex_C -> getZ() - __vertex_B -> getZ()) +
+                            __vertex_B -> getY()))
+                    );
+                    return {};
+            }
+
+            /**
+             * @brief check triangle incidence on range
+             * @param height is height of layer face
+             * @return true if height in triangle gabarit range
+             */
+            inline bool
+            onRange(float height) const noexcept
+            { return __vertex_A -> getZ() > height
+                  && __vertex_C -> getZ() < height; }
+
+            static void
+            onTerm(const std::shared_ptr < Triangle >& triangle) noexcept
+            {
+                std::cout << "\n\nNORMAL\t" << triangle -> getNormal()   .  getX() << '\t';
+                std::cout               << triangle -> getNormal()   .  getY() << '\t';
+                std::cout               << triangle -> getNormal()   .  getZ() << '\n';
+                std::cout << "VERT_A\t" << triangle -> getVertex_A() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_A() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_A() -> getZ() << '\n';
+                std::cout << "VERT_B\t" << triangle -> getVertex_B() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_B() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_B() -> getZ() << '\n';
+                std::cout << "VERT_C\t" << triangle -> getVertex_C() -> getX() << '\t';
+                std::cout               << triangle -> getVertex_C() -> getY() << '\t';
+                std::cout               << triangle -> getVertex_C() -> getZ() << "\n\n";
             }
 
 
         private:    // INTERNAL_METHOD
             /**
-             * @brief 
-             * 
+             * @brief calculate normal use vertex coord
+             *
              * this method no throw exeption
             */
-            void 
+            inline void
             normal() noexcept
-            {   
+            {
                 Vector V1( __vertex_A -> getX() - __vertex_B -> getX()
                          , __vertex_A -> getY() - __vertex_B -> getY()
                          , __vertex_A -> getZ() - __vertex_B -> getZ() );
@@ -1548,24 +1642,24 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief this method change vertex position if
              * !(vertex_a.z >= vartex_b.z >= vertex_c.z)
-             * 
+             *
              * this method no throw exeption
             */
-            void
+            inline void
             moveVertex() noexcept
             {
                 auto z_a = __vertex_A -> getZ();
                 auto z_b = __vertex_B -> getZ();
                 auto z_c = __vertex_C -> getZ();
 
-                if(z_c >= z_b) 
-                    if(z_c >= z_a) 
+                if(z_c >= z_b)
+                    if(z_c >= z_a)
                     {
                         std::swap(__vertex_A, __vertex_C);
                         if(z_a >= z_b) std::swap(__vertex_C, __vertex_B);
                     }
                     else std::swap(__vertex_B, __vertex_A);
-                else if(z_b >= z_a) 
+                else if(z_b >= z_a)
                 {
                     std::swap(__vertex_B, __vertex_A);
                     if(z_c >= z_a) std::swap(__vertex_C, __vertex_B);

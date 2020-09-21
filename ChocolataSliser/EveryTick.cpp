@@ -45,7 +45,7 @@ void ChocolataSlicer::drawUI() {
 
 
                 // showing list of recent files
-                if (ImGui::BeginMenu("Open Recent..", (!FileSelector::getInstance()._recentFiles["recentFiles"].size() ? false : true) )) {  
+                if (ImGui::BeginMenu("Open Recent..", (!FileSelector::getInstance()._recentFiles["recentFiles"].size() ? false : true) )) {
                     for (int i = FileSelector::getInstance()._recentFiles["recentFiles"].size()-1; i >= 0 ; i-- ) {
                         if (ImGui::MenuItem(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString()) ) {
                             FileSelector::getInstance().open(FileSelector::getInstance()._recentFiles["recentFiles"][i].asCString() );
@@ -128,7 +128,7 @@ void ChocolataSlicer::drawUI() {
 
 
             // ViewMode
-            static const Json::Value::Members _list = Json::Value::Members({"Shaded", "Wireframe", "Solid" } ); 
+            static const Json::Value::Members _list = Json::Value::Members({"Shaded", "Wireframe", "Solid" } );
             if (ImGui::Combo("ViewMode", &_viewMode, _list ) ) {
                 switch (_viewMode) {
                     case (0) : {
@@ -267,7 +267,7 @@ void ChocolataSlicer::drawUI() {
 
 
 void ChocolataSlicer::draw() {
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();    
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
 
     drawUI();
 
@@ -279,7 +279,7 @@ void ChocolataSlicer::draw() {
         uint32_t lines = 6, offset = 2;
         ci::gl::color(1,1,1, 0.4);
         for (int i = 1; i <= lines; i ++ ) {
-            ci::gl::drawLine(glm::vec3((offset*i),0,0), glm::vec3((offset*i),0,(offset*lines)) );    
+            ci::gl::drawLine(glm::vec3((offset*i),0,0), glm::vec3((offset*i),0,(offset*lines)) );
             ci::gl::drawLine(glm::vec3(0,0,(offset*i)), glm::vec3((offset*lines),0,(offset*i)) );
         }
 
@@ -321,4 +321,3 @@ void ChocolataSlicer::keyDown(ci::app::KeyEvent event ) {
     }
 
 }
- 

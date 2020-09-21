@@ -1,27 +1,24 @@
 #include "ChocolataSlicerMesh.h"
 #include "filework.hpp"
 
+#include "core.h"
+
+
 Mesh::Mesh(_filename_t filename) noexcept
     : __filename ( filename )
-{
-
-}
+{ }
 
 Mesh::Mesh(const Mesh& mesh) noexcept
     : __filename    (mesh.__filename    )
     , __vertexData  (mesh.__vertexData  )
     , __triangleData(mesh.__triangleData)
-{
-
-}
+{ fixAllTriangle(); calculateGabarit(); }
 
 Mesh::Mesh(const Mesh&& mesh) noexcept
     : __filename    (std::move(mesh.__filename)    )
     , __vertexData  (std::move(mesh.__vertexData)  )
     , __triangleData(std::move(mesh.__triangleData))
-{
-
-}
+{ fixAllTriangle(); calculateGabarit(); }
 
 Mesh::~Mesh( ) noexcept
 {
@@ -52,6 +49,7 @@ Mesh& Mesh::operator = ( const Mesh&& mesh ) noexcept
 
 void Mesh::conf() noexcept
 {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     std::for_each
     (
         __triangleData.cbegin(),
@@ -91,67 +89,131 @@ void Mesh::conf() noexcept
     recalculateNormals();
     recalculateTangents();
     recalculateBitangents();
-
-    printf("Conf function is okey\n");
-
 }
 
-bool Mesh::isEmpty() noexcept {
-    return (getNumTriangles() < 1) ? true : false;
+bool Mesh::isEmpty() noexcept
+{ return __triangleData.empty() && __vertexData.empty(); }
+
+const Mesh::_triangleData&
+Mesh::getTriangleArray() const noexcept
+{ return __triangleData; }
+
+const float
+Mesh::getModelHeights() const noexcept
+{ return _g_z; }
+
+void Mesh::calculateGabarit() noexcept
+{
+    if (__vertexData.empty()) std::cout << "YOU ARE DYRAK";
+
+    auto [minX, maxX] = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getX() < v_2.first -> getX(); }
+    );
+
+    auto [minY, maxY] = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getY() < v_2.first -> getY();}
+    );
+
+    auto [minZ, maxZ] = std::minmax_element
+    (
+        __vertexData.cbegin(),
+        __vertexData.cend(),
+        [] (auto v_1, auto v_2) -> bool
+        { return  v_1.first -> getZ() < v_2.first -> getZ();}
+    );
+
+    _g_x = maxX -> first -> getX() - minX -> first -> getX();
+    _g_y = maxY -> first -> getY() - minY -> first -> getY();
+    _g_z = maxZ -> first -> getZ() - minZ -> first -> getZ();
+}
+
+void Mesh::fixAllTriangle() noexcept
+{
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+    std::for_each
+    (
+        __triangleData.begin(),
+        __triangleData.end(),
+        [] (auto triangle) -> void
+        { triangle -> fixTriangle(); }
+    );
+}
+
+std::optional < float >
+Mesh::nextLayerHeight(const float prev) const noexcept
+{
+    std::optional < float > minCos = std::nullopt;   // max angle
+
+    const float min          = *cfg::get<f>(CfgNames::MIN_LAYER);
+    const float max          = *cfg::get<f>(CfgNames::MAX_LAYER);
+    const float intersection = *cfg::get<f>(CfgNames::INTERSECTION);
+
+    std::for_each
+    (
+        __triangleData.cbegin(),
+        __triangleData.cend(),
+        [&minCos, prev, min, max] (auto triangle) mutable -> void
+        {
+            if (triangle -> onRange(prev + min) || triangle -> onRange(prev + max))
+            {
+                if(!minCos) minCos = 1.f;
+                if (auto angle = triangle -> getNormal().normalAngle();
+                    std::abs(angle) < *minCos ) minCos = std::abs(angle);
+            }
+        }
+    );
+
+    if (minCos)
+    {
+        auto res = std::sqrt ( ( 1 - *minCos ) * ( 1 + *minCos ) ) * intersection;
+
+        if(*minCos != 0) res /= *minCos;
+        else return prev + max;
+
+        if (res <= min) return prev + min;
+        if (res >= max) return prev + max;
+        if (res >=   0) return prev + res;
+    }
+    return std::nullopt;
 }
 
 Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
     Mesh::_filename_t filename) noexcept
 {
-    if (file_type == Mesh::File::_STL)
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+    Mesh::_meshPtr_t result = nullptr;
+
     {
-        auto tmp = std::make_unique<Filework::STL>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
+        CHOCOLATA_SLIER_PROFILE_SCOPE("result = std::make_shared<_T>(filename)");
+        if (file_type == Mesh::File::_STL) result = std::make_shared<Filework:: STL>(filename);
+        if (file_type == Mesh::File::_OBJ) result = std::make_shared<Filework:: OBJ>(filename);
+        if (file_type == Mesh::File::_AMF) result = std::make_shared<Filework:: AMF>(filename);
+        if (file_type == Mesh::File::_3MF) result = std::make_shared<Filework::_3MF>(filename);
+        if (file_type == Mesh::File::_FBX) result = std::make_shared<Filework:: FBX>(filename);
+        if (file_type == Mesh::File::_PLY) result = std::make_shared<Filework:: PLY>(filename);
     }
 
-    if (file_type == Mesh::File::_OBJ)
-    {
-        auto tmp = std::make_unique<Filework::OBJ>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
+    // auto fut = std::async
+    // (
+        // std::launch::async,
+        // [result] () -> void
+        // {
+            if(result == nullptr) return result;
+            result -> open();
+            result -> fixAllTriangle();
+            result -> conf();
+        // }
+    // );
 
-    if (file_type == Mesh::File::_AMF)
-    {
-        auto tmp = std::make_unique<Filework::AMF>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_3MF)
-    {
-        auto tmp = std::make_unique<Filework::_3MF>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_FBX)
-    {
-        auto tmp = std::make_unique<Filework::FBX>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-
-    if (file_type == Mesh::File::_PLY)
-    {
-        auto tmp = std::make_unique<Filework::PLY>(filename);
-        tmp -> open();
-        tmp -> conf();
-        return tmp;
-    }
-    // etc...
-    return nullptr;
+    return result;
 }
 
 bool add_in_this_mesh(Mesh::File file_type,
@@ -159,65 +221,8 @@ bool add_in_this_mesh(Mesh::File file_type,
 {
     bool result = false;
 
-    if (file_type == Mesh::File::_STL)
-    {
-        Filework::STL tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_OBJ)
-    {
-        Filework::OBJ tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_AMF)
-    {
-        Filework::AMF tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_3MF)
-    {
-        Filework::_3MF tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_FBX)
-    {
-        Filework::FBX tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_PLY)
-    {
-        Filework::PLY tmp = *model;
-
-        tmp.__filename = filename;
-        tmp.open();
-
-        *model = tmp;
-    }
+    model -> __filename = filename;
+    model -> open();
 
     result = true;
     return result;
@@ -228,47 +233,9 @@ bool reinit_mesh(Mesh::File file_type,
 {
     bool result = false;
 
-    if (file_type == Mesh::File::_STL)
-    {
-        Filework::STL tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
-
-    if (file_type == Mesh::File::_OBJ)
-    {
-        Filework::OBJ tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
-
-        if (file_type == Mesh::File::_AMF)
-    {
-        Filework::AMF tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
-
-        if (file_type == Mesh::File::_3MF)
-    {
-        Filework::_3MF tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
-
-        if (file_type == Mesh::File::_FBX)
-    {
-        Filework::FBX tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
-
-        if (file_type == Mesh::File::_PLY)
-    {
-        Filework::PLY tmp(filename);
-        tmp.open();
-        *model = tmp;
-    }
+    model -> destroy();
+    model -> __filename = filename;
+    model -> open();
 
     result = true;
     return result;
@@ -312,16 +279,10 @@ void save_mesh_as(Mesh::File file_type, const Mesh::_meshPtr_t& model,
 
 const Mesh::_stat_t Mesh::getVertices( ) const noexcept
 {
-    return _vertices;
+    return __vertexData.size();
 }
 
 const Mesh::_stat_t Mesh::getTriangles( ) const noexcept
 {
-    return _triangles;
-}
-
-void Mesh::stat() noexcept
-{
-    _vertices = __vertexData.size();
-    _triangles = __triangleData.size();
+    return __triangleData.size();
 }

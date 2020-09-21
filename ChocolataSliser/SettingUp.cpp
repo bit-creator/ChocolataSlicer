@@ -92,7 +92,7 @@ void ChocolataSlicer::setup() {
             m_handler_main = ui::uiWindowHandler::create(getWindow(), ui::uiLocation_Right, {250,250}, {0,19} );
             m_handler_main->pushWnd(m_window_editor );
             m_handler_main->pushWnd(m_window_content );
-    
+
             // Notifications
             std::string _vs = "Current version is : "; _vs += __ChocolataSlicer_Version_;
             Notifications::GetInstance().addNotif( Notif { "Slicer version", _vs.c_str(), __ChocolataSlicer_Link_, ci::log::LEVEL_INFO  } );
@@ -107,7 +107,7 @@ void ChocolataSlicer::setup() {
                 // "HouseLogo",
                 // ci::gl::Batch::create(*ms, ShaderTree::getInstance().velvetyShader() )
                 // ci::gl::Texture2d::create(ci::loadImage("test/Ico.png") )
-            // ) 
+            // )
         // );
         // ContentTree::getInstance()._items.back()->_rotate = {-1.6,0,0};
 
