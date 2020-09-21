@@ -183,6 +183,7 @@ namespace Filework
             virtual bool
             open() noexcept final
             {
+                CHOCOLATA_SLIER_PROFILE_FUNCTION();
                 bool result = false;
 
 

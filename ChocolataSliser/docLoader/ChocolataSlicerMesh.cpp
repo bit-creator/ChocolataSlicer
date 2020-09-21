@@ -1,6 +1,9 @@
 #include "ChocolataSlicerMesh.h"
 #include "filework.hpp"
 
+#include "core.h"
+
+
 Mesh::Mesh(_filename_t filename) noexcept
     : __filename ( filename )
 { }
@@ -46,6 +49,7 @@ Mesh& Mesh::operator = ( const Mesh&& mesh ) noexcept
 
 void Mesh::conf() noexcept
 {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     std::for_each
     (
         __triangleData.cbegin(),
@@ -133,6 +137,7 @@ void Mesh::calculateGabarit() noexcept
 
 void Mesh::fixAllTriangle() noexcept
 {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     std::for_each
     (
         __triangleData.begin(),
@@ -183,13 +188,18 @@ Mesh::nextLayerHeight(const float prev) const noexcept
 Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
     Mesh::_filename_t filename) noexcept
 {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
     Mesh::_meshPtr_t result = nullptr;
-    if (file_type == Mesh::File::_STL) result = std::make_shared<Filework:: STL>(filename);
-    if (file_type == Mesh::File::_OBJ) result = std::make_shared<Filework:: OBJ>(filename);
-    if (file_type == Mesh::File::_AMF) result = std::make_shared<Filework:: AMF>(filename);
-    if (file_type == Mesh::File::_3MF) result = std::make_shared<Filework::_3MF>(filename);
-    if (file_type == Mesh::File::_FBX) result = std::make_shared<Filework:: FBX>(filename);
-    if (file_type == Mesh::File::_PLY) result = std::make_shared<Filework:: PLY>(filename);
+
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("result = std::make_shared<_T>(filename)");
+        if (file_type == Mesh::File::_STL) result = std::make_shared<Filework:: STL>(filename);
+        if (file_type == Mesh::File::_OBJ) result = std::make_shared<Filework:: OBJ>(filename);
+        if (file_type == Mesh::File::_AMF) result = std::make_shared<Filework:: AMF>(filename);
+        if (file_type == Mesh::File::_3MF) result = std::make_shared<Filework::_3MF>(filename);
+        if (file_type == Mesh::File::_FBX) result = std::make_shared<Filework:: FBX>(filename);
+        if (file_type == Mesh::File::_PLY) result = std::make_shared<Filework:: PLY>(filename);
+    }
 
     // auto fut = std::async
     // (
