@@ -39,6 +39,7 @@
 // #include "../Cinder/include/cinder/ObjLoader.h"
 #include "geometry.hpp"
 #include "ChocolataSlicerMesh.h"
+#include "core.h"
 
 namespace Filework
 {
