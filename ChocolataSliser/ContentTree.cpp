@@ -34,7 +34,12 @@ void ContentTree::destroy() {
 }
 
 void ContentTree::update() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
     std::vector<ContentItemRef> new_items;
+
+    if (_items.size() <= 0) return;
+
     for (int i = 0; i < _items.size(); i++ )
         if (_items.at(i)->isEmpty() ) new_items.push_back(_items.at(i));
 
@@ -46,39 +51,49 @@ void ContentTree::update() {
 
 
 void ContentTree::drawObjectsToUiList() {
+    CHOCOLATA_SLIER_PROFILE_FUNCTION();
+
     update();       // update items location
 
     static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    for (int i = (_items.size() - 1); i >= 0; i-- ) {
-        ImGuiTreeNodeFlags node_flags = base_flags;
-        if (i == _selected ) node_flags |= ImGuiTreeNodeFlags_Selected;
-        if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
+    {
+        CHOCOLATA_SLIER_PROFILE_SCOPE("drawItems");
+        for (int i = (_items.size() - 1); i >= 0; i-- ) {
+            ImGuiTreeNodeFlags node_flags = base_flags;
+            if (i == _selected ) node_flags |= ImGuiTreeNodeFlags_Selected;
+            if (_items.at(i)->_texturePtr == nullptr && _items.at(i)->_batchPtr == nullptr ) node_flags |= ImGuiTreeNodeFlags_Leaf;
+    
+            float _x = ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - 50;
+            bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef.c_str(), (i+1) );
+            if (ImGui::IsItemClicked()) _selected = i;
 
-        float _x = ImGui::GetCursorScreenPos().x + ImGui::GetWindowWidth() - 50;
-        bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, "%s", _items.at(i)->_nameRef.c_str(), (i+1) );
-        if (ImGui::IsItemClicked()) _selected = i;
+    
+            if (node_open) {
+                bool _drBatch = (_items.at(i)->_batchPtr != nullptr);
+                bool _drTextr = (_items.at(i)->_texturePtr != nullptr);
 
-
-        if (node_open) {
-            if (_items.at(i)->_batchPtr != nullptr) {
-                ImVec2 nodePos = ImGui::GetCursorScreenPos();
-                ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
-                ImGui::SameLine();
-                ImGui::Text("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
-
-                if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), " ", true ) ) {
-                    _items.at(i)->_batchPtr.reset();
-
-                    if (_items.at(i)->isEmpty() ) {
-                        _items.erase(_items.end() - i - 1 );
-                    }
-
-                } __tooltip("Remove item");
-
-            }
-
-            if (_items.at(i)->_texturePtr != nullptr) {
+                if (_drBatch ) {
+                    ImVec2 nodePos = ImGui::GetCursorScreenPos();
+                    ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
+                    ImGui::SameLine();
+                    ImGui::Text("%p", _items.at(i)->_batchPtr ); __tooltip("Mesh object");
+    
+                    if (ui::__ui_invisible_button(ImVec2(nodePos.x + ImGui::GetWindowSize().x - 50, nodePos.y), " ", true ) ) {
+                        _items.at(i)->_batchPtr.reset();
+    
+                        if (_items.at(i)->isEmpty() ) {
+                            if (_items.size() > 0 )
+                                _items.erase(_items.end() - i - 1 );
+                            else 
+                                _items.clear();
+                        }
+    
+                    } __tooltip("Remove item");
+    
+                }
+    
+                if (_drTextr ) {
                 ImVec2 nodePos = ImGui::GetCursorScreenPos();
                 ui::customBullet("", ImVec2(17,17), glm::vec3(0.23137,0.23137,0.21961), true);
                 ImGui::SameLine();
@@ -96,16 +111,18 @@ void ContentTree::drawObjectsToUiList() {
                     _items.at(i)->_texturePtr.reset();
 
                     if (_items.at(i)->isEmpty() ) {
-                        _items.erase(_items.end() - i - 1 );
+                        if (_items.size() > 0 )
+                            _items.erase(_items.end() - i - 1 );
+                        else 
+                            _items.clear();
                     }
 
                 } __tooltip("Remove item");
 
             }
-
-            ImGui::TreePop();
-            // if (_items.at(i)->_texturePtr != nullptr || _items.at(i)->_batchPtr != nullptr ) { ImGui::Spacing(); ImGui::Spacing(); }
-
+    
+                ImGui::TreePop();
+            }
         }
     }
 }
