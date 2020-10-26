@@ -183,15 +183,13 @@ namespace Filework
             virtual bool
             open() noexcept final
             {
-                CHOCOLATA_SLIER_PROFILE_FUNCTION();
                 bool result = false;
-
+                __index = 0;
 
                 std::ifstream in(__filename, std::ios::binary);
                 in >> *this;
 
-                // fixAllTriangle(); calculateGabarit();
-                // std::cout << "\n\nsome\n\n";
+                calculateGabarit();
 
                 _valid = true;
 
@@ -270,6 +268,16 @@ namespace Filework
                             ++__index
                         ) )
                     );
+
+                // if(insert)
+                // {
+                //     mPositions.emplace_back(vertex.getZ());
+                //     mPositions.emplace_back(vertex.getY());
+                //     mPositions.emplace_back(vertex.getX());
+                // }
+
+                mIndices.emplace_back(iterator -> second);
+
                 return iterator -> first;
             }
 

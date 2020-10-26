@@ -97,7 +97,7 @@ class ContentTree {
             ci::gl::Fbo::Format fboFormat;
             fboFormat.samples(8 );
             glm::ivec2 fboResolution = glm::ivec2(1280, 960);
-	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );    
+	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );
         }
 
     public :
@@ -109,7 +109,7 @@ class ContentTree {
          *
          * @param item Pointer to item which should be pushed to vector
         */
-        ContentItemRef pushItem(ContentItemRef item) { _items.push_back(item ); return _items.at(_items.size()-1); }
+        ContentItemRef pushItem(ContentItemRef item) { _items.push_back(item); return _items.at(_items.size()-1); }
 
 
         /**
@@ -127,7 +127,7 @@ class ContentTree {
 
 
         /**
-         * @brief Draw objects to scene 
+         * @brief Draw objects to scene
         */
         void drawObjectsToScene(ci::CameraPersp* _camera );
 

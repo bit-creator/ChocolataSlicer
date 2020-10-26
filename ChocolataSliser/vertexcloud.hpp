@@ -33,27 +33,7 @@
 #include <algorithm>
 
 #include "ChocolataSlicerMesh.h"
-// #include "ContentTree.h"
-
-//  ____________________TEMPORARY________________________ //
-
-class ContentItem { public: Mesh::_meshPtr_t _meshPtr; };
-
-class ContentTree
-{
-    public:
-        static ContentTree&
-        getInstance()
-        { static ContentTree tree; return tree; }
-
-    public:
-        std::vector < std::shared_ptr < ContentItem > >        _items;
-
-    private:
-        ContentTree() {  }
-};
-
-//  ________________END_OF_TEMPORARY_____________________ //
+#include "ContentTree.h"
 
 namespace Slicer
 {
@@ -65,6 +45,8 @@ namespace Slicer
   using layer       = std::list <         curve          >;
   using vertexCloud = std::map  <      height, layer     >;
   using tempLayer   = std::list <     Geometry::cut_t    >;
+
+
 
   namespace
   {

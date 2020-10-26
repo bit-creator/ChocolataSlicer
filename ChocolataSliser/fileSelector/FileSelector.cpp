@@ -352,7 +352,7 @@ bool FileSelector::openLoadingFileSelector(_File_Extention extention ) {
     // Cutting _lastPathRef from endline symbol. _lastPathRef will contains clear path to file
     strcpy(_lastPath, (std::string(_lastPath).erase(std::string(_lastPath).find("\n"))).c_str());
     CI_LOG_I("Selected object : " << _lastPath << "\n" );
-    
+
     // Load an object
     loadObject();
 
@@ -392,6 +392,7 @@ void FileSelector::loadObject( ) {
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
         Mesh::_meshPtr_t _mesh;
 
+        std::cout << "foeusdn\n\n";
         std::thread loading([&_mesh](char* path) {
             if (_str_find(path, ".stl") == 0 )
                 _mesh = make_mesh(Mesh::File::_STL, path );
@@ -407,7 +408,6 @@ void FileSelector::loadObject( ) {
             }, _lastPath
         );
         loading.join();
-
 
 
         // if(_mesh != nullptr)

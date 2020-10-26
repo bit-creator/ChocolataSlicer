@@ -49,44 +49,45 @@ Mesh& Mesh::operator = ( const Mesh&& mesh ) noexcept
 
 void Mesh::conf() noexcept
 {
-    CHOCOLATA_SLIER_PROFILE_FUNCTION();
-    std::for_each
-    (
-        __triangleData.cbegin(),
-        __triangleData.cend(),
-        [this](_trianglePtr triangle) mutable -> void
-        {
-            mIndices.insert
-            (
-                mIndices.end(),
-                {
-                    __vertexData [ triangle -> getVertex_A() ],
-                    __vertexData [ triangle -> getVertex_B() ],
-                    __vertexData [ triangle -> getVertex_C() ],
-                }
-            );
-        }
-    );
+    // CHOCOLATA_SLIER_PROFILE_FUNCTION();
+    // std::for_each
+    // (
+    //     __triangleData.cbegin(),
+    //     __triangleData.cend(),
+    //     [this](_trianglePtr triangle) mutable -> void
+    //     {
+    //         mIndices.insert
+    //         (
+    //             mIndices.end(),
+    //             {
+    //                 __vertexData [ triangle -> getVertex_A() ],
+    //                 __vertexData [ triangle -> getVertex_B() ],
+    //                 __vertexData [ triangle -> getVertex_C() ],
+    //             }
+    //         );
+    //     }
+    // );
+    //
+    // for (auto& [vert, index] : __vertexData)
+    //     mPositions.insert
+    //     (
+    //         mPositions.begin(),
+    //         {
+    //             vert -> getX(),
+    //             vert -> getY(),
+    //             vert -> getZ(),
+    //         }
+    //     );
+    //
+    // recalculateNormals();
 
-    std::for_each
-    (
-        __vertexData.cbegin(),
-        __vertexData.cend(),
-        [this](auto vert) mutable -> void
-        {
-            mPositions.insert
-            (
-                mPositions.begin(),
-                {
-                    vert.first -> getX(),
-                    vert.first -> getY(),
-                    vert.first -> getZ(),
-                }
-            );
-        }
-    );
+    for (auto& [vertex, index] : __vertexData){
+    mPositions.emplace_back(vertex->getZ());
+    mPositions.emplace_back(vertex->getY());
+    mPositions.emplace_back(vertex->getX());}
 
-    recalculateNormals();
+    // std::reverse(mPositions.begin(), mPositions.end());
+    // std::reverse(mIndices.begin(), mIndices.end());
     recalculateTangents();
     recalculateBitangents();
 }
@@ -201,17 +202,10 @@ Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
         if (file_type == Mesh::File::_PLY) result = std::make_shared<Filework:: PLY>(filename);
     }
 
-    // auto fut = std::async
-    // (
-        // std::launch::async,
-        // [result] () -> void
-        // {
-            if(result == nullptr) return result;
-            result -> open();
-            result -> fixAllTriangle();
-            result -> conf();
-        // }
-    // );
+    if(result == nullptr) return result;
+
+    result -> open();
+    result -> conf();
 
     return result;
 }

@@ -1111,7 +1111,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 , __vertex_A (std::make_shared<Vertex>())
                 , __vertex_B (std::make_shared<Vertex>())
                 , __vertex_C (std::make_shared<Vertex>())
-            { }
+            {  }
 
             /**
              * @brief (constructor) for triangle who init all data with r-value reference
@@ -1129,7 +1129,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 , __vertex_A(std::move(vertex_A))
                 , __vertex_B(std::move(vertex_B))
                 , __vertex_C(std::move(vertex_C))
-            { }
+            { fixTriangle(); }
 
             /**
              * @brief copy (constructor) for Triangle
@@ -1142,7 +1142,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 : __vertex_A (other.__vertex_A)
                 , __vertex_B (other.__vertex_B)
                 , __vertex_C (other.__vertex_C)
-            { normal(); }
+            { fixTriangle(); }
 
             /**
              * @brief move (constructor) for Triangle
@@ -1155,7 +1155,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 : __vertex_A (std::move(other.__vertex_A))
                 , __vertex_B (std::move(other.__vertex_B))
                 , __vertex_C (std::move(other.__vertex_C))
-            { normal(); }
+            { fixTriangle(); }
 
             /**
              * @brief (destructor) for Triangle
@@ -1184,7 +1184,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 __vertex_B = other.__vertex_B;
                 __vertex_C = other.__vertex_C;
 
-                normal();
+                fixTriangle();
 
                 return *this;
             }
@@ -1208,7 +1208,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 __vertex_B = std::move(other.__vertex_B);
                 __vertex_C = std::move(other.__vertex_C);
 
-                normal();
+                fixTriangle();
 
                 return *this;
             }
@@ -1320,6 +1320,8 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 __vertex_A = vertex_A;
                 __vertex_B = vertex_B;
                 __vertex_C = vertex_C;
+
+                fixTriangle();
             }
 
            /**
@@ -1340,6 +1342,8 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 *__vertex_A = vertex_A;
                 *__vertex_B = vertex_B;
                 *__vertex_C = vertex_C;
+
+                fixTriangle();
             }
 
            /**
@@ -1358,7 +1362,7 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 __vertex_A = vertex_A;
                 __vertex_B = vertex_B;
                 __vertex_C = vertex_C;
-                normal();
+                fixTriangle();
             }
 
            /**

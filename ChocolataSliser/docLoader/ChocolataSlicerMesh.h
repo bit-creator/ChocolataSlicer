@@ -36,6 +36,8 @@
 #include <optional>
 #include <algorithm>
 
+#include <boost/functional/hash.hpp>
+
 #include "geometry.hpp"
 #include "configs.hpp"
 #include "flat_hash_map/unordered_map.hpp"
@@ -76,19 +78,14 @@ class Mesh : public TriMesh
          */
         struct _Hesher
         {
-            size_t
-            operator()(const _vertexPtr value) const noexcept
-            {
-                std::bitset < 32 >  bit_x(*(int32_t*)(&(value -> getX())));
-                std::bitset < 32 >  bit_y(*(int32_t*)(&(value -> getY())));
-                std::bitset < 32 >  bit_z(*(int32_t*)(&(value -> getZ())));
-
-                std::string bits = bit_x.to_string();
-                bits.append(bit_y.to_string());
-                bits.append(bit_z.to_string());
-
-                return  std::hash < std::bitset < 96 > > { } (std::bitset < 96 >(bits));
-            }
+          size_t
+          operator()(const _vertexPtr value) const noexcept
+          {
+            size_t res = *(int32_t*)(&(value -> getX()));
+            boost::hash_combine(res, *(int32_t*)(&(value -> getY())));
+            boost::hash_combine(res, *(int32_t*)(&(value -> getZ())));
+            return res;
+          }
         }; // STRUCT_HESHER
 
         /**
@@ -107,7 +104,7 @@ class Mesh : public TriMesh
         using _triangleData = std::list < _trianglePtr >;                       // array of triangle
         // using _vertexData   = std::unordered_map < _vertexPtr, uint32_t,
                                                    // _Hesher   , _Equal >;        // array of verrtex
-        using _vertexData   = ska::unordered_map< _vertexPtr, uint32_t, _Hesher   , _Equal >;
+        using _vertexData   = ska::unordered_map< _vertexPtr, uint32_t, _Hesher, _Equal >;
         using _filename_t   = std::string;                                      // Mesh name type
         using _stat_t       = uint64_t;                                         // type for statict
 
