@@ -100,8 +100,10 @@ class ContentTree {
 	        _FboPtr = ci::gl::Fbo::create(fboResolution.x, fboResolution.y, fboFormat );
         }
 
+
     public :
-        static ContentTree& getInstance() { static ContentTree tree; return tree; }
+        static ContentTree               __tree;
+        static ContentTree& getInstance() { static ContentTree __tree; return __tree; }
 
 
         /**

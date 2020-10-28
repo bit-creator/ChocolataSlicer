@@ -59,9 +59,6 @@ static void __preSettingUp(ci::app::App::Settings* settings ) {
 
 
 int main(int argc, char* argv[] ) {
-
-    // ContentTree::getInstance();
-
     ci::app::RendererGl::Options _options = ci::app::RendererGl::Options().msaa(16);
     _options.stencil(true );
     _options.setVersion(3, 2);
@@ -69,25 +66,6 @@ int main(int argc, char* argv[] ) {
 	cinder::app::RendererRef renderer( new ci::app::RendererGl(_options ) );
 	cinder::app::AppLinux::main<ChocolataSlicer>( renderer, "ChocolataSlicer", argc, argv, __preSettingUp );
     CHOCOLATA_SLIER_PROFILE_END_SESSION();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // system("clear");
     //
@@ -111,7 +89,8 @@ int main(int argc, char* argv[] ) {
     //
     // item->_meshPtr = make_mesh(Mesh::File::_STL, "test/bridge.stl");
     //
-    // // ._items.push_back(std::make_shared<ContentItem>("test/bridge.stl", ci::gl::BatchRef(nullptr)));
+    //
+    // // ContentTree::getInstance()._items.push_back(std::make_shared<ContentItem>("test/bridge.stl", ci::gl::BatchRef(nullptr)));
     // auto finish_load = high_resolution_clock::now();
     //
     // auto load_time = duration_cast<milliseconds>(finish_load - start_load);

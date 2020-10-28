@@ -49,6 +49,7 @@ using               Geometry::_vertexPtr;         // Pointer on geometric Vertex
 using               Geometry::_trianglePtr;       // Pointer on triangle
 using               dim_t = float;                // Type of coord data
 using               cinder::TriMesh;              // Visualizing Mesh
+using               namespace std::chrono;
 
 /**
  * @class Mesh is abstract base for 3D Mesh objects
@@ -105,7 +106,7 @@ class Mesh : public TriMesh
         // using _vertexData   = std::unordered_map < _vertexPtr, uint32_t,
                                                    // _Hesher   , _Equal >;        // array of verrtex
         using _vertexData   = ska::unordered_map< _vertexPtr, uint32_t, _Hesher, _Equal >;
-        
+
         using _filename_t   = std::string;                                      // Mesh name type
         using _stat_t       = uint64_t;                                         // type for statict
 

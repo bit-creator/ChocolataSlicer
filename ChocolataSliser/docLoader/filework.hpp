@@ -266,16 +266,17 @@ namespace Filework
                         std::move ( std::make_pair
                         (
                             std::make_shared<Geometry::Vertex>(std::move(vertex)),
-                            ++__index
+                            __index
                         ) )
                     );
 
-                // if(insert)
-                // {
-                //     mPositions.emplace_back(vertex.getZ());
-                //     mPositions.emplace_back(vertex.getY());
-                //     mPositions.emplace_back(vertex.getX());
-                // }
+                if(insert)
+                {
+                    mPositions.emplace_back(vertex.getX());
+                    mPositions.emplace_back(vertex.getY());
+                    mPositions.emplace_back(vertex.getZ());
+                    ++__index;
+                }
 
                 mIndices.emplace_back(iterator -> second);
 

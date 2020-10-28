@@ -392,7 +392,6 @@ void FileSelector::loadObject( ) {
     else if (_lastPathExtention == _File_Extention::_File_Extention_Mesh ) {
         Mesh::_meshPtr_t _mesh;
 
-        std::cout << "foeusdn\n\n";
         std::thread loading([&_mesh](char* path) {
             if (_str_find(path, ".stl") == 0 )
                 _mesh = make_mesh(Mesh::File::_STL, path );

@@ -49,45 +49,13 @@ Mesh& Mesh::operator = ( const Mesh&& mesh ) noexcept
 
 void Mesh::conf() noexcept
 {
-    // CHOCOLATA_SLIER_PROFILE_FUNCTION();
-    // std::for_each
-    // (
-    //     __triangleData.cbegin(),
-    //     __triangleData.cend(),
-    //     [this](_trianglePtr triangle) mutable -> void
-    //     {
-    //         mIndices.insert
-    //         (
-    //             mIndices.end(),
-    //             {
-    //                 __vertexData [ triangle -> getVertex_A() ],
-    //                 __vertexData [ triangle -> getVertex_B() ],
-    //                 __vertexData [ triangle -> getVertex_C() ],
-    //             }
-    //         );
-    //     }
-    // );
-    //
-    // for (auto& [vert, index] : __vertexData)
-    //     mPositions.insert
-    //     (
-    //         mPositions.begin(),
-    //         {
-    //             vert -> getX(),
-    //             vert -> getY(),
-    //             vert -> getZ(),
-    //         }
-    //     );
-    //
-    // recalculateNormals();
+    for (auto& [vertex, index] : __vertexData)
+    {
+        mTexCoords0.push_back(vertex -> getV());
+        mTexCoords1.push_back(vertex -> getU());
+    }
 
-    for (auto& [vertex, index] : __vertexData){
-    mPositions.emplace_back(vertex->getZ());
-    mPositions.emplace_back(vertex->getY());
-    mPositions.emplace_back(vertex->getX());}
-
-    // std::reverse(mPositions.begin(), mPositions.end());
-    // std::reverse(mIndices.begin(), mIndices.end());
+    recalculateNormals();
     recalculateTangents();
     recalculateBitangents();
 }
@@ -204,8 +172,12 @@ Mesh::_meshPtr_t make_mesh(Mesh::File file_type,
 
     if(result == nullptr) return result;
 
+    auto start_load = high_resolution_clock::now();
     result -> open();
     result -> conf();
+    auto finish_load = high_resolution_clock::now();
+
+    std::cout << "|info   | loading time - " << duration_cast<milliseconds>(finish_load - start_load).count() << " milliseconds\ttriangles - " << result -> getTriangles() << '\t' << "vertices - " << result -> getVertices() << '\n';
 
     return result;
 }
