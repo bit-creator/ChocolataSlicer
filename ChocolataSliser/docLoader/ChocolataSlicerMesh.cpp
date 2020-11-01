@@ -125,20 +125,16 @@ Mesh::nextLayerHeight(const float prev) const noexcept
     const float max          = *cfg::get<f>(CfgNames::MAX_LAYER);
     const float intersection = *cfg::get<f>(CfgNames::INTERSECTION);
 
-    std::for_each
-    (
-        __triangleData.cbegin(),
-        __triangleData.cend(),
-        [&minCos, prev, min, max] (auto triangle) mutable -> void
+
+    for (auto& triangle : __triangleData)
+    {
+        if (triangle -> onRange(prev + min) || triangle -> onRange(prev + max))
         {
-            if (triangle -> onRange(prev + min) || triangle -> onRange(prev + max))
-            {
-                if(!minCos) minCos = 1.f;
-                if (auto angle = triangle -> getNormal().normalAngle();
-                    std::abs(angle) < *minCos ) minCos = std::abs(angle);
-            }
+            if(!minCos) minCos = 1.f;
+            if (auto angle = triangle -> getNormal().normalAngle();
+                std::abs(angle) < *minCos ) minCos = std::abs(angle);
         }
-    );
+    }
 
     if (minCos)
     {

@@ -1116,6 +1116,22 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
             /**
              * @brief (constructor) for triangle who init all data with r-value reference
              *
+             * @param vertex_A first vertex
+             * @param vertex_B second vertex
+             * @param vertex_C third vertex
+             *
+             * this method no throw exeption
+            */
+            Triangle(_vertexPtr&& vertex_A,
+                _vertexPtr&& vertex_B, _vertexPtr&& vertex_C) noexcept
+                : __vertex_A(std::move(vertex_A))
+                , __vertex_B(std::move(vertex_B))
+                , __vertex_C(std::move(vertex_C))
+            { fixTriangle(); }
+
+            /**
+             * @brief (constructor) for triangle who init all data with r-value reference
+             *
              * @param vector normal for this triangle
              * @param vertex_A first vertex
              * @param vertex_B second vertex
@@ -1670,6 +1686,142 @@ namespace Geometry  // GEOMETRIC_TYPES_IMPL
                 }
             }
     }; // CLASS_TRIANGLE
+
+    /*
+     * @class Plane is geometry type for analitics planes
+     *
+     * create with (constructor)
+     */
+    class Plane
+    {
+    private:
+        using _vertexPtr = std::shared_ptr<Vertex>;
+
+    public:
+        enum class Position
+        { UnderPlane, OverPlane };
+
+    private:
+        float                                   _A;     // x coeficient in plane equation
+        float                                   _B;     // y coeficient in plane equation
+        float                                   _C;     // z coeficient in plane equation
+        float                                   _D;     // free param
+
+    public:
+        /**
+         * @brief default (constructor)
+         * @brief no throw exeptions
+         */
+        Plane() noexcept
+            : _A (0.)
+            , _B (0.)
+            , _C (0.)
+            , _D (0.)
+        {  }
+
+        /**
+         * @brief (constructor) used a plane normal for definishing plane
+         * @brief free parametr no defined
+         * @brief no throw exeptions
+         * @param normal, to plane
+         */
+        Plane(const Vector& normal) noexcept
+            : _A (normal.getX())
+            , _B (normal.getY())
+            , _C (normal.getZ())
+            , _D (0.)
+        {  }
+
+        /**
+         * @brief (constructor) used plane normal for definished plane,
+         * @brief and use point belong to plane for definished free param
+         * @brief no throw exeptions
+         * @param normal, to plane
+         * @param point, belong the plane
+         */
+        Plane(const Vector& normal, const Vertex& point) noexcept
+            : Plane(normal)
+        { genD(point); }
+
+        /**
+         * @brief (constructor) used triangle in-plane
+         * @brief no throw exeptions
+         * @param tr triangle in-plane
+         */
+        Plane(const Triangle& tr) noexcept
+            : Plane(tr.getNormal(), *tr.getVertex_A())
+        {  }
+
+        /**
+         * @brief (constructor) used temporary triangle in-plane
+         * @brief no throw exeptions
+         * @param tr triangle in-plane
+         */
+        Plane(Triangle&& tr) noexcept
+            : Plane(tr.getNormal(), *tr.getVertex_A())
+        {  }
+
+        /**
+         * @brief (constructor) used 3 point no in-line
+         * @brief no throw exeptions
+         * @param point_1, first pointer
+         * @param point_2, second pointer
+         * @param point_3, third pointer
+         */
+        Plane(_vertexPtr&& point_1, _vertexPtr&& point_2, _vertexPtr&& point_3) noexcept
+            : Plane(Triangle(std::move(point_1), 
+                             std::move(point_2), 
+                             std::move(point_3)))
+        {  }
+
+        /**
+         * @brief (constructor) used 3 point no in-line
+         * @brief no throw exeptions
+         * @param point_1, first reference
+         * @param point_2, second reference
+         * @param point_3, third reference
+         */
+        Plane(const Vertex& point_1, const Vertex& point_2, const Vertex& point_3) noexcept
+            : Plane(std::make_shared<Vertex>(point_1),
+                    std::make_shared<Vertex>(point_2),
+                    std::make_shared<Vertex>(point_3))
+        {  }
+        /**
+         * @brief @class Plane no work with dinamic memory
+         * @brief all copy/move operations and (destructor) default
+         */
+        Plane(const Plane& oth) noexcept = default;
+        Plane(Plane&& oth) noexcept = default;
+        Plane& operator = (const Plane& oth) noexcept = default;
+        Plane& operator = (Plane&& oth) noexcept = default;
+        ~Plane() noexcept = default;
+
+        /**
+         * @brief method found point position relativity plane
+         * @param point, which position count
+         * @return Position::OverPlane if point higer then plane
+         */
+        Position getPos(const Vertex& point) noexcept
+        { return pointPosition(point) >= 0 ? Position::OverPlane : Position::UnderPlane; }
+
+    private:
+        /**
+         * @brief set free parametr use point belong the planes
+         * @param point, belong the plane
+         */
+        void genD(const Vertex& point) noexcept
+        { _D = - pointPosition(point); }
+
+        /**
+         * @brief count the specific charachteristic point position
+         * @brief relativetly plane
+         * @param point, which position count
+         * @return value of specific charachteristic
+         */
+        float pointPosition(const Vertex& point) const noexcept
+        { return _A * point.getX() + _B * point.getY() + _C * point.getZ() + _D; }
+
+    }; // CLASS_PLANE
 
     // TYPES
     using _vectorPtr   = std::unique_ptr < Vector >;

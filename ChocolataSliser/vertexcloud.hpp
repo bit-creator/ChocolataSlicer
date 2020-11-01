@@ -39,273 +39,379 @@ namespace Slicer
 {
   using height      = float;
   using layerPoint  = Geometry::Point2d;
+  using optPoint    = Geometry::optPoint2d;
+  using tmpPoint    = Geometry::cut_t;
   using closeFlag   = bool;
-  using closedCurve = std::list <       layerPoint       >;     // or circular linked list (need impliment)
-  using curve       = std::pair < closeFlag, closedCurve >;
-  using layer       = std::list <         curve          >;
-  using vertexCloud = std::map  <      height, layer     >;
-  using tempLayer   = std::list <     Geometry::cut_t    >;
+  // using curve       = std::pair < closeFlag, closedCurve >;
+  using curve       = std::list <    layerPoint    >;     // or circular linked list (need impliment)
 
+  // class curve : public curve_t
+  // {
+  // public:
+  //     curve(auto& par) : curve_t(par) {  }
+  //     curve(auto& par_1, auto par_2) : curve_t(par_1, par_2) {  }
+  //
+  //     bool close() const noexcept
+  //     { return *cbegin() == *crbegin(); }
+  // }
 
+  using layer       = std::list <      curve       >;
+  using vertexCloud = std::map  <   height, layer  >;
+  using tempLayer   = std::list <     tmpPoint     >;
 
-  namespace
+  class VertexCloudHandler
   {
+  private:
+      using VCHandler = VertexCloudHandler;
+
+      vertexCloud                                           _cloud;
+
+      VertexCloudHandler() noexcept
+      {  }
+
+  public:
+      static VCHandler&
+      get() noexcept
+      { static auto cloud = VCHandler(); return cloud; }
+
       void
-      generateStaticLayerHeight(vertexCloud& cloud, const float gabarits) noexcept
+      generateStaticLayerHeight(const float gabarits) noexcept
       {
           const float layerh = *cfg::get<f>(CfgNames::LAYER);
-          while(cloud.rbegin() -> first < gabarits - layerh)
-                cloud.emplace ( std::make_pair ( layerh, layer() ) );
+          while(_cloud.rbegin() -> first < gabarits - layerh)
+                _cloud.emplace ( std::make_pair ( layerh, layer() ) );
       }
 
       void
-      generateDynamicLayerHeight(vertexCloud& cloud, const float gabarits) noexcept
+      generateDynamicLayerHeight(const float gabarits) noexcept
       {
           float max = *cfg::get<f>(CfgNames::MAX_LAYER);
 
-          while(cloud.rbegin() -> first < gabarits - max)
+          while(_cloud.rbegin() -> first < gabarits - max)
           {
-              float layerHeight = cloud.rbegin() -> first + max;
-              std::for_each
-              (
-                  ContentTree::getInstance()._items.cbegin(),
-                  ContentTree::getInstance()._items.cend(),
-                  [&cloud, &layerHeight] (auto item) mutable -> void
-                  {
-                      if (!item -> _meshPtr -> _sliced)
-                      {
-                          if (auto layHeigh = item -> _meshPtr
-                              -> nextLayerHeight(cloud.rbegin() -> first);
-                          layHeigh) { if (layerHeight >= *layHeigh ) layerHeight = *layHeigh; }
-                          else item -> _meshPtr -> _sliced = true;
-                      }
-                  }
-              );
-              cloud.emplace ( std::make_pair ( layerHeight, layer() ) );
-          }
-          if (gabarits - cloud.rbegin()->first > *cfg::get<f>(CfgNames::MIN_LAYER)) cloud.emplace
-             (
-               std::make_pair
-               (
-                   gabarits,
-                   layer()
-               )
-             );
-      }
+              float layerHeight = _cloud.rbegin() -> first + max;
 
-      inline bool isClosed(const closedCurve& curve) noexcept
-      { return *curve.begin() == *curve.rbegin(); }
-
-      bool allClosed(const layer& lay) noexcept
-      { bool res = true; for(auto [close, curve] : lay) !close ? res = false : res; return res; }
-      //
-      bool onLine(const layerPoint& first, const layerPoint& second, const layerPoint& third) noexcept
-      { return Geometry::is_equal((third.x - first.x) * (second.y - first.y), (third.y - first.y) * (second.x - first.x)); }
-
-      void validate(tempLayer& tmp, layer& arr) noexcept
-      {
-          bool inserted = 0;
-
-          if (tmp.empty()) return;
-
-          if (auto& point = *tmp.begin(); arr.empty() || allClosed(arr))
-          {
-               if (point)
-               {
-                   if (point -> first)
-                   {
-                       arr.emplace_back(curve(false, closedCurve({*point -> first})));
-                       if (point -> second) arr.rbegin()->second.emplace_back(*point -> second);
-                   }
-                   if (point -> second) arr.emplace_back(curve(false, closedCurve({*point -> second})));
-               }
-               tmp.erase(tmp.begin());
-          }
-          else
-          {
-              for(auto& [closed, curve] : arr)
+              for (auto& model : ContentTree::getInstance()._items)
               {
-                  if (closed) continue;
-                  if(curve.size() == 1)
+                  if (!model -> _meshPtr -> _sliced)
                   {
-                      for (auto pi = tmp.cbegin(); pi != tmp.cend(); ++pi)
+                      if (auto layHeigh = model -> _meshPtr
+                          -> nextLayerHeight(_cloud.rbegin() -> first);
+                      layHeigh)
                       {
-                          auto& point = *pi;
-
-                          if (point)
-                          {
-                              if(point -> first) if (*point -> first == *curve.crbegin())
-                              { if(point -> second) curve.emplace_back(*point -> second); inserted = true; }
-
-                              if(point -> second) if (*point -> second == *curve.crbegin())
-                              { if(point -> first) curve.emplace_back(*point -> first); inserted = true; }
-                          }
-                          if (inserted) {tmp.erase(pi); break;}
+                          if (layerHeight >= *layHeigh )
+                          layerHeight = *layHeigh;
                       }
+                      else model -> _meshPtr -> _sliced = true;
                   }
-                  else for (auto pi = tmp.cbegin(); pi != tmp.cend(); ++pi)
-                  // else for (auto& point : tmp)
-                  {
-                      auto& point = *pi;
-                      if (point)
-                      {
-                          if (point -> first)
-                          {
-                              if (*point -> first == *curve.crbegin())
-                              {
-                                    if(point -> second)
-                                    {
-                                        if (*point -> second == *curve.cbegin())
-                                        {
-                                            if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
-                                                curve.erase(curve.begin());
-
-                                            if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
-                                                curve.pop_back();
-
-                                            closed = true;
-                                            inserted = true;
-                                        }
-
-                                        if (!inserted) onLine(*curve.crbegin(), *++curve.crbegin(), *point -> second)
-                                            ? *curve.rbegin() = *point -> second
-                                            : curve.emplace_back(*point -> second);
-                                    }
-                                    inserted = true;
-                              }
-
-                              if (!inserted)
-                                 if (*point -> first == *curve.cbegin())
-                                 {
-                                    if(point -> second)
-                                    {
-                                        if (*point -> second == *curve.crbegin())
-                                        {
-                                            if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
-                                                curve.erase(curve.begin());
-
-                                            if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
-                                                curve.pop_back();
-
-                                            closed = true;
-                                            inserted = true;
-                                        }
-
-                                        if (!inserted) onLine(*curve.cbegin(), *++curve.cbegin(), *point -> second)
-                                            ? *curve.begin() = *point -> second
-                                            : curve.emplace_front(*point -> second);
-                                    }
-                                    inserted = true;
-                                 }
-                          }
-
-                          if (point -> second)
-                          {
-                              if (*point -> second == *curve.crbegin())
-                              {
-                                    if(point -> first)
-                                    {
-                                        if (*point -> first == *curve.cbegin())
-                                        {
-                                            if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
-                                                curve.erase(curve.begin());
-
-                                            if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
-                                                curve.pop_back();
-
-                                            closed = true;
-                                            inserted = true;
-                                        }
-
-                                        if (!inserted) onLine(*curve.crbegin(), *++curve.crbegin(), *point -> first)
-                                            ? *curve.rbegin() = *point -> first
-                                            : curve.emplace_back(*point -> first);
-                                    }
-                                    inserted = true;
-                              }
-
-                              if (!inserted)
-                                 if (*point -> second == *curve.cbegin())
-                                 {
-                                    if(point -> first)
-                                    {
-                                        if (*point -> first == *curve.crbegin())
-                                        {
-                                            if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
-                                                curve.pop_back();
-
-                                            if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
-                                                curve.pop_back();
-
-                                            closed = true;
-                                            inserted = true;
-                                        }
-
-                                        if (!inserted) onLine(*curve.cbegin(), *++curve.cbegin(), *point -> first)
-                                            ? *curve.begin() = *point -> first
-                                            : curve.emplace_front(*point -> first);
-                                    }
-                                    inserted = true;
-                                 }
-                          }
-                      }
-                      if (inserted) {tmp.erase(pi); break;}
-                  }
-                  if(inserted) validate(tmp, arr);
               }
+              _cloud.emplace ( std::make_pair ( layerHeight, layer() ) );
           }
+
+          if (gabarits - _cloud.rbegin()->first > *cfg::get<f>(CfgNames::MIN_LAYER))
+            _cloud.emplace (std::make_pair (gabarits, layer()));
       }
-};
 
+      void
+      generateVertexCloud() noexcept
+      {
+          _cloud.clear();
 
-  void
-  generateVertexCloud(vertexCloud& cloud) noexcept
-  {
-      cloud.clear();
-
-      auto gabarits =
-      (*std::max_element
-        (
+          auto gabarits = (*std::max_element (
             ContentTree::getInstance()._items.cbegin(),
             ContentTree::getInstance()._items.cend(),
             [] (auto item_1, auto item_2) -> bool
             { return item_1 -> _meshPtr -> getModelHeights() >
                      item_2 -> _meshPtr -> getModelHeights(); }
-        )
-      ) -> _meshPtr -> getModelHeights();
+            )) -> _meshPtr -> getModelHeights();
 
+          _cloud.emplace (std::make_pair (*cfg::get<f>(CfgNames::FIRST_LAYER), layer()));
 
-      cloud.emplace
-      (
-        std::make_pair
-        (
-            *cfg::get<f>(CfgNames::FIRST_LAYER),
-            layer()
-        )
-      );
+          if(cfg::get<b>(CfgNames::DYNAMIC_LAYER)) generateDynamicLayerHeight(gabarits);
+          else                                     generateStaticLayerHeight (gabarits);
 
-      if(cfg::get<b>(CfgNames::DYNAMIC_LAYER)) generateDynamicLayerHeight(cloud, gabarits);
-      else                                     generateStaticLayerHeight (cloud, gabarits);
+          std::vector<tempLayer> tmpCloud(_cloud.size(), tempLayer());
 
-      std::vector<tempLayer> tmpCloud(cloud.size(), tempLayer());
-
-      for (auto& item : ContentTree::getInstance()._items)
-              for (auto& triangle : item -> _meshPtr -> getTriangleArray())
+          for (auto& item : ContentTree::getInstance()._items)
+            for (auto& triangle : item -> _meshPtr -> getTriangleArray())
+            {
+              uint32_t index = 0u;
+              // Geometry::Triangle::onTerm(triangle);
+              for ( auto& [ height, layer ] : _cloud )
               {
-                      uint32_t index = 0u;
-                      // Geometry::Triangle::onTerm(triangle);
-                      for ( auto& [ height, layer ] : cloud )
-                      {
-                          if ( triangle -> getVertex_A() -> getZ() <  height ) break;
-                          if ( triangle -> getVertex_C() -> getZ() >  height ) ++index;
-                          if ( triangle -> getVertex_C() -> getZ() <= height )
-                          {
-                                  tmpCloud[index].emplace_back(triangle -> cut(height));
-                                  validate(tmpCloud[index], layer);
-                          }
-                      }
-               }
-  }
+                  if ( triangle -> getVertex_A() -> getZ() <  height ) break;
+                  if ( triangle -> getVertex_C() -> getZ() >  height ) ++index;
+                  if ( triangle -> getVertex_C() -> getZ() <= height )
+                  {
+                    tmpCloud[index].emplace_back(triangle -> cut(height));
+                    // validate(tmpCloud[index], layer);
+                  }
+              }
+            }
+          setPoints(tmpCloud);
+      }
+
+  private:
+      optPoint compare(layerPoint& pnt, tmpPoint& tmp) const noexcept
+      {
+          if (tmp)
+          {
+              if (auto& [first, second] = *tmp; first)
+              {
+                  if (second)
+                  {
+                      if (*first == pnt) return second;
+                      else if (*second == pnt) return first;
+
+                      else return std::nullopt;
+                  }
+                  else return std::nullopt;
+              }
+              else return std::nullopt;
+          }
+          else return std::nullopt;
+      }
+
+      void setPoints(std::vector<tempLayer>& temp) noexcept
+      {
+          auto layer = _cloud.begin();
+          for(auto& rowLayer : temp)
+          {
+              while(!rowLayer.empty())
+              {
+                  auto currentCurve = layer -> second.begin();
+                  if(true){  }                              // curve no close
+                  else layer -> second.emplace_back(curve());
+              }
+              ++layer;
+          }
+
+          uint32_t index = 0u;
+
+          for (auto& [height, layer] : _cloud)
+          {
+            // layer.emplace_back(temp[index].)
+              ++index;
+          }
+          tempLayer& tmp = temp[index];
+      }
+
+  };
+
+
+//       inline bool isClosed(const closedCurve& curve) noexcept
+//       { return *curve.begin() == *curve.rbegin(); }
+//
+//       bool allClosed(const layer& lay) noexcept
+//       { bool res = true; for(auto [close, curve] : lay) !close ? res = false : res; return res; }
+//       //
+//       bool onLine(const layerPoint& first, const layerPoint& second, const layerPoint& third) noexcept
+//       { return Geometry::is_equal((third.x - first.x) * (second.y - first.y), (third.y - first.y) * (second.x - first.x)); }
+//
+//       void validate(tempLayer& tmp, layer& arr) noexcept
+//       {
+//           bool inserted = 0;
+//
+//           if (tmp.empty()) return;
+//
+//           if (auto& point = *tmp.begin(); arr.empty() || allClosed(arr))
+//           {
+//                if (point)
+//                {
+//                    if (point -> first)
+//                    {
+//                        arr.emplace_back(curve(false, closedCurve({*point -> first})));
+//                        if (point -> second) arr.rbegin()->second.emplace_back(*point -> second);
+//                    }
+//                    if (point -> second) arr.emplace_back(curve(false, closedCurve({*point -> second})));
+//                }
+//                tmp.erase(tmp.begin());
+//           }
+//           else
+//           {
+//               for(auto& [closed, curve] : arr)
+//               {
+//                   if (closed) continue;
+//                   if(curve.size() == 1)
+//                   {
+//                       for (auto pi = tmp.cbegin(); pi != tmp.cend(); ++pi)
+//                       {
+//                           auto& point = *pi;
+//
+//                           if (point)
+//                           {
+//                               if(point -> first) if (*point -> first == *curve.crbegin())
+//                               { if(point -> second) curve.emplace_back(*point -> second); inserted = true; }
+//
+//                               if(point -> second) if (*point -> second == *curve.crbegin())
+//                               { if(point -> first) curve.emplace_back(*point -> first); inserted = true; }
+//                           }
+//                           if (inserted) {tmp.erase(pi); break;}
+//                       }
+//                   }
+//                   else for (auto pi = tmp.cbegin(); pi != tmp.cend(); ++pi)
+//                   // else for (auto& point : tmp)
+//                   {
+//                       auto& point = *pi;
+//                       if (point)
+//                       {
+//                           if (point -> first)
+//                           {
+//                               if (*point -> first == *curve.crbegin())
+//                               {
+//                                     if(point -> second)
+//                                     {
+//                                         if (*point -> second == *curve.cbegin())
+//                                         {
+//                                             if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
+//                                                 curve.erase(curve.begin());
+//
+//                                             if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
+//                                                 curve.pop_back();
+//
+//                                             closed = true;
+//                                             inserted = true;
+//                                         }
+//
+//                                         if (!inserted) onLine(*curve.crbegin(), *++curve.crbegin(), *point -> second)
+//                                             ? *curve.rbegin() = *point -> second
+//                                             : curve.emplace_back(*point -> second);
+//                                     }
+//                                     inserted = true;
+//                               }
+//
+//                               if (!inserted)
+//                                  if (*point -> first == *curve.cbegin())
+//                                  {
+//                                     if(point -> second)
+//                                     {
+//                                         if (*point -> second == *curve.crbegin())
+//                                         {
+//                                             if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
+//                                                 curve.erase(curve.begin());
+//
+//                                             if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
+//                                                 curve.pop_back();
+//
+//                                             closed = true;
+//                                             inserted = true;
+//                                         }
+//
+//                                         if (!inserted) onLine(*curve.cbegin(), *++curve.cbegin(), *point -> second)
+//                                             ? *curve.begin() = *point -> second
+//                                             : curve.emplace_front(*point -> second);
+//                                     }
+//                                     inserted = true;
+//                                  }
+//                           }
+//
+//                           if (point -> second)
+//                           {
+//                               if (*point -> second == *curve.crbegin())
+//                               {
+//                                     if(point -> first)
+//                                     {
+//                                         if (*point -> first == *curve.cbegin())
+//                                         {
+//                                             if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
+//                                                 curve.erase(curve.begin());
+//
+//                                             if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
+//                                                 curve.pop_back();
+//
+//                                             closed = true;
+//                                             inserted = true;
+//                                         }
+//
+//                                         if (!inserted) onLine(*curve.crbegin(), *++curve.crbegin(), *point -> first)
+//                                             ? *curve.rbegin() = *point -> first
+//                                             : curve.emplace_back(*point -> first);
+//                                     }
+//                                     inserted = true;
+//                               }
+//
+//                               if (!inserted)
+//                                  if (*point -> second == *curve.cbegin())
+//                                  {
+//                                     if(point -> first)
+//                                     {
+//                                         if (*point -> first == *curve.crbegin())
+//                                         {
+//                                             if (onLine(*curve.crbegin(), *curve.cbegin(), *++curve.cbegin()))
+//                                                 curve.pop_back();
+//
+//                                             if (onLine(*curve.crbegin(), *++curve.crbegin(), *curve.cbegin()))
+//                                                 curve.pop_back();
+//
+//                                             closed = true;
+//                                             inserted = true;
+//                                         }
+//
+//                                         if (!inserted) onLine(*curve.cbegin(), *++curve.cbegin(), *point -> first)
+//                                             ? *curve.begin() = *point -> first
+//                                             : curve.emplace_front(*point -> first);
+//                                     }
+//                                     inserted = true;
+//                                  }
+//                           }
+//                       }
+//                       if (inserted) {tmp.erase(pi); break;}
+//                   }
+//                   if(inserted) validate(tmp, arr);
+//               }
+//           }
+//       }
+// };
+//
+//
+//   void
+//   generateVertexCloud(vertexCloud& cloud) noexcept
+//   {
+//       cloud.clear();
+//
+//       auto gabarits =
+//       (*std::max_element
+//         (
+//             ContentTree::getInstance()._items.cbegin(),
+//             ContentTree::getInstance()._items.cend(),
+//             [] (auto item_1, auto item_2) -> bool
+//             { return item_1 -> _meshPtr -> getModelHeights() >
+//                      item_2 -> _meshPtr -> getModelHeights(); }
+//         )
+//       ) -> _meshPtr -> getModelHeights();
+//
+//
+//       cloud.emplace
+//       (
+//         std::make_pair
+//         (
+//             *cfg::get<f>(CfgNames::FIRST_LAYER),
+//             layer()
+//         )
+//       );
+//
+//       if(cfg::get<b>(CfgNames::DYNAMIC_LAYER)) generateDynamicLayerHeight(cloud, gabarits);
+//       else                                     generateStaticLayerHeight (cloud, gabarits);
+//
+//       std::vector<tempLayer> tmpCloud(cloud.size(), tempLayer());
+//
+//       for (auto& item : ContentTree::getInstance()._items)
+//               for (auto& triangle : item -> _meshPtr -> getTriangleArray())
+//               {
+//                       uint32_t index = 0u;
+//                       // Geometry::Triangle::onTerm(triangle);
+//                       for ( auto& [ height, layer ] : cloud )
+//                       {
+//                           if ( triangle -> getVertex_A() -> getZ() <  height ) break;
+//                           if ( triangle -> getVertex_C() -> getZ() >  height ) ++index;
+//                           if ( triangle -> getVertex_C() -> getZ() <= height )
+//                           {
+//                                   tmpCloud[index].emplace_back(triangle -> cut(height));
+//                                   validate(tmpCloud[index], layer);
+//                           }
+//                       }
+//                }
+//   }
 
 //  ____________________TEMPORARY________________________ //
 
@@ -321,7 +427,7 @@ namespace Slicer
       {
           int c = 0;
           std::cout << ++count << '\t' << height << '\n';
-          for ( auto& [closed, coords] : layer ) for(auto& coord : coords) std::cout << "\t\t" << ++c << " point\t" << "X = " << coord.x << '\t' << "Y = " << coord.y << '\n';
+          // for ( auto& [closed, coords] : layer ) for(auto& coord : coords) std::cout << "\t\t" << ++c << " point\t" << "X = " << coord.x << '\t' << "Y = " << coord.y << '\n';
           std::cout << "\n\n\n";
       }
   }
